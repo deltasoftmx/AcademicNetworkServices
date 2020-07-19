@@ -1,0 +1,5 @@
+{
+  "error_messages": {
+    "e500": "Something gone wrong. Please contact with the maintainers of the server and report the response code."
+  }
+}
