@@ -34,7 +34,7 @@ looking for the line where the wanted option is. The place to change such option
     "write_to_stdout": true
   },
   "session": {
-    "expiresIn": "7 days"
+    "expires_in": "7 days"
   },
   "db": {
     "conn_limit": 50
@@ -78,7 +78,7 @@ The certs must be in the following directory and with the following names.
 If you have a bash-like shell, you can use the following commands to generate the certs.
 
 ```sh
-ssh-keygen -q -f academy_network -t rsa -N ""
+ssh-keygen -q -f academy_network -t rsa -m PEM -N ""
 ssh-keygen -e -f academy_network -m PEM > academy_network.pem
 ```
 
