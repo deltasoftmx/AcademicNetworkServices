@@ -25,6 +25,7 @@ The whole documentation is in `docs/` directory. Please, read it if you want to 
 ## How to try it
 
 * Clone this repository to your local machine.
+* Install dependencies with `npm ci`.
 * Setup the environment. See how to do it [here](docs/ENV_SETUP.md).
 * Run `npm run dev` if you are in a development environment, `npm start` if production environment.
 

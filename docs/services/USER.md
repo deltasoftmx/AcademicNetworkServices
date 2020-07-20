@@ -9,7 +9,7 @@
 
 ## Description
 
-This service use the [MariaDB service](MARIADB.md) to perform queries to the database. This service is in charge to
+This service use the [MariaDB service](MARIADB.md) to perform queries to the database. This service is in charge of
 read and write user data.
 
 ## Methods
