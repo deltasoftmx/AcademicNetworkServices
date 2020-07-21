@@ -55,5 +55,29 @@ module.exports = {
       }
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+
+  getUserData: async function(req, res) {
+    try {
+      let result = await userService.getUserData(req.params.username)
+
+      res.finish({
+        code: 0,
+        data: {
+          user: result
+        },
+        messages: 'Done'
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'getUserData'
+      if (err.code === 1) {
+        res.finish({
+          code: err.code,
+          messages: `Username doesn't exist.`
+        })
+      }
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }
