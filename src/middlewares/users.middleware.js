@@ -65,5 +65,20 @@ module.exports = {
       })
     }
     return next()
+  },
+
+  checkGetDataParameter: function(req, res, next) {
+    let validator = new Validator()
+    validator(req.params).required().isObject( obj => {
+      obj('username').required().isString()
+    })
+    let errors = parseValidatorOutput(validator.run())
+    if(errors.length != 0) {
+      return res.status(400).finish({
+        code: -1,
+        messages: errors
+      })
+    }
+    return next()
   }
 }
