@@ -24,6 +24,7 @@ The whole documentation is in `docs/` directory. Please, read it if you want to 
 
 ## How to try it
 
+* If you don't have nodemon installed, use `npm install -g nodemon`.
 * Clone this repository to your local machine.
 * Install dependencies with `npm ci`.
 * Setup the environment. See how to do it [here](docs/ENV_SETUP.md).
