@@ -109,42 +109,56 @@ module.exports = {
 
   /**
    * Return the user public information according of the user type.
-   * @param {String} username 
+   * @param {string} username 
    */
   getUserData: async function (username) {
     try {
-      let query = 'select * from users where username = ?'
+      let query = `SELECT 
+                      users.id,
+                      users.username,
+                      users.firstname,
+                      users.lastname,
+                      users.email,
+                      user_types.name AS 'type_user',
+                      users.description,
+                      users.profile_img_src
+                  FROM
+                      users
+                          INNER JOIN
+                      user_types ON users.user_type_id = user_types.id
+                  WHERE
+                      username = ?
+                  LIMIT 1;`
       let resultUser = await mariadb.query(query, username)
-      resultUser = resultUser[0]
-
-      let userData = {
-        username: resultUser.username,
-        firstname: resultUser.firstname,
-        lastname: resultUser.lastname,
-        description: resultUser.description,
-        profile_img_src: resultUser.profile_img_src,
-        created_at: resultUser.created_at
+      userData = resultUser[0]
+      
+      if (!userData) {
+        return null;
       }
 
-      query = 'select * from user_types where id = ?'
-      let resultTypeUser = await mariadb.query(query, resultUser.user_type_id)
-      userData.user_type = resultTypeUser[0].name
+      // Determine if the user is a student, if so add his/her major and delete his/her email.
+      query = `SELECT 
+                  majors.name
+              FROM
+                  students_data
+                      INNER JOIN
+                  majors ON students_data.major_id = majors.id
+              WHERE
+                  user_id = ?
+              LIMIT 1;`
+      let resultMajorStudent = await mariadb.query(query, userData.id)
+      resultMajorStudent = resultMajorStudent[0]
 
-      if (userData.user_type === 'Estudiante') {
-        query = 'select name from majors where id = (select major_id from students_data where user_id = ?)'
-        let resultMajorStudent = await mariadb.query(query, resultUser.user_type_id)
-        userData.major = resultMajorStudent[0].name
+      if (resultMajorStudent) {
+        userData.major = resultMajorStudent.name
+        userData.email = undefined
       }
 
-      if (userData.user_type === 'Profesor') {
-        userData.email = resultUser.email
-      }
-
+      userData.id = undefined
       return userData
     } catch (err) {
       err.file = __filename
       err.func = 'getUserData'
-      err.code = 1
       throw err
     }
   }

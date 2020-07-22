@@ -62,3 +62,19 @@ read and write user data.
   * 3: Username already exists.
   * 4: User type doesn't exists.
   * 5: Major doesn't exists.
+
+### `getUserData`
+
+* **Description**: Retrieve the user public information according of the user type.
+* **Params**
+  * `username`: string
+* **Return data type**: Promise\<Object>
+  * `user`: Object.
+    * `username`: string.
+    * `firstname`: string.
+    * `lastname`: string.
+    * `email`: string. This will not apply if the user is a student.
+    * `type_user`: string.
+    * `description`: string.
+    * `profile_img_src`: string.
+    * `major_id`: string. This will only be if the user is a student.

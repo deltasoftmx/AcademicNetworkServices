@@ -10,6 +10,7 @@
 * [Social Network API](#Social-Network-API)
   * [Create student](#Create-student)
   * [Sign in](#Sign-in)
+  * [Get user data](#Get-user-data)
 
 ## General information
 
