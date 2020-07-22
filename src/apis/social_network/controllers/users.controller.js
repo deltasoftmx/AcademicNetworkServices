@@ -1,3 +1,4 @@
+const moment = require('moment')
 const userService = require('../../../services/user.service')
 const cryptService = require('../../../services/crypt.service')
 const authService = require('../../../services/auth.service')
@@ -67,6 +68,8 @@ module.exports = {
           messages: [`Username doesn't exists.`]
         })
       } else {
+        resultUserData.created_at = moment(resultUserData.created_at).format("LL")
+
         res.finish({
           code: 0,
           data: resultUserData,

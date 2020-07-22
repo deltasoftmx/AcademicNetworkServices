@@ -38,6 +38,9 @@ looking for the line where the wanted option is. The place to change such option
   },
   "db": {
     "conn_limit": 50
+  },
+  "moment": {
+    "language": "es"
   }
 }
 ```
@@ -64,6 +67,10 @@ See [the library doc](https://www.npmjs.com/package/jsonwebtoken) if you want to
 
 We use a service to manage the DB connections. This service contains a pool of MariaDB connections and only allow a certain number of connections.
 This number is defined by this config variable.
+
+* `moment.language`
+
+Language that we use to format the date and time in the library Moment.js
 
 ## RSA certs
 

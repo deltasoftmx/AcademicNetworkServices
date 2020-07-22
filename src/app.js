@@ -9,8 +9,12 @@ require('./scripts/verify_env')
 const express = require('express')
 const bodyParser = require('body-parser')
 const path = require('path')
+const moment = require('moment')
 const generalMidd = require('./middlewares/general.middleware')
 const conf = require('../conf/conf.json')
+
+//General settings.
+moment.locale(conf.moment.language);
 
 //Creating a express server.
 const app = express()
