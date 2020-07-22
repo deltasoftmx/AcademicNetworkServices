@@ -10,6 +10,7 @@
 * [Social Network API](#Social-Network-API)
   * [Create student](#Create-student)
   * [Sign in](#Sign-in)
+  * [Get user data](#Get-user-data)
 
 ## General information
 
@@ -135,3 +136,44 @@ POST
 #### Codes
 
 No particular codes.
+
+### Get user data
+
+#### Description
+
+Retrieve the user public information according of the user type. For example, if the user is a student
+so within the data will be the major, or if the user is a teacher so within the data will be the email.
+
+#### Endpoint
+
+`/api/social-network/users/:username`
+
+#### Headers
+
+Not more than the mandatories.
+
+#### Method
+
+GET
+
+#### Params
+
+* `username`: string.
+
+#### Response data-structure
+
+```json
+{
+  "username": "jonhdoe",
+  "firstname": "John",
+  "lastname": "Doe",
+  "description": "Hi I'm John Doe",
+  "profile_img_src": "",
+  "created_at": "2020-07-20T16:31:31.000Z",
+  "user_type": "Estudiante",
+  "major": "Data Engineering"
+}
+```
+
+#### Codes
+* 1: Username doesn't exists.

@@ -105,5 +105,61 @@ module.exports = {
       err.func = 'createStudent'
       throw err
     }
+  },
+
+  /**
+   * Return the user public information according of the user type.
+   * @param {string} username 
+   */
+  getUserData: async function (username) {
+    try {
+      let query = `SELECT 
+                      users.id,
+                      users.username,
+                      users.firstname,
+                      users.lastname,
+                      users.email,
+                      user_types.name AS 'type_user',
+                      users.description,
+                      users.profile_img_src
+                  FROM
+                      users
+                          INNER JOIN
+                      user_types ON users.user_type_id = user_types.id
+                  WHERE
+                      username = ?
+                  LIMIT 1;`
+      let resultUser = await mariadb.query(query, username)
+      userData = resultUser[0]
+      
+      if (!userData) {
+        return null;
+      }
+
+      // Determine if the user is a student, if so add his/her major and delete his/her email.
+      query = `SELECT 
+                  majors.name
+              FROM
+                  students_data
+                      INNER JOIN
+                  majors ON students_data.major_id = majors.id
+              WHERE
+                  user_id = ?
+              LIMIT 1;`
+      let resultMajorStudent = await mariadb.query(query, userData.id)
+      resultMajorStudent = resultMajorStudent[0]
+
+      if (resultMajorStudent) {
+        userData.major = resultMajorStudent.name
+        userData.email = undefined
+      }
+
+      userData.id = undefined
+      return userData
+    } catch (err) {
+      err.file = __filename
+      err.func = 'getUserData'
+      throw err
+    }
   }
 }

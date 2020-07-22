@@ -16,5 +16,12 @@ module.exports = {
     generalMidd.verifyAPIKey,
     userMidd.checkSignInData,
     userCtrl.signIn
+  ],
+
+  getData: [
+    generalMidd.allowExternalConnections,
+    generalMidd.verifyAPIKey,
+    userMidd.checkGetDataParameter,
+    userCtrl.getUserData
   ]
 }
