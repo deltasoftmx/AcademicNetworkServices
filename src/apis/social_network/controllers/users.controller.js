@@ -64,15 +64,13 @@ module.exports = {
       if (!resultUserData) {
         res.status(404).finish({
           code: 1,
-          messages: `Username doesn't exist.`
+          messages: [`Username doesn't exists.`]
         })
       } else {
         res.finish({
           code: 0,
-          data: {
-            user: resultUserData
-          },
-          messages: 'Done'
+          data: resultUserData,
+          messages: ['Done']
         })
       }
       

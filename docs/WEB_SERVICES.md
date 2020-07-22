@@ -164,16 +164,14 @@ GET
 
 ```json
 {
-  "user": {
-    "username": "jonhdoe",
-    "firstname": "John",
-    "lastname": "Doe",
-    "description": "Hi I'm John Doe",
-    "profile_img_src": "",
-    "created_at": "2020-07-20T16:31:31.000Z",
-    "user_type": "Estudiante",
-    "major": "Data Engineering"
-  }
+  "username": "jonhdoe",
+  "firstname": "John",
+  "lastname": "Doe",
+  "description": "Hi I'm John Doe",
+  "profile_img_src": "",
+  "created_at": "2020-07-20T16:31:31.000Z",
+  "user_type": "Estudiante",
+  "major": "Data Engineering"
 }
 ```
 
