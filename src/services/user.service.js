@@ -121,7 +121,8 @@ module.exports = {
                       users.email,
                       user_types.name AS 'type_user',
                       users.description,
-                      users.profile_img_src
+                      users.profile_img_src,
+                      Date(users.created_at) AS 'created_at'
                   FROM
                       users
                           INNER JOIN
