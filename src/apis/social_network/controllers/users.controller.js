@@ -90,7 +90,7 @@ module.exports = {
         content: req.body.content,
         image: req.file
       }
-      let resultPost = await userService.createPost(req.api.userId.id, post)
+      let resultPost = await userService.createPost(req.api.userId, post)
 
       if (!resultPost) {
         return res.status(404).finish({
