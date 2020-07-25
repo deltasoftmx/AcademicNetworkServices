@@ -1,15 +1,15 @@
 #This file contains the Data Base schema for Academy Network.
 
-create database academy_network;
+create database if not exists academy_network;
 
 use academy_network;
 
-create table user_types (
+create table if not exists user_types (
 	id int unsigned primary key auto_increment,
     name varchar(255) not null
 );
 
-create table users (
+create table if not exists users (
 	id int unsigned primary key auto_increment,
     firstname varchar(70) not null,
     lastname varchar(70) not null,
@@ -26,19 +26,19 @@ create table users (
 );
 
 ############# Administrative purpuses #############
-create table admins (
+create table if not exists admins (
 	id int unsigned primary key auto_increment,
     user_id int unsigned not null,
     
     foreign key(user_id) references users(id)
 );
 
-create table admin_privileges (
+create table if not exists admin_privileges (
 	id int unsigned primary key auto_increment,
     name varchar(100) not null
 );
 
-create table granted_privileges (
+create table if not exists granted_privileges (
 	id int unsigned primary key auto_increment,
     admin_id int unsigned not null,
     privilege_id int unsigned not null,
@@ -47,7 +47,7 @@ create table granted_privileges (
     foreign key(privilege_id) references admin_privileges(id)
 );
 
-create table admin_endpoints (
+create table if not exists admin_endpoints (
 	id int unsigned primary key auto_increment,
     endpoint varchar(700) not null,
     privilege_id int unsigned not null,
@@ -55,19 +55,19 @@ create table admin_endpoints (
     foreign key(privilege_id) references admin_privileges(id)
 );
 
-create table allowed_domains (
+create table if not exists allowed_domains (
 	id int unsigned primary key auto_increment,
     domain_name varchar(255) not null
 );
 
-create table public_user_types (
+create table if not exists public_user_types (
 	id int unsigned primary key auto_increment,
     user_type_id int unsigned not null,
     
     foreign key (user_type_id) references user_types(id)
 );
 
-create table api_keys (
+create table if not exists api_keys (
 	id int unsigned primary key auto_increment,
     appname varchar(100) not null,
     api_key varchar(255) not null,
@@ -80,12 +80,12 @@ create table api_keys (
 
 ############# Users #############
 
-create table majors (
+create table if not exists majors (
 	id int unsigned primary key auto_increment,
     name varchar(100)
 );
 
-create table students_data (
+create table if not exists students_data (
 	id int unsigned primary key auto_increment,
     user_id int unsigned not null unique,
     student_id varchar(50) not null,
@@ -95,7 +95,7 @@ create table students_data (
     foreign key(major_id) references majors(id)
 );
 
-create table pending_for_confirm (
+create table if not exists pending_for_confirm (
 	id int unsigned primary key auto_increment,
     user_id int unsigned not null,
     confirm_token varchar(750) not null,
@@ -105,7 +105,7 @@ create table pending_for_confirm (
     foreign key(user_id) references users(id)
 );
 
-create table passwd_recovery (
+create table if not exists passwd_recovery (
 	id int unsigned primary key auto_increment,
     user_id int unsigned not null,
     token varchar(750) not null,
@@ -115,7 +115,7 @@ create table passwd_recovery (
     foreign key(user_id) references users(id)
 );
 
-create table posts (
+create table if not exists posts (
 	id int unsigned primary key auto_increment,
     user_id int unsigned not null,
     content text,
@@ -128,7 +128,7 @@ create table posts (
     foreign key(user_id) references users(id)
 );
 
-create table post_comments (
+create table if not exists post_comments (
 	id int unsigned primary key auto_increment,
     post_id int unsigned not null,
     user_id int unsigned not null,
@@ -140,7 +140,7 @@ create table post_comments (
     foreign key(user_id) references users(id)
 );
 
-create table favorite_posts (
+create table if not exists favorite_posts (
 	id int unsigned primary key auto_increment,
     user_id int unsigned not null,
     post_id int unsigned not null,
@@ -150,7 +150,7 @@ create table favorite_posts (
     foreign key(post_id) references posts(id)
 );
 
-create table followers (
+create table if not exists followers (
 	id int unsigned primary key auto_increment,
     target_user_id int unsigned not null,
     follower_user_id int unsigned not null,
@@ -160,7 +160,7 @@ create table followers (
     foreign key(follower_user_id) references users(id)
 );
 
-create table user_chats (
+create table if not exists user_chats (
 	id int unsigned primary key auto_increment,
     user_one_id int unsigned not null,
     user_two_id int unsigned not null,
@@ -169,7 +169,7 @@ create table user_chats (
     foreign key (user_two_id) references users(id)
 );
 
-create table user_chat_messages (
+create table if not exists user_chat_messages (
 	id int unsigned primary key auto_increment,
     chat_id int unsigned not null,
     issuing_user_id int unsigned not null,
@@ -185,7 +185,7 @@ create table user_chat_messages (
 
 ############# Groups #############
 
-create table user_groups (
+create table if not exists user_groups (
 	id int unsigned primary key auto_increment,
     owner_user_id int unsigned not null,
     name varchar(100) not null,
@@ -197,7 +197,7 @@ create table user_groups (
     foreign key (owner_user_id) references users(id)
 );
 
-create table group_tags (
+create table if not exists group_tags (
 	id int unsigned primary key auto_increment,
     group_id int unsigned not null,
     tag varchar(50) not null,
@@ -205,12 +205,12 @@ create table group_tags (
     foreign key (group_id) references user_groups(id)
 );
 
-create table group_permissions (
+create table if not exists group_permissions (
 	id int unsigned primary key auto_increment,
     name varchar(100) not null
 );
 
-create table group_endpoint_permissions (
+create table if not exists group_endpoint_permissions (
 	id int unsigned primary key auto_increment,
     endpoint varchar(700) not null,
     group_permission_id int unsigned not null,
@@ -218,7 +218,7 @@ create table group_endpoint_permissions (
     foreign key (group_permission_id) references group_permissions(id)
 );
 
-create table permissions_granted_to_groups (
+create table if not exists permissions_granted_to_groups (
 	id int unsigned primary key auto_increment,
     group_id int unsigned not null,
     group_permission_id int unsigned not null,
@@ -227,7 +227,7 @@ create table permissions_granted_to_groups (
     foreign key (group_permission_id) references group_permissions(id)
 );
 
-create table group_memberships (
+create table if not exists group_memberships (
 	id int unsigned primary key auto_increment,
     user_id int unsigned not null,
     group_id int unsigned not null,
@@ -238,7 +238,7 @@ create table group_memberships (
     foreign key (group_id) references user_groups(id)
 );
 
-create table group_posts (
+create table if not exists group_posts (
 	id int unsigned primary key auto_increment,
     post_id int unsigned not null,
     group_id int unsigned not null,
@@ -247,7 +247,7 @@ create table group_posts (
     foreign key (group_id) references user_groups(id)
 );
 
-create table group_chats (
+create table if not exists group_chats (
 	id int unsigned primary key auto_increment,
     group_id int unsigned not null,
     issuing_user_id int unsigned not null,
@@ -263,7 +263,7 @@ create table group_chats (
 
 ############# Notifications #############
 
-create table notifications (
+create table if not exists notifications (
 	id int unsigned primary key auto_increment,
     message varchar(700) not null,
     notif_type varchar(100) not null,
