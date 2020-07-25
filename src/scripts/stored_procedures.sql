@@ -6,8 +6,9 @@ use academy_network;
 #username not repeated.
 #user type available.
 #email domain name allowed.
-delimiter &&
-# drop procedure if exists sp_user_create;
+
+drop procedure if exists sp_user_create;
+delimiter $$
 create procedure sp_user_create (
 	firstname varchar(70),
     lastname varchar(70),
@@ -75,11 +76,11 @@ sp_user_create_label:begin
 		0 as exit_code,
         last_insert_id() as id,
         "Done" as message;
-end &&
-
+end $$
+delimiter ;
 #Create a new student.
-# drop procedure sp_create_student;
-delimiter &&
+drop procedure if exists sp_create_student;
+delimiter $$
 create procedure sp_create_student (
 	user_id int unsigned,
     student_id varchar(50),
@@ -127,11 +128,12 @@ sp_create_student_label:begin
 		0 as exit_code,
         last_insert_id() as id,
         "Done" as message;
-end &&
+end $$
+delimiter ;
 
 #Create a new user type if not repeated.
-delimiter &&
-# drop procedure if exists sp_user_type_create;
+drop procedure if exists sp_user_type_create;
+delimiter $$
 create procedure sp_user_type_create (
 	name varchar(255)
 )
@@ -155,11 +157,12 @@ sp_user_type_create_label:begin
 		0 as exit_code,
         last_insert_id() as id,
         "Done" as message;
-end &&
+end $$
+delimiter ;
 
 #Create a new allowed domain if isn't repeated.
-delimiter &&
-# drop procedure if exists sp_domain_create;
+drop procedure if exists sp_domain_create;
+delimiter $$
 create procedure sp_domain_create (
 	domain_name varchar(255)
 )
@@ -182,10 +185,11 @@ sp_domain_create_label:begin
 		0 as exit_code,
         last_insert_id() as id,
         "Done" as message;
-end &&
+end $$
+delimiter ;
 
--- drop procedure sp_create_api_key;
-delimiter &&
+drop procedure if exists sp_create_api_key;
+delimiter $$
 create procedure sp_create_api_key (
 	appname varchar(100),
     owner_name varchar(100),
@@ -208,4 +212,5 @@ sp_create_api_key_label:begin
     select
 		0 as exit_code,
         "Done" as message;
-end &&
+end $$
+delimiter ;
