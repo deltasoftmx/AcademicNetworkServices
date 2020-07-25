@@ -88,6 +88,7 @@ POST
 * `lastname`: string
 * `email`: string
 * `passwd`: string
+* `description`: string
 * `user_type_id`: int
 * `major_id`: int
 
