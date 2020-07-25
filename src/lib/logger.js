@@ -9,8 +9,8 @@ class Logger {
     this.queue = (conf.queue) ? (conf.queue) : ([])
     this.logpath = (conf.logpath) ? (conf.logpath) : (path.join(process.cwd(), 'logs', 'logs.log'))
     this.dirname = path.dirname(this.logpath)
-    this.writeToStdout = conf.writeToStdout || true
-    this.writeToFile = conf.writeToFile || false
+    this.writeToStdout = (typeof conf.writeToStdout == 'boolean') ? (conf.writeToStdout) : true
+    this.writeToFile = (typeof conf.writeToFile == 'boolean') ? (conf.writeToFile) : false
   }
 
   log(message) {
