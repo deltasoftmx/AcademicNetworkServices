@@ -1,5 +1,8 @@
 # How to setup the environment
 
+Here you will be introduced in how the environment is set and why. You can setup the environment following this guide or [using the
+script](SCRIPTS.md) to automate this task.
+
 ## Index
 * [Setting up environment variables](#Setting-up-environment-variables)
 * [Setting up configuration file](#Setting-up-configuration-file)

@@ -210,6 +210,14 @@ function parseSPScript(scriptname) {
   return usableLines.join('\n')
 }
 
+async function createDB(conn) {
+  console.log('Creating DB, tables and SPs if they do not exist.')
+  await execSQLScript(conn, 'db.sql')
+  console.log('DB and tables created.')
+  await conn.query(parseSPScript('stored_procedures.sql'))
+  console.log('SPs loaded.')
+}
+
 async function setupDB(force_reconf) {
   let conn
   try {
@@ -223,26 +231,21 @@ async function setupDB(force_reconf) {
       }
     }
 
+    //If DB exists and reconfiguration is forced.
     if(db_exists && force_reconf) {
       console.log('Reconfiguring DB...')
       await conn.query('drop database academy_network')
       console.log('DB dropped.')
-      await execSQLScript(conn, 'db.sql')
-      console.log('DB re-created.')
-      await conn.query(parseSPScript('stored_procedures.sql'))
-      console.log('SPs loaded.')
+    }
+
+    await createDB(conn)
+
+    if(!db_exists || force_reconf) {
       let initResult = await execSQLScript(conn, 'db_initial_setup.sql')
       let apiKey = initResult[initResult.length - 1][0].api_key
       console.log('Initial setup done.')
       console.log(`API Key: ${apiKey}`)
       logger.log(`API KEY: ${apiKey}`)
-    } else {
-      //Create missing tables and SPs.
-      console.log('Creating DB, tables and SPs if they do not exist.')
-      await execSQLScript(conn, 'db.sql')
-      console.log('DB and tables created.')
-      await conn.query(parseSPScript('stored_procedures.sql'))
-      console.log('SPs loaded.')
     }
 
     conn.end()
@@ -336,8 +339,8 @@ function getConfigFile() {
 }
 
 function setupConfigFile(force_reconf) {
-  let configFile = `
-{
+  let configFile = 
+`{
   "path_tracking": {
     "write_to_file": true,
     "write_to_stdout": true
