@@ -70,7 +70,7 @@ module.exports = {
   userAuth: async function(req, res, next) {
     try {
       let payload = await cryptService.verifyJWT(req.headers.authorization)
-      req.api.userId = payload.userId
+      req.api.userId = payload.user_id
       return next()
     } catch(err) {
       if(err.name) {

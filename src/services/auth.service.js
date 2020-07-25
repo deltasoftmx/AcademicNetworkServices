@@ -29,7 +29,7 @@ module.exports = {
     try {
       let query = 'select id from users where (username = ? or email = ?) and passwd = ? limit 1'
       let result = await mariadb.query(query, [username, username, passwd])
-      return result[0]
+      return result[0].id
     } catch(err) {
       err.file = __filename
       err.func = 'authUserByCrendent'
