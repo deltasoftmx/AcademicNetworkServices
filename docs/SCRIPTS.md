@@ -56,7 +56,7 @@ Display a minified version of this documentation.
 
 **Example**
 
-node setup_env.js --db-user=ale --db-passwd=qwerty --force-reconf --reconf-target=env,db
+`node setup_env.js --db-user=ale --db-passwd=qwerty --force-reconf --reconf-target=env,db`
 
 This will overwrite the current configuration of the environment variables and the database with the default configuration.
 Also will add missing configuration of the remaining elements.
