@@ -82,5 +82,32 @@ module.exports = {
       err.func = err.func || 'getUserData'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+
+  createPost: async function(req, res) {
+    try {
+      const post = {
+        content: req.body.content,
+        image: req.file
+      }
+      let resultPost = await userService.createPost(req.api.userId.id, post)
+
+      if (!resultPost) {
+        return res.status(404).finish({
+          code: 1,
+          messages: ['No data was sent.']
+        })
+      }
+
+      res.finish({
+        code: 0,
+        messages: ['Done'],
+        data: resultPost
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'createPost'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }

@@ -1,3 +1,5 @@
+const cloudinary = require('cloudinary').v2
+const fs = require('fs').promises
 const mariadb = require('./mariadb.service')
 
 module.exports = {
@@ -160,6 +162,51 @@ module.exports = {
     } catch (err) {
       err.file = __filename
       err.func = 'getUserData'
+      throw err
+    }
+  },
+
+  /**
+   * Creates new post in the system.
+   * @param {int} userId 
+   * @param {Object} post An object with:
+   * - content: string.
+   * - image: binary.
+   */
+  createPost: async function(userId, post) {    
+    // If the user doesn't send any data.
+    if (!post.content && !post.image) {
+      return null
+    }
+
+    let result = {}
+
+    if (post.content) {
+      result.content = post.content;
+    }
+
+    try {
+      if (post.image) {
+        // The image is uploaded to cloudinary
+        const resultUploadImage = await cloudinary.uploader.upload(post.image.path)
+
+        result.img_src = resultUploadImage.secure_url
+        result.cloudinary_id = resultUploadImage.public_id
+
+        // The local files are deleted.
+        await fs.unlink(post.image.path)
+      }
+
+      let args = [userId, result.content || '', result.img_src || '', result.cloudinary_id || '', 'user']
+      const query = `INSERT INTO posts (user_id, content, img_src, cloudinary_id, post_type) 
+                    VALUES (?, ?, ?, ?, ?);`
+    
+      await mariadb.query(query, args)
+      result.cloudinary_id = undefined
+      return result;
+    } catch (err) {
+      err.file = __filename
+      err.func = 'createPost'
       throw err
     }
   }
