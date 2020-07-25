@@ -9,6 +9,7 @@
 * [SQL Database](SQL_DATABASE.md)
 * [Libraries](LIBS.md)
 * [Services](SERVICES.md)
+* [Scripts](SCRIPTS.md)
 
 ## Definitions and acronyms
 

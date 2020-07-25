@@ -8,6 +8,7 @@ module.exports = {
       obj('lastname').required().isString()
       obj('email').required().isString().isEmail()
       obj('passwd').required().isString()
+      obj('description').isString()
       obj('user_type_id').required().isNumber().integer()
     })
     let errors = parseValidatorOutput(validator.run())
