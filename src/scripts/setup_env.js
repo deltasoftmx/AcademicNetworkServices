@@ -24,6 +24,7 @@ function parseArgs(args) {
     '--db-passwd': 'db_passwd',
     '--force-reconf': 'force_reconf',
     '--reconf-target': 'reconf_target', //target must be given only separated by comma. Values: env|db|certs|conf-file
+    '--db-port': 'db_port',
     '--help': 'help'
   }
 
@@ -69,6 +70,7 @@ function loadEnvVars() {
     'MARIADB_DATABASE',
     'IANA_TIMEZONE',
     'PORT',
+    'MARIADB_PORT'
   ]
 
   //Loading env vars.
@@ -94,60 +96,58 @@ function loadEnvVars() {
 }
 
 //Sets up the environment
-function setupEnv(user, passwd, force_reconf) {
-  //Load env vars and check for missing vars.
-  envResult = loadEnvVars()
-
+function setupEnv(user, passwd, dbPort, force_reconf) {
   //Default env vars configuratons.
   let envConf = [
     'MARIADB_HOST=localhost',
     `MARIADB_USER=${user}`,
-    `MARIADB_PASS=${passwd}`,
+    `MARIADB_PASS=${passwd || ''}`,
     'MARIADB_DATABASE=academy_network',
     'IANA_TIMEZONE=America/Cancun',
     'PORT=3000',
+    `MARIADB_PORT=${dbPort || '3306'}`
   ].join('\n') + '\n'
+
+  if(force_reconf) {
+    //Reconfiguring.
+    console.log('Reconfiguring.')
+    fs.writeFileSync(path.join(rootDir, '.env'), envConf)
+  }
+  //Load env vars and check for missing vars.
+  envResult = loadEnvVars()
 
   try {
     if(envResult.missing_env_vars.length) {
       console.log('Missing env vars.')
-      if(force_reconf) {
-        //Reconfiguring.
-        console.log('Reconfiguring.')
-        fs.writeFileSync(path.join(rootDir, '.env'), envConf)
-      } else {
-        //Adding missing conf.
-        console.log('Adding missing vars.')
-        fs.appendFileSync(path.join(rootDir, '.env'), '\n')
-        for(let evar of envResult.missing_env_vars) {
-          let conf = ''
-          switch(evar) {
-            case 'MARIADB_HOST':
-              conf = 'MARIADB_HOST=localhost'
-              break
-            case 'MARIADB_USER':
-              conf = `MARIADB_USER=${user}`
-              break
-            case 'MARIADB_PASS':
-              conf = `MARIADB_PASS=${passwd || ''}`
-              break
-            case 'MARIADB_DATABASE':
-              conf = 'MARIADB_DATABASE=academy_network'
-              break
-            case 'IANA_TIMEZONE':
-              conf = 'IANA_TIMEZONE=America/Cancun'
-              break
-            case 'PORT':
-              conf = 'PORT=3000'
-              break
-          }
-          fs.appendFileSync(path.join(rootDir, '.env'), conf + '\n')
+      //Adding missing conf.
+      console.log('Adding missing vars.')
+      fs.appendFileSync(path.join(rootDir, '.env'), '\n')
+      for(let evar of envResult.missing_env_vars) {
+        let conf = ''
+        switch(evar) {
+          case 'MARIADB_HOST':
+            conf = 'MARIADB_HOST=localhost'
+            break
+          case 'MARIADB_USER':
+            conf = `MARIADB_USER=${user}`
+            break
+          case 'MARIADB_PASS':
+            conf = `MARIADB_PASS=${passwd || ''}`
+            break
+          case 'MARIADB_DATABASE':
+            conf = 'MARIADB_DATABASE=academy_network'
+            break
+          case 'IANA_TIMEZONE':
+            conf = 'IANA_TIMEZONE=America/Cancun'
+            break
+          case 'PORT':
+            conf = 'PORT=3000'
+            break
+          case 'MARIADB_PORT':
+            conf = `MARIADB_PORT=${dbPort || '3306'}`
         }
+        fs.appendFileSync(path.join(rootDir, '.env'), conf + '\n')
       }
-    } else if(force_reconf) {
-      //Reconfiguring.
-      console.log('Reconfiguring.')
-      fs.writeFileSync(path.join(rootDir, '.env'), envConf)
     } else {
       console.log('No missing env vars.')
     }
@@ -176,7 +176,8 @@ function createDBConn() {
     password: process.env.MARIADB_PASS,
     host: process.env.MARIADB_HOST,
     timezone: process.env.IANA_TIMEZONE,
-    multipleStatements: true
+    multipleStatements: true,
+    port: process.env.MARIADB_PORT
   })
 }
 
@@ -253,9 +254,9 @@ async function setupDB(force_reconf) {
     logger.log('DB setup done.')
   } catch(err) {
     if(err.code == 'ECONNREFUSED') {
-      console.log('Please ensure your DB server is running')
+      console.log('Please ensure your DB server is running or you have set an appropriate port.')
       console.log('DB Setup failed.')
-      logger.log('Please ensure your DB server is running.')
+      logger.log('Please ensure your DB server is running or you have set an appropriate port.')
       logger.error(err)
     } else if(err.code == 'ER_ACCESS_DENIED_ERROR') {
       let message = `Access denied to DB. Ensure your credentials are valid.`
@@ -494,7 +495,7 @@ async function main() {
     forceReconf = mustReconf(args.reconf_target, 'env')
   }
 
-  setupEnv(args.db_user, args.db_passwd, forceReconf)
+  setupEnv(args.db_user, args.db_passwd, args.db_port, forceReconf)
 
   forceReconf = false;
   if(args.force_reconf) {
