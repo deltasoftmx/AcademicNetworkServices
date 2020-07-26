@@ -54,7 +54,7 @@ function parseArgs(args) {
     }
   }
 
-  if((!parsedArgs.db_user || !parsedArgs.db_passwd) && !parsedArgs.help) {
+  if(!parsedArgs.db_user && !parsedArgs.help) {
     console.log(`You need provide the --db-user and --db-passwd options.`)
     process.exit(2) //Required options not provided.
   }
@@ -129,7 +129,7 @@ function setupEnv(user, passwd, force_reconf) {
               conf = `MARIADB_USER=${user}`
               break
             case 'MARIADB_PASS':
-              conf = `MARIADB_PASS=${passwd}`
+              conf = `MARIADB_PASS=${passwd || ''}`
               break
             case 'MARIADB_DATABASE':
               conf = 'MARIADB_DATABASE=academy_network'
@@ -253,14 +253,19 @@ async function setupDB(force_reconf) {
     logger.log('DB setup done.')
   } catch(err) {
     if(err.code == 'ECONNREFUSED') {
-      console.log('Please ensure your DB server is running.')
+      console.log('Please ensure your DB server is running')
       console.log('DB Setup failed.')
       logger.log('Please ensure your DB server is running.')
+      logger.error(err)
+    } else if(err.code == 'ER_ACCESS_DENIED_ERROR') {
+      let message = `Access denied to DB. Ensure your credentials are valid.`
+      console.log(message)
+      console.log(err)
+      logger.log(message)
       logger.error(err)
     } else {
       console.log('An unexpected error have ocurred:')
       console.log(err)
-      console.log('Leaving process.')
       conn.end()
       logger.log('Error trying to setup the DB.')
       logger.error(err)
