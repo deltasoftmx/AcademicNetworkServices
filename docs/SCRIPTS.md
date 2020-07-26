@@ -50,6 +50,11 @@ is not given.
 
 Indicates what elements of the environment configuration reconfigurate. Values can be: `env|db|certs|conf-file`
 
+* `--db-port`
+
+Indicates what port the MariaDB connector should use. If it don't exists or if `--force-reconf` is present and `env` is part of the target,
+this port will be written in the .env file.
+
 * `--help`
 
 Display a minified version of this documentation.
