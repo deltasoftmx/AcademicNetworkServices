@@ -175,6 +175,10 @@ module.exports = {
    * @param {string} search 
    * @param {number} asc 
    * @param {number} userTarget 
+   * 
+   * @returns {Object}
+   *  * users: users records
+   *  * total_records: number
    */
   searchUsers: async function(userRelativeType = 'all', page = 0, offset = 10, search = '', asc = 1, userTarget) {
     //userRelativeType = all|followers|followed
