@@ -222,7 +222,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
 
 * `search`: string.
 
-The search critrea. Defaul is an empty string.
+A phrase containing keywords to perform the search. Default is an empty string.
 
 * `asc`: int.
 
