@@ -20,6 +20,9 @@ let env_vars_set = [
 'MARIADB_DATABASE',
 'IANA_TIMEZONE',
 'PORT',
+'CLOUDINARY_CLOUD_NAME',
+'CLOUDINARY_API_KEY',
+'CLOUDINARY_API_SECRET'
 ]
 
 function exit() {
