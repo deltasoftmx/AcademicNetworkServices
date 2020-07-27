@@ -23,5 +23,13 @@ module.exports = {
     generalMidd.verifyAPIKey,
     userMidd.checkGetDataParameter,
     userCtrl.getUserData
+  ],
+
+  searchUsers: [
+    generalMidd.allowExternalConnections,
+    generalMidd.verifyAPIKey,
+    generalMidd.userAuth,
+    userMidd.checkSearchUserParams,
+    userCtrl.searchUsers
   ]
 }

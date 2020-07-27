@@ -1,4 +1,4 @@
-const { Validator, parseValidatorOutput } = require('../services/validator.service')
+const { Validator, parseValidatorOutput, parseNumberFromGroupIfApplic } = require('../services/validator.service')
 
 module.exports = {
   checkSignUpData: function(req, res, next) {
@@ -72,6 +72,27 @@ module.exports = {
     let validator = new Validator()
     validator(req.params).required().isObject( obj => {
       obj('username').required().isString()
+    })
+    let errors = parseValidatorOutput(validator.run())
+    if(errors.length != 0) {
+      return res.status(400).finish({
+        code: -1,
+        messages: errors
+      })
+    }
+    return next()
+  },
+
+  checkSearchUserParams: function(req, res, next) {
+    let validator = new Validator()
+    req.query = parseNumberFromGroupIfApplic(req.query)
+    validator(req.query).isObject(obj => {
+      obj('page').isNumber().integer()
+      obj('offset').isNumber().integer()
+      obj('asc').isNumber().integer()
+      obj('search').isString()
+      obj('user_relative_type').isString().isIncludedInArray(['all', 'followers', 'followed', undefined])
+      obj('asc').isNumber().integer()
     })
     let errors = parseValidatorOutput(validator.run())
     if(errors.length != 0) {
