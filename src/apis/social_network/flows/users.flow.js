@@ -4,7 +4,7 @@ const userMidd = require('../../../middlewares/users.middleware')
 const userCtrl = require('../controllers/users.controller')
 
 // Multer settings.
-const upload = multer({dest: 'src/uploads'})
+const upload = multer({dest: 'uploads/'})
 
 module.exports = {
   signup: [

@@ -185,22 +185,27 @@ module.exports = {
       result.content = post.content;
     }
 
-    try {
-      if (post.image) {
+    if (post.image) {
+      try {
         // The image is uploaded to cloudinary
         const resultUploadImage = await cloudinary.uploader.upload(post.image.path)
-
         result.img_src = resultUploadImage.secure_url
         result.cloudinary_id = resultUploadImage.public_id
-
-        // The local files are deleted.
+      } catch (err) {
+        err.file = __filename
+        err.func = 'createPost'
+        throw err
+      } finally {
+         // The local files are deleted.
         await fs.unlink(post.image.path)
       }
+    }
 
-      let args = [userId, result.content || '', result.img_src || '', result.cloudinary_id || '', 'user']
-      const query = `INSERT INTO posts (user_id, content, img_src, cloudinary_id, post_type) 
-                    VALUES (?, ?, ?, ?, ?);`
+    let args = [userId, result.content || '', result.img_src || '', result.cloudinary_id || '', 'user']
+    const query = `INSERT INTO posts (user_id, content, img_src, cloudinary_id, post_type) 
+                  VALUES (?, ?, ?, ?, ?);`
     
+    try {
       await mariadb.query(query, args)
       result.cloudinary_id = undefined
       return result;
