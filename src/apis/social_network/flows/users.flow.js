@@ -1,6 +1,7 @@
 const generalMidd = require('../../../middlewares/general.middleware')
 const userMidd = require('../../../middlewares/users.middleware')
 const userCtrl = require('../controllers/users.controller')
+const usersController = require('../controllers/users.controller')
 
 module.exports = {
   signup: [
@@ -23,5 +24,13 @@ module.exports = {
     generalMidd.verifyAPIKey,
     userMidd.checkGetDataParameter,
     userCtrl.getUserData
+  ],
+
+  searchUsers: [
+    generalMidd.allowExternalConnections,
+    generalMidd.verifyAPIKey,
+    generalMidd.userAuth,
+    userMidd.checkSearchUserParams,
+    usersController.searchUsers
   ]
 }

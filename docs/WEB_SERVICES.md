@@ -11,6 +11,7 @@
   * [Create student](#Create-student)
   * [Sign in](#Sign-in)
   * [Get user data](#Get-user-data)
+  * [Search users](#Search-users)
 
 ## General information
 
@@ -178,3 +179,77 @@ GET
 
 #### Codes
 * 1: Username doesn't exists.
+
+### Search users
+
+#### Description
+
+Performs a search of a certain relative kind of user, based on the user that ask for the search. It can retrieve 
+all of users, followers or users followed by the requesting user that match with a search criteria. If the search 
+field is empty, the records are not disciminated. Records are served into groups of a certain size called pages. 
+You can select the group size and what group get in a call.
+
+This endpoint also return how much records were found with the search criteria.
+
+#### Endpoint
+
+`/api/social-network/users/search`
+
+#### Headers
+
+* `Authorization`
+
+#### Method
+
+GET
+
+#### Params
+
+All of the following parameters are optional. It has default values.
+
+* `user_relative_type`: string.
+
+This parameter set what relative type of user to search for. It can be all kind of users (`all`), followers of the user
+(`followers`) or the users that the user follow (`followed`). Default `all`.
+
+* `offset`: int.
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`: int.
+
+The number of the group to retrieve. Pages starts at `0`, what is also the defaul value.
+
+* `search`: string.
+
+The search critrea. Defaul is an empty string.
+
+* `asc`: int.
+
+If records are retrieved in ascending order. Default `1`. Use `0` for false.
+
+#### Response data-structure
+
+```json
+{
+  "users": [
+    {
+      "username": "person 4",
+      "firstname": "person 4 firstname",
+      "lastname": "person 4 lastname",
+      "profile_img_src": ""
+    },
+    {
+      "username": "person 3",
+      "firstname": "person 3 firstname",
+      "lastname": "person 3 lastname",
+      "profile_img_src": ""
+    }
+  ],
+  "total_records": 4
+}
+```
+
+#### Codes
+
+No particular codes.
