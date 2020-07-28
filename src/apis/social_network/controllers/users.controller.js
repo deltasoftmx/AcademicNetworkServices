@@ -121,5 +121,22 @@ module.exports = {
       err.func = err.func || 'getPublicUserTypes'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+
+  getMajorsData: async function(req, res) {
+    try {
+      let majors = await userService.getMejorsData()
+      res.finish({
+        code: 0,
+        messages: ['Done'],
+        data: {
+          majors: majors
+        }
+      })
+    } catch(err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'getMajorsData'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }

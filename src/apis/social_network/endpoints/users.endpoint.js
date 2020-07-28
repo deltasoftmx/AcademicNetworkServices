@@ -5,6 +5,7 @@ router.post('/signup', userflows.signup)
 router.post('/signin', userflows.signin)
 router.get('/search', userflows.searchUsers)
 router.get('/types', userflows.getPublicUserTypes)
+router.get('/majors', userflows.getMajorsData)
 router.get('/:username', userflows.getData)
 
 module.exports = router

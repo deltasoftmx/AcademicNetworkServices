@@ -278,5 +278,21 @@ module.exports = {
       err.func = 'getPublicUserTypes'
       throw err
     }
+  },
+
+  getMejorsData: async function() {
+    let query = `
+      select
+        majors.id,
+        majors.name
+      from majors`
+    try {
+      let majors = await mariadb.query(query)
+      return majors
+    } catch(err) {
+      err.file = __filename
+      err.func = 'getMejorsData'
+      throw err
+    }
   }
 }

@@ -37,5 +37,11 @@ module.exports = {
     generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,
     userCtrl.getPublicUserTypes
+  ],
+
+  getMajorsData: [
+    generalMidd.allowExternalConnections,
+    generalMidd.verifyAPIKey,
+    userCtrl.getMajorsData
   ]
 }
