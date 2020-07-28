@@ -253,3 +253,46 @@ If records are retrieved in ascending order. Default `1`. Use `0` for false.
 #### Codes
 
 No particular codes.
+
+### Get public user types
+
+#### Description
+
+Return an object containing an array of names and ids of the public user types. Useful as part of the sign up flow.
+
+#### Endpoint
+
+`/api/social-network/users/types`
+
+#### Headers
+
+Not more than madatories.
+
+#### Method
+
+GET
+
+#### Params
+
+Void
+
+#### Response data-structure
+
+```json
+{
+  "user_types": [
+    {
+      "name": "Estudiante",
+      "id": 1
+    },
+    {
+      "name": "Invitado",
+      "id": 3
+    }
+  ]
+}
+```
+
+#### Codes
+
+No particular codes.

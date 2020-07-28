@@ -257,5 +257,26 @@ module.exports = {
       err.func = 'searchUsers'
       throw err
     }
+  },
+
+  /**
+   * Retrieve the name and id of all the public user types.
+   */
+  getPublicUserTypes: async function() {
+    let query = `
+      select 
+        user_types.name, 
+        user_types.id 
+      from public_user_types
+        inner join user_types
+          on user_types.id = public_user_types.user_type_id`
+    try {
+      let userTypes = await mariadb.query(query)
+      return userTypes
+    } catch(err) {
+      err.file = __filename
+      err.func = 'getPublicUserTypes'
+      throw err
+    }
   }
 }
