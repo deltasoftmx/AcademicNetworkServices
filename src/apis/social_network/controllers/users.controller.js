@@ -107,7 +107,7 @@ module.exports = {
     } catch (err) {
       err.file = err.file || __filename
       err.func = err.func || 'createPost'
-      errorHandlingService.handleErrorInRequest(req, res, err)
+      errorHandlingService.handleImageUploadError(req, res, err)
     }
   }
 }

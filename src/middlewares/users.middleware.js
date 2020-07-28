@@ -81,5 +81,21 @@ module.exports = {
       })
     }
     return next()
+  },
+
+  checkNewPostData: function(req, res, next) {
+    let validator = new Validator()
+    validator(req.body.content).isString()
+    validator(req.file).isObject()
+
+    let errors = parseValidatorOutput(validator.run())
+    if (errors.length != 0) {
+      return res.status(400).finish({
+        code: -1,
+        messages: errors
+      })
+    }
+
+    return next();
   }
 }

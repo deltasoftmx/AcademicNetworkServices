@@ -19,6 +19,9 @@ These data is ussually stored in environment variables. That is why you need to 
 * `MARIADB_DATABASE`: MariaDB database name.
 * `IANA_TIMEZONE`: Timezone of the DB.
 * `PORT`: Port where the express server will be listening.
+* `CLOUDINARY_CLOUD_NAME`: Cloudinary user's cloud name.
+* `CLOUDINARY_API_KEY`: Cloudinary user's API Key.
+* `CLOUDINARY_API_SECRET`: Cloudinary user's API Secret. 
 
 For `IANA_TIMEZONE` env var, you can see [this article](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). As exmaple, for Cancun city, you would use the `America/Cancun` value.
 

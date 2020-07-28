@@ -33,6 +33,7 @@ module.exports = {
     generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,
     generalMidd.userAuth,
+    userMidd.checkNewPostData,
     upload.single('image'),
     userCtrl.createPost
   ]

@@ -1,5 +1,5 @@
 const cloudinary = require('cloudinary').v2
-const fs = require('fs').promises
+const fs = require('fs')
 const mariadb = require('./mariadb.service')
 
 module.exports = {
@@ -171,7 +171,7 @@ module.exports = {
    * @param {int} userId 
    * @param {Object} post An object with:
    * - content: string.
-   * - image: binary.
+   * - image: Object.
    */
   createPost: async function(userId, post) {    
     // If the user doesn't send any data.
@@ -194,10 +194,11 @@ module.exports = {
       } catch (err) {
         err.file = __filename
         err.func = 'createPost'
+        err.cloudinary_id = result.cloudinary_id
         throw err
       } finally {
          // The local files are deleted.
-        await fs.unlink(post.image.path)
+        fs.unlinkSync(post.image.path)
       }
     }
 
@@ -212,6 +213,7 @@ module.exports = {
     } catch (err) {
       err.file = __filename
       err.func = 'createPost'
+      err.cloudinary_id = result.cloudinary_id
       throw err
     }
   }

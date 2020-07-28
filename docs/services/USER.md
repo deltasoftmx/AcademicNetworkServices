@@ -6,6 +6,8 @@
 * [Methods](#Methods)
   * [createUser](#createUser)
   * [createStudent](#createStudent)
+  * [getUserData](#getUserData)
+  * [createPost](#createPost)
 
 ## Description
 
@@ -78,3 +80,15 @@ read and write user data.
     * `description`: string.
     * `profile_img_src`: string.
     * `major_id`: string. This will only be if the user is a student.
+
+### `createPost`
+
+* **Description**: Create a new user post, either only text or text with an image.
+* **Params**
+  * `userId`: int.
+  * `post`: Object.
+    * `content`: string.
+    * `image`: Object.
+* **Return data type**: Promise\<Object>
+  * `content`: string.
+  * `img_src`: string.
