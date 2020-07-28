@@ -12,6 +12,8 @@
   * [Sign in](#Sign-in)
   * [Get user data](#Get-user-data)
   * [Search users](#Search-users)
+  * [Get public user types](#Get-public-user-types)
+  * [Get majors data](#Get-majors-data)
 
 ## General information
 
@@ -247,6 +249,92 @@ If records are retrieved in ascending order. Default `1`. Use `0` for false.
     }
   ],
   "total_records": 4
+}
+```
+
+#### Codes
+
+No particular codes.
+
+### Get public user types
+
+#### Description
+
+Return an object containing an array of names and ids of the public user types. Useful as part of the sign up flow.
+
+#### Endpoint
+
+`/api/social-network/users/types`
+
+#### Headers
+
+Not more than madatories.
+
+#### Method
+
+GET
+
+#### Params
+
+Void
+
+#### Response data-structure
+
+```json
+{
+  "user_types": [
+    {
+      "name": "Estudiante",
+      "id": 1
+    },
+    {
+      "name": "Invitado",
+      "id": 3
+    }
+  ]
+}
+```
+
+#### Codes
+
+No particular codes.
+
+### Get majors data
+
+#### Description
+
+Return an object containing an array of names and ids of avaliable majors. Useful as part of the sign up flow.
+
+#### Endpoint
+
+`/api/social-network/users/majors`
+
+#### Headers
+
+Not more than madatories.
+
+#### Method
+
+GET
+
+#### Params
+
+Void
+
+#### Response data-structure
+
+```json
+{
+  "majors": [
+    {
+      "id": 1,
+      "name": "Data Engineering"
+    },
+    {
+      "id": 2,
+      "name": "Environmental Engineering"
+    }
+  ]
 }
 ```
 

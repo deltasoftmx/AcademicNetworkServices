@@ -31,5 +31,17 @@ module.exports = {
     generalMidd.userAuth,
     userMidd.checkSearchUserParams,
     userCtrl.searchUsers
+  ],
+
+  getPublicUserTypes: [
+    generalMidd.allowExternalConnections,
+    generalMidd.verifyAPIKey,
+    userCtrl.getPublicUserTypes
+  ],
+
+  getMajorsData: [
+    generalMidd.allowExternalConnections,
+    generalMidd.verifyAPIKey,
+    userCtrl.getMajorsData
   ]
 }
