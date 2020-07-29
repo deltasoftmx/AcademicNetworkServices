@@ -209,8 +209,10 @@ POST
 #### Response data-structure
 
 ```json
+{
   "content": "Lorem ipsum",
   "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
+}
 ```
 
 #### Codes
@@ -358,7 +360,7 @@ Void
 #### Response data-structure
 
 ```json
-
+{
   "content": "Lorem ipsum",
   "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
   "majors": [
