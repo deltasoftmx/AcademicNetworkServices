@@ -25,6 +25,8 @@ These data is ussually stored in environment variables. That is why you need to 
 
 For `IANA_TIMEZONE` env var, you can see [this article](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). As exmaple, for Cancun city, you would use the `America/Cancun` value.
 
+In some endpoints we are be using [Cloudinary](https://cloudinary.com/) services. For `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET` env vars you will need the values of your Cloudinary "Account Details", to do that you can create your Cloudinary account [here](https://cloudinary.com/users/register/free).
+
 You can setup the environment vars in the host system or use a `.env` file to place them in. If you prefer use this last option,
 the file must be in the root of the project.
 

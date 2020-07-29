@@ -10,7 +10,7 @@
 * [Social Network API](#Social-Network-API)
   * [Create student](#Create-student)
   * [Sign in](#Sign-in)
-  * [Get user data](#Get-user-data)
+  * [Get public user data](#Get-public-user-data)
   * [Create post](#Create-post)
   * [Search users](#Search-users)
   * [Get public user types](#Get-public-user-types)
@@ -142,7 +142,7 @@ POST
 
 No particular codes.
 
-### Get user data
+### Get public user data
 
 #### Description
 
@@ -195,7 +195,8 @@ Create a new user post, either only text or text with an image.
 
 #### Headers
 
-* Authorization.
+* `Content-Type`: multipart/form-data
+* `Authorization`
 
 #### Method
 

@@ -6,7 +6,7 @@
 * [Methods](#Methods)
   * [createUser](#createUser)
   * [createStudent](#createStudent)
-  * [getUserData](#getUserData)
+  * [getPublicUserData](#getPublicUserData)
   * [createPost](#createPost)
 
 ## Description
@@ -65,7 +65,7 @@ read and write user data.
   * 4: User type doesn't exists.
   * 5: Major doesn't exists.
 
-### `getUserData`
+### `getPublicUserData`
 
 * **Description**: Retrieve the user public information according of the user type.
 * **Params**

@@ -113,42 +113,44 @@ module.exports = {
    * Return the user public information according of the user type.
    * @param {string} username 
    */
-  getUserData: async function (username) {
+  getPublicUserData: async function (username) {
     try {
-      let query = `SELECT 
-                      users.id,
-                      users.username,
-                      users.firstname,
-                      users.lastname,
-                      users.email,
-                      user_types.name AS 'type_user',
-                      users.description,
-                      users.profile_img_src,
-                      Date(users.created_at) AS 'created_at'
-                  FROM
-                      users
-                          INNER JOIN
-                      user_types ON users.user_type_id = user_types.id
-                  WHERE
-                      username = ?
-                  LIMIT 1;`
+      let query = `
+        SELECT 
+          users.id,
+          users.username,
+          users.firstname,
+          users.lastname,
+          users.email,
+          user_types.name AS 'type_user',
+          users.description,
+          users.profile_img_src,
+          Date(users.created_at) AS 'created_at'
+        FROM
+          users
+            INNER JOIN
+          user_types ON users.user_type_id = user_types.id
+        WHERE
+          username = ?
+        LIMIT 1;`
       let resultUser = await mariadb.query(query, username)
-      userData = resultUser[0]
+      let userData = resultUser[0]
       
       if (!userData) {
         return null;
       }
 
       // Determine if the user is a student, if so add his/her major and delete his/her email.
-      query = `SELECT 
-                  majors.name
-              FROM
-                  students_data
-                      INNER JOIN
-                  majors ON students_data.major_id = majors.id
-              WHERE
-                  user_id = ?
-              LIMIT 1;`
+      query = `
+        SELECT 
+          majors.name
+        FROM
+          students_data
+            INNER JOIN
+          majors ON students_data.major_id = majors.id
+        WHERE
+          user_id = ?
+        LIMIT 1;`
       let resultMajorStudent = await mariadb.query(query, userData.id)
       resultMajorStudent = resultMajorStudent[0]
 
@@ -167,11 +169,12 @@ module.exports = {
   },
 
   /**
-   * Creates new post in the system.
+   * Creates a new post in the system.
    * @param {int} userId 
    * @param {Object} post An object with:
    * - content: string.
-   * - image: Object.
+   * - image: Object. An object with:
+   *   - path: Path of image in the local files.
    */
   createPost: async function(userId, post) {    
     // If the user doesn't send any data.
@@ -203,8 +206,7 @@ module.exports = {
     }
 
     let args = [userId, result.content || '', result.img_src || '', result.cloudinary_id || '', 'user']
-    const query = `INSERT INTO posts (user_id, content, img_src, cloudinary_id, post_type) 
-                  VALUES (?, ?, ?, ?, ?);`
+    const query = `INSERT INTO posts (user_id, content, img_src, cloudinary_id, post_type) VALUES (?, ?, ?, ?, ?);`
     
     try {
       await mariadb.query(query, args)
