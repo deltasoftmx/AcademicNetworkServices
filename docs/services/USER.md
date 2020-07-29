@@ -89,6 +89,7 @@ read and write user data.
   * `post`: Object.
     * `content`: string.
     * `image`: Object.
+      * `path`: string. Path of image in the local files.
 * **Return data type**: Promise\<Object>
   * `content`: string.
   * `img_src`: string.

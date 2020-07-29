@@ -147,11 +147,11 @@ No particular codes.
 #### Description
 
 Retrieve the user public information according of the user type. For example, if the user is a student
-so within the data will be the major, or if the user is a teacher so within the data will be the email.
+so within the data will be the major and the email will not show.
 
 #### Endpoint
 
-`/api/social-network/users/:username`
+`/api/social-network/users/data/:username`
 
 #### Headers
 
@@ -361,8 +361,6 @@ Void
 
 ```json
 {
-  "content": "Lorem ipsum",
-  "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
   "majors": [
     {
       "id": 1,
