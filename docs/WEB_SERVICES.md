@@ -11,13 +11,10 @@
   * [Create student](#Create-student)
   * [Sign in](#Sign-in)
   * [Get user data](#Get-user-data)
-<<<<<<< HEAD
   * [Create post](#Create-post)
-=======
   * [Search users](#Search-users)
   * [Get public user types](#Get-public-user-types)
   * [Get majors data](#Get-majors-data)
->>>>>>> 0cd9673b3eb8c35d70c8493848c95e88480cf3b8
 
 ## General information
 
@@ -186,7 +183,6 @@ GET
 #### Codes
 * 1: Username doesn't exists.
 
-<<<<<<< HEAD
 ### Create post
 
 #### Description
@@ -209,7 +205,17 @@ POST
 
 * `content`: string.
 * `image`: Object.
-=======
+
+#### Response data-structure
+
+```json
+  "content": "Lorem ipsum",
+  "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
+```
+
+#### Codes
+* 1: No data was sent.
+
 ### Search users
 
 #### Description
@@ -348,16 +354,13 @@ GET
 #### Params
 
 Void
->>>>>>> 0cd9673b3eb8c35d70c8493848c95e88480cf3b8
 
 #### Response data-structure
 
 ```json
-{
-<<<<<<< HEAD
+
   "content": "Lorem ipsum",
   "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
-=======
   "majors": [
     {
       "id": 1,
@@ -368,14 +371,9 @@ Void
       "name": "Environmental Engineering"
     }
   ]
->>>>>>> 0cd9673b3eb8c35d70c8493848c95e88480cf3b8
 }
 ```
 
 #### Codes
-<<<<<<< HEAD
-* 1: No data was sent.
-=======
 
 No particular codes.
->>>>>>> 0cd9673b3eb8c35d70c8493848c95e88480cf3b8
