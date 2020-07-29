@@ -11,7 +11,13 @@
   * [Create student](#Create-student)
   * [Sign in](#Sign-in)
   * [Get user data](#Get-user-data)
+<<<<<<< HEAD
   * [Create post](#Create-post)
+=======
+  * [Search users](#Search-users)
+  * [Get public user types](#Get-public-user-types)
+  * [Get majors data](#Get-majors-data)
+>>>>>>> 0cd9673b3eb8c35d70c8493848c95e88480cf3b8
 
 ## General information
 
@@ -180,6 +186,7 @@ GET
 #### Codes
 * 1: Username doesn't exists.
 
+<<<<<<< HEAD
 ### Create post
 
 #### Description
@@ -202,15 +209,173 @@ POST
 
 * `content`: string.
 * `image`: Object.
+=======
+### Search users
+
+#### Description
+
+Performs a search of a certain relative kind of user, based on the user that ask for the search. It can retrieve 
+all of users, followers or users followed by the requesting user that match with a search criteria. If the search 
+field is empty, the records are not disciminated. Records are served into groups of a certain size called pages. 
+You can select the group size and what group get in a call.
+
+This endpoint also return how much records were found with the search criteria.
+
+#### Endpoint
+
+`/api/social-network/users/search`
+
+#### Headers
+
+* `Authorization`
+
+#### Method
+
+GET
+
+#### Params
+
+All of the following parameters are optional. It has default values.
+
+* `user_relative_type`: string.
+
+This parameter set what relative type of user to search for. It can be all kind of users (`all`), followers of the user
+(`followers`) or the users that the user follow (`followed`). Default `all`.
+
+* `offset`: int.
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`: int.
+
+The number of the group to retrieve. Pages starts at `0`, what is also the defaul value.
+
+* `search`: string.
+
+A phrase containing keywords to perform the search. Default is an empty string.
+
+* `asc`: int.
+
+If records are retrieved in ascending order. Default `1`. Use `0` for false.
 
 #### Response data-structure
 
 ```json
 {
-  "content": "Lorem ipsum",
-  "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
+  "users": [
+    {
+      "username": "person 4",
+      "firstname": "person 4 firstname",
+      "lastname": "person 4 lastname",
+      "profile_img_src": ""
+    },
+    {
+      "username": "person 3",
+      "firstname": "person 3 firstname",
+      "lastname": "person 3 lastname",
+      "profile_img_src": ""
+    }
+  ],
+  "total_records": 4
 }
 ```
 
 #### Codes
+
+No particular codes.
+
+### Get public user types
+
+#### Description
+
+Return an object containing an array of names and ids of the public user types. Useful as part of the sign up flow.
+
+#### Endpoint
+
+`/api/social-network/users/types`
+
+#### Headers
+
+Not more than madatories.
+
+#### Method
+
+GET
+
+#### Params
+
+Void
+
+#### Response data-structure
+
+```json
+{
+  "user_types": [
+    {
+      "name": "Estudiante",
+      "id": 1
+    },
+    {
+      "name": "Invitado",
+      "id": 3
+    }
+  ]
+}
+```
+
+#### Codes
+
+No particular codes.
+
+### Get majors data
+
+#### Description
+
+Return an object containing an array of names and ids of avaliable majors. Useful as part of the sign up flow.
+
+#### Endpoint
+
+`/api/social-network/users/majors`
+
+#### Headers
+
+Not more than madatories.
+
+#### Method
+
+GET
+
+#### Params
+
+Void
+>>>>>>> 0cd9673b3eb8c35d70c8493848c95e88480cf3b8
+
+#### Response data-structure
+
+```json
+{
+<<<<<<< HEAD
+  "content": "Lorem ipsum",
+  "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
+=======
+  "majors": [
+    {
+      "id": 1,
+      "name": "Data Engineering"
+    },
+    {
+      "id": 2,
+      "name": "Environmental Engineering"
+    }
+  ]
+>>>>>>> 0cd9673b3eb8c35d70c8493848c95e88480cf3b8
+}
+```
+
+#### Codes
+<<<<<<< HEAD
 * 1: No data was sent.
+=======
+
+No particular codes.
+>>>>>>> 0cd9673b3eb8c35d70c8493848c95e88480cf3b8

@@ -216,5 +216,136 @@ module.exports = {
       err.cloudinary_id = result.cloudinary_id
       throw err
     }
+  },
+
+  /** Perform a search in the database retrieving all the user records that match with 'search' parameter.
+   * It gets all users, followers or users followed by a target user. This can be set in 'userRelativeType' using: all|followers|followed
+   * It can selects chunks of records of 'offset' size. The chunk number is defined by 'page'.
+   * It supports ascending and descending order by regiter date.
+   * @param {string} userRelativeType 
+   * @param {number} page 
+   * @param {number} offset 
+   * @param {string} search 
+   * @param {number} asc 
+   * @param {number} userTarget 
+   * 
+   * @returns {Object}
+   *  * users: users records
+   *  * total_records: number
+   */
+  searchUsers: async function(userRelativeType = 'all', page = 0, offset = 10, search = '', asc = 1, userTarget) {
+    //userRelativeType = all|followers|followed
+    let query = `
+      select 
+        users.username, 
+        users.firstname, 
+        users.lastname, 
+        users.profile_img_src
+      from users
+        inner join user_types
+          on users.user_type_id = user_types.id `
+    
+    if(userRelativeType != 'all') {
+      query += `inner join followers `
+      if(userRelativeType == 'followers') {
+        //This select followers of targetUser.
+        query += `on followers.follower_user_id = users.id `
+        query += `where followers.target_user_id = ? and `
+      } else if(userRelativeType == 'followed') {
+        //This select users that userTarget follow.
+        query += `on followers.target_user_id = users.id `
+        query += `where followers.follower_user_id = ? and `
+      }
+    } else {
+      query += `where `
+    }
+
+    search = search.split(' ').join('|')
+    query += `(
+      users.username regexp "${search}" or
+      users.firstname regexp "${search}" or 
+      users.lastname regexp "${search}" or 
+      users.email regexp "${search}" or
+      user_types.name regexp "${search}" ) 
+      order by users.id ${asc ? 'asc' : 'desc'}
+      limit ${page * offset}, ${offset} ;`
+    
+    let args = [ userTarget ]
+    if(userRelativeType == 'all') {
+      args = undefined
+    }
+
+    //Counts how much records there are.
+    let countQuery = query.split(/[ |\n]/)
+
+    for(let i = 0; i < countQuery.length; i++) {
+      //Removes selected fields and select the amount of records.
+      if(countQuery[i] == 'select') {
+        countQuery[++i] = 'count(*) as total_records'
+        i++
+        while(countQuery[i] != 'from') {
+          countQuery.splice(i, 1)
+        }
+      }
+      //Remove limit to select all the records.
+      if(countQuery[i] == 'order') {
+        countQuery[i++] = ';'
+        //Remove the remaining elements.
+        countQuery.splice(i, countQuery.length - i)
+        break
+      }
+    }
+
+    countQuery = countQuery.join(' ')
+
+    try {
+      let result = await mariadb.query(query, args)
+      let countResult = await mariadb.query(countQuery, args)
+      return {
+        users: result,
+        total_records: countResult[0].total_records
+      }
+    } catch(err) {
+      err.file = __filename
+      err.func = 'searchUsers'
+      throw err
+    }
+  },
+
+  /**
+   * Retrieve the name and id of all the public user types.
+   */
+  getPublicUserTypes: async function() {
+    let query = `
+      select 
+        user_types.name, 
+        user_types.id 
+      from public_user_types
+        inner join user_types
+          on user_types.id = public_user_types.user_type_id`
+    try {
+      let userTypes = await mariadb.query(query)
+      return userTypes
+    } catch(err) {
+      err.file = __filename
+      err.func = 'getPublicUserTypes'
+      throw err
+    }
+  },
+
+  getMejorsData: async function() {
+    let query = `
+      select
+        majors.id,
+        majors.name
+      from majors`
+    try {
+      let majors = await mariadb.query(query)
+      return majors
+    } catch(err) {
+      err.file = __filename
+      err.func = 'getMejorsData'
+      throw err
+    }
   }
 }

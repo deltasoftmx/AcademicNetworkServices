@@ -109,5 +109,61 @@ module.exports = {
       err.func = err.func || 'createPost'
       errorHandlingService.handleImageUploadError(req, res, err)
     }
+  },
+  
+  searchUsers: async function(req, res) {
+    try {
+      let result = await userService.searchUsers(
+        req.query.user_relative_type, 
+        req.query.page, 
+        req.query.offset, 
+        req.query.search, 
+        req.query.asc,
+        req.api.userId)
+
+      res.finish({
+        code: 0,
+        messages: ['Done'],
+        data: result
+      })
+    } catch(err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'searchUsers'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
+  },
+
+  getPublicUserTypes: async function(req, res) {
+    try {
+      let userTypes = await userService.getPublicUserTypes()
+      res.finish({
+        code: 0,
+        messages: ['Done'],
+        data: {
+          user_types: userTypes
+        }
+      })
+    } catch(err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'getPublicUserTypes'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
+  },
+
+  getMajorsData: async function(req, res) {
+    try {
+      let majors = await userService.getMejorsData()
+      res.finish({
+        code: 0,
+        messages: ['Done'],
+        data: {
+          majors: majors
+        }
+      })
+    } catch(err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'getMajorsData'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }
