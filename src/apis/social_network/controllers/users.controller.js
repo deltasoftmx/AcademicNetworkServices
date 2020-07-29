@@ -58,9 +58,9 @@ module.exports = {
     }
   },
 
-  getUserData: async function(req, res) {
+  getPublicUserData: async function(req, res) {
     try {
-      let resultUserData = await userService.getUserData(req.params.username)
+      let resultUserData = await userService.getPublicUserData(req.params.username)
 
       if (!resultUserData) {
         res.status(404).finish({

@@ -22,11 +22,11 @@ module.exports = {
     userCtrl.signIn
   ],
 
-  getData: [
+  getPublicUserData: [
     generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,
-    userMidd.checkGetDataParameter,
-    userCtrl.getUserData
+    userMidd.checkGetPublicUserDataParameter,
+    userCtrl.getPublicUserData
   ],
 
   post: [

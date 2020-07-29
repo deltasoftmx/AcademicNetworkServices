@@ -68,7 +68,7 @@ module.exports = {
     return next()
   },
 
-  checkGetDataParameter: function(req, res, next) {
+  checkGetPublicUserDataParameter: function(req, res, next) {
     let validator = new Validator()
     validator(req.params).required().isObject( obj => {
       obj('username').required().isString()
