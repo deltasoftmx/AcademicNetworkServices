@@ -1,3 +1,5 @@
+const cloudinary = require('cloudinary').v2
+const fs = require('fs')
 const mariadb = require('./mariadb.service')
 
 module.exports = {
@@ -165,7 +167,58 @@ module.exports = {
   },
 
   /**
-   * Perform a search in the database retrieving all the user records that match with 'search' parameter.
+   * Creates new post in the system.
+   * @param {int} userId 
+   * @param {Object} post An object with:
+   * - content: string.
+   * - image: Object.
+   */
+  createPost: async function(userId, post) {    
+    // If the user doesn't send any data.
+    if (!post.content && !post.image) {
+      return null
+    }
+
+    let result = {}
+
+    if (post.content) {
+      result.content = post.content;
+    }
+
+    if (post.image) {
+      try {
+        // The image is uploaded to cloudinary
+        const resultUploadImage = await cloudinary.uploader.upload(post.image.path)
+        result.img_src = resultUploadImage.secure_url
+        result.cloudinary_id = resultUploadImage.public_id
+      } catch (err) {
+        err.file = __filename
+        err.func = 'createPost'
+        err.cloudinary_id = result.cloudinary_id
+        throw err
+      } finally {
+         // The local files are deleted.
+        fs.unlinkSync(post.image.path)
+      }
+    }
+
+    let args = [userId, result.content || '', result.img_src || '', result.cloudinary_id || '', 'user']
+    const query = `INSERT INTO posts (user_id, content, img_src, cloudinary_id, post_type) 
+                  VALUES (?, ?, ?, ?, ?);`
+    
+    try {
+      await mariadb.query(query, args)
+      result.cloudinary_id = undefined
+      return result;
+    } catch (err) {
+      err.file = __filename
+      err.func = 'createPost'
+      err.cloudinary_id = result.cloudinary_id
+      throw err
+    }
+  },
+
+  /** Perform a search in the database retrieving all the user records that match with 'search' parameter.
    * It gets all users, followers or users followed by a target user. This can be set in 'userRelativeType' using: all|followers|followed
    * It can selects chunks of records of 'offset' size. The chunk number is defined by 'page'.
    * It supports ascending and descending order by regiter date.

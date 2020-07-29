@@ -120,6 +120,7 @@ create table if not exists posts (
     user_id int unsigned not null,
     content text,
     img_src varchar(700),
+    cloudinary_id varchar(100),
     referenced_post_id int unsigned,
     post_type varchar(50) not null,
     like_counter int unsigned not null default 1,

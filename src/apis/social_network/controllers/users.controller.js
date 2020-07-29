@@ -84,6 +84,33 @@ module.exports = {
     }
   },
 
+  createPost: async function(req, res) {
+    try {
+      const post = {
+        content: req.body.content,
+        image: req.file
+      }
+      let resultPost = await userService.createPost(req.api.userId, post)
+
+      if (!resultPost) {
+        return res.status(404).finish({
+          code: 1,
+          messages: ['No data was sent.']
+        })
+      }
+
+      res.finish({
+        code: 0,
+        messages: ['Done'],
+        data: resultPost
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'createPost'
+      errorHandlingService.handleImageUploadError(req, res, err)
+    }
+  },
+  
   searchUsers: async function(req, res) {
     try {
       let result = await userService.searchUsers(

@@ -5,6 +5,7 @@
 * [Description](#Description)
 * [Methods](#Methods)
   * [handleErrorInRequest](#handleErrorInRequest)
+  * [handleImageUploadError](#handleImageUploadError)
 
 ## Description
 
@@ -28,4 +29,21 @@ and keep the application running. See the [web services doc](../WEB_SERVICES.md)
     * `func`: string. The name of the function in which the error was originally caught.
     * `file`: string. The filename where the error was originally caught.
     * `stack`: string. The tracking made for Node.js.
+* **Return data type**: void
+
+### handleImageUploadError`
+
+* **Description**: Check if the uploaded image still exists in local files, if so it will be deleted. Something similar occurs 
+with the image stored in Cloudinary services.
+
+* **Params**:
+  * `req`: requestObject. The express req object.
+  * `res`: responseObject. The express res object.
+  * `err`: Error
+    * `code`: string. The error code.
+    * `messages`: string. The informative messages of the error.
+    * `func`: string. The name of the function in which the error was originally caught.
+    * `file`: string. The filename where the error was originally caught.
+    * `stack`: string. The tracking made for Node.js.
+    * `cloudinary_id`: string. The public id of image stored in cloudinary in case that it need to delete the image.
 * **Return data type**: void

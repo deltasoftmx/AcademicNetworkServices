@@ -1,6 +1,10 @@
+const multer = require('multer')
 const generalMidd = require('../../../middlewares/general.middleware')
 const userMidd = require('../../../middlewares/users.middleware')
 const userCtrl = require('../controllers/users.controller')
+
+// Multer settings.
+const upload = multer({dest: 'uploads/'})
 
 module.exports = {
   signup: [
@@ -25,6 +29,15 @@ module.exports = {
     userCtrl.getUserData
   ],
 
+  post: [
+    generalMidd.allowExternalConnections,
+    generalMidd.verifyAPIKey,
+    generalMidd.userAuth,
+    userMidd.checkNewPostData,
+    upload.single('image'),
+    userCtrl.createPost
+  ],
+  
   searchUsers: [
     generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,

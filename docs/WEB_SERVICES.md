@@ -11,6 +11,7 @@
   * [Create student](#Create-student)
   * [Sign in](#Sign-in)
   * [Get user data](#Get-user-data)
+  * [Create post](#Create-post)
   * [Search users](#Search-users)
   * [Get public user types](#Get-public-user-types)
   * [Get majors data](#Get-majors-data)
@@ -146,11 +147,11 @@ No particular codes.
 #### Description
 
 Retrieve the user public information according of the user type. For example, if the user is a student
-so within the data will be the major, or if the user is a teacher so within the data will be the email.
+so within the data will be the major and the email will not show.
 
 #### Endpoint
 
-`/api/social-network/users/:username`
+`/api/social-network/users/data/:username`
 
 #### Headers
 
@@ -181,6 +182,41 @@ GET
 
 #### Codes
 * 1: Username doesn't exists.
+
+### Create post
+
+#### Description
+
+Create a new user post, either only text or text with an image.
+
+#### Endpoint
+
+`/api/social-network/users/post`
+
+#### Headers
+
+* Authorization.
+
+#### Method
+
+POST
+
+#### Params
+
+* `content`: string.
+* `image`: Object.
+
+#### Response data-structure
+
+```json
+{
+  "content": "Lorem ipsum",
+  "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
+}
+```
+
+#### Codes
+* 1: No data was sent.
 
 ### Search users
 
