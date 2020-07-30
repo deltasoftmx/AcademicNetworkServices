@@ -25,6 +25,9 @@ function parseArgs(args) {
     '--force-reconf': 'force_reconf',
     '--reconf-target': 'reconf_target', //target must be given only separated by comma. Values: env|db|certs|conf-file
     '--db-port': 'db_port',
+    '--cd-cloud-name': 'cd_cloud_name',
+    '--cd-api-key': 'cd_api_key',
+    '--cd-api-secret': 'cd_api_secret',
     '--help': 'help'
   }
 
@@ -70,7 +73,10 @@ function loadEnvVars() {
     'MARIADB_DATABASE',
     'IANA_TIMEZONE',
     'PORT',
-    'MARIADB_PORT'
+    'MARIADB_PORT',
+    'CLOUDINARY_CLOUD_NAME',
+    'CLOUDINARY_API_KEY',
+    'CLOUDINARY_API_SECRET'
   ]
 
   //Loading env vars.
@@ -96,7 +102,7 @@ function loadEnvVars() {
 }
 
 //Sets up the environment
-function setupEnv(user, passwd, dbPort, force_reconf) {
+function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, force_reconf) {
   //Default env vars configuratons.
   let envConf = [
     'MARIADB_HOST=localhost',
@@ -105,7 +111,10 @@ function setupEnv(user, passwd, dbPort, force_reconf) {
     'MARIADB_DATABASE=academy_network',
     'IANA_TIMEZONE=America/Cancun',
     'PORT=3000',
-    `MARIADB_PORT=${dbPort || '3306'}`
+    `MARIADB_PORT=${dbPort || '3306'}`,
+    `CLOUDINARY_CLOUD_NAME=${cdCloudName || ''}`,
+    `CLOUDINARY_API_KEY=${cdApiKey || ''}`,
+    `CLOUDINARY_API_SECRET=${cdApiSecret || ''}`
   ].join('\n') + '\n'
 
   if(force_reconf) {
@@ -471,6 +480,18 @@ function help() {
 
   Indicates what elements of the environment configuration reconfigurate. Values can be: env|db|certs|conf-file
 
+  * --cd-cloud-name
+
+  Indicates the Cloud name of your Cloudinary account.
+
+  * --cd-api-key
+
+  Indicates the API Key of your Cloudinary account.
+
+  * --cd-api-secret
+
+  Indicates the API Secret of your Cloudinary account.
+
   * --help
 
   Display this documentation.
@@ -495,7 +516,7 @@ async function main() {
     forceReconf = mustReconf(args.reconf_target, 'env')
   }
 
-  setupEnv(args.db_user, args.db_passwd, args.db_port, forceReconf)
+  setupEnv(args.db_user, args.db_passwd, args.db_port, args.cd_cloud_name, args.cd_api_key, args.cd_api_secret, forceReconf)
 
   forceReconf = false;
   if(args.force_reconf) {
