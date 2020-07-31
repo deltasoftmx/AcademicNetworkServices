@@ -107,6 +107,15 @@ module.exports = {
     } catch (err) {
       err.file = err.file || __filename
       err.func = err.func || 'createPost'
+
+      // If exist some Cloudinary env var not configured.
+      if (err.http_code === 401) {
+        req.api.logger.error(err)
+        res.status(500).finish({
+          code: 1001,
+          messages: [messages.error_messages.e500]
+        })
+      }
       errorHandlingService.handleImageUploadError(req, res, err)
     }
   },
