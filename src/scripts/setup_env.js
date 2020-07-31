@@ -101,33 +101,6 @@ function loadEnvVars() {
   }
 }
 
-function checkCloudinaryEnvVars(cloudName, apiKey, apiSecret) {
-  let message = ''
-
-  if (cloudName === undefined || apiKey  === undefined || apiSecret === undefined  ||
-  cloudName === '*' || apiKey === '*' ||  apiSecret === '*') {
-    message = `You didn't provide some values for Cloudinary env vars, we put '*' as default value. You must configure manually or use the corresponding flags, otherwise you won't be able to use endpoints that use Cloudinary services.`
-    console.log(message)
-    logger.log(message)
-  }
-
-  if (cloudName === undefined || cloudName === '*') {
-    message = 'Env var CLOUDINARY_CLOUD_NAME not configured correctly.'
-    console.log(message)
-    logger.log(message)
-  }
-  if (apiKey === undefined || apiKey === '*') {
-    message = 'Env var CLOUDINARY_API_KEY not configured correctly.'
-    console.log(message)
-    logger.log(message)
-  }
-  if (apiSecret === undefined || apiSecret === '*') {
-    message = 'Env var CLOUDINARY_API_SECRET not configured correctly.'
-    console.log(message)
-    logger.log(message)
-  }
-}
-
 //Sets up the environment
 function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, force_reconf) {
   //Default env vars configuratons.
@@ -148,18 +121,32 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
     //Reconfiguring.
     console.log('Reconfiguring.')
     fs.writeFileSync(path.join(rootDir, '.env'), envConf)
+
+    // Checks if some Cloudinary env var it was not provided.
+    let cloudinaryErrorMsg = `No value was provided for ENV_VAR env var. '*' will be set as the default value and you must configure it, otherwise some endpoints using Cloudinary services it won't work'`
+    if (cdCloudName === undefined) {
+      console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_CLOUD_NAME'))
+      logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_CLOUD_NAME'))
+    }
+    if (cdApiKey === undefined) {
+      console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_KEY'))
+      logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_KEY'))
+    }
+    if (cdApiSecret === undefined) {
+      console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_SECRET'))
+      logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_SECRET'))
+    }
   }
   //Load env vars and check for missing vars.
   envResult = loadEnvVars()
-
-  // Check if some Cloudinary env var is not configured correctly.
-  checkCloudinaryEnvVars(process.env.CLOUDINARY_CLOUD_NAME, process.env.CLOUDINARY_API_KEY, process.env.CLOUDINARY_API_SECRET)
 
   try {
     if(envResult.missing_env_vars.length) {
       console.log('Missing env vars.')
       //Adding missing conf.
       console.log('Adding missing vars.')
+      let cloudinaryErrorMsg = `Env var ENV_VAR doesn't exist and it wasn't provided a value to create it. '*' will be set as the default value and you must configure it, otherwise some endpoints using Cloudinary services it won't work`
+
       fs.appendFileSync(path.join(rootDir, '.env'), '\n')
       for(let evar of envResult.missing_env_vars) {
         let conf = ''
@@ -186,13 +173,19 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
             conf = `MARIADB_PORT=${dbPort || '3306'}`
             break
           case 'CLOUDINARY_CLOUD_NAME':
-            conf = `CLOUDINARY_CLOUD_NAME=${cdCloudName || '*'}`
+            console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_CLOUD_NAME'))
+            logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_CLOUD_NAME'))
+            conf = `CLOUDINARY_CLOUD_NAME=*`
             break
           case 'CLOUDINARY_API_KEY':
-            conf = `CLOUDINARY_API_KEY=${cdApiKey || '*'}`
+            console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_KEY'))
+            logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_KEY'))
+            conf = `CLOUDINARY_API_KEY=*`
             break
           case 'CLOUDINARY_API_SECRET':
-            conf = `CLOUDINARY_API_SECRET=${cdApiSecret || '*'}`
+            console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_SECRET'))
+            logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_SECRET'))
+            conf = `CLOUDINARY_API_SECRET=*`
             break
         }
         fs.appendFileSync(path.join(rootDir, '.env'), conf + '\n')
