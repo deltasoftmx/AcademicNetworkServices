@@ -101,6 +101,33 @@ function loadEnvVars() {
   }
 }
 
+function checkCloudinaryEnvVars(cloudName, apiKey, apiSecret) {
+  let message = ''
+
+  if (cloudName === undefined || apiKey  === undefined || apiSecret === undefined  ||
+  cloudName === '*' || apiKey === '*' ||  apiSecret === '*') {
+    message = `You didn't provide some values for Cloudinary env vars, we put '*' as default value. You must configure manually or use the corresponding flags, otherwise you won't be able to use endpoints that use Cloudinary services.`
+    console.log(message)
+    logger.log(message)
+  }
+
+  if (cloudName === undefined || cloudName === '*') {
+    message = 'Env var CLOUDINARY_CLOUD_NAME not configured correctly.'
+    console.log(message)
+    logger.log(message)
+  }
+  if (apiKey === undefined || apiKey === '*') {
+    message = 'Env var CLOUDINARY_API_KEY not configured correctly.'
+    console.log(message)
+    logger.log(message)
+  }
+  if (apiSecret === undefined || apiSecret === '*') {
+    message = 'Env var CLOUDINARY_API_SECRET not configured correctly.'
+    console.log(message)
+    logger.log(message)
+  }
+}
+
 //Sets up the environment
 function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, force_reconf) {
   //Default env vars configuratons.
@@ -112,9 +139,9 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
     'IANA_TIMEZONE=America/Cancun',
     'PORT=3000',
     `MARIADB_PORT=${dbPort || '3306'}`,
-    `CLOUDINARY_CLOUD_NAME=${cdCloudName || ''}`,
-    `CLOUDINARY_API_KEY=${cdApiKey || ''}`,
-    `CLOUDINARY_API_SECRET=${cdApiSecret || ''}`
+    `CLOUDINARY_CLOUD_NAME=${cdCloudName || '*'}`,
+    `CLOUDINARY_API_KEY=${cdApiKey || '*'}`,
+    `CLOUDINARY_API_SECRET=${cdApiSecret || '*'}`
   ].join('\n') + '\n'
 
   if(force_reconf) {
@@ -124,6 +151,9 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
   }
   //Load env vars and check for missing vars.
   envResult = loadEnvVars()
+
+  // Check if some Cloudinary env var is not configured correctly.
+  checkCloudinaryEnvVars(process.env.CLOUDINARY_CLOUD_NAME, process.env.CLOUDINARY_API_KEY, process.env.CLOUDINARY_API_SECRET)
 
   try {
     if(envResult.missing_env_vars.length) {
@@ -154,6 +184,16 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
             break
           case 'MARIADB_PORT':
             conf = `MARIADB_PORT=${dbPort || '3306'}`
+            break
+          case 'CLOUDINARY_CLOUD_NAME':
+            conf = `CLOUDINARY_CLOUD_NAME=${cdCloudName || '*'}`
+            break
+          case 'CLOUDINARY_API_KEY':
+            conf = `CLOUDINARY_API_KEY=${cdApiKey || '*'}`
+            break
+          case 'CLOUDINARY_API_SECRET':
+            conf = `CLOUDINARY_API_SECRET=${cdApiSecret || '*'}`
+            break
         }
         fs.appendFileSync(path.join(rootDir, '.env'), conf + '\n')
       }

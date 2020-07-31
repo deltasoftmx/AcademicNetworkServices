@@ -57,18 +57,18 @@ this port will be written in the .env file.
 
 * `--cd-cloud-name`
 
-Indicates the Cloud name of your Cloudinary account. If it don't exist (take an empty value) and the `--force-reconf` is present and 
-`env` is part of the target, the Cloud name env var will be written in the .env file.
+Indicates the Cloud name of your Cloudinary account. If it don't exist (take '*' as default value) and the `--force-reconf` is present 
+and `env` is part of the target, the Cloud name env var will be written in the .env file.
 
 * `--cd-api-key`
 
-Indicates the API Key of your Cloudinary account. If it don't exist (take an empty value) and the `--force-reconf` is present and `env` 
-is part of the target, the API Key env var will be written in the .env file.
+Indicates the API Key of your Cloudinary account. If it don't exist (take '*' as default value) and the `--force-reconf` is present and 
+`env` is part of the target, the API Key env var will be written in the .env file.
 
 * `--cd-api-secret`
 
-Indicates the API Secret of your Cloudinary account. If it don't exist (take an empty value) and the `--force-reconf` is present and 
-`env` is part of the target, the API Secret env var will be written in the .env file.
+Indicates the API Secret of your Cloudinary account. If it don't exist (take '*' as default value) and the `--force-reconf` is present 
+and `env` is part of the target, the API Secret env var will be written in the .env file.
 
 * `--help`
 
