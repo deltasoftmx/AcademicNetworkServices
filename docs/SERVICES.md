@@ -11,3 +11,4 @@ Here is a list of services written for this system.
 * [Log service](services/LOG.md)
 * [Error handling service](services/ERROR_HANDLING.md)
 * [Validator service](services/VALIDATOR.md)
+* [Group service](services/GROUP.md)

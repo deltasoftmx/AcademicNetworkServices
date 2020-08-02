@@ -214,3 +214,41 @@ sp_create_api_key_label:begin
         "Done" as message;
 end $$
 delimiter ;
+
+drop procedure if exists group_permission_create;
+delimiter $$
+create procedure group_permission_create (
+	name varchar(100),
+    codename varchar(100)
+)
+gpc_label:begin
+	declare name_exists int;
+    declare codename_exists int;
+    
+    select id into name_exists from group_permissions as gp
+    where gp.name = name limit 1;
+    if name_exists is not null then
+		select
+			1 as exit_code,
+            "Name already exists.";
+		leave gpc_label;
+	end if;
+    
+    select id into codename_exists from group_permissions as gp
+    where gp.codename = codename limit 1;
+    if codename_exists is not null then
+		select
+			2 as exit_code,
+            "Codename already exists.";
+		leave gpc_label;
+	end if;
+    
+    insert into group_permissions (name, codename)
+    values(name, codename);
+    
+    select
+		0 as exit_code,
+        "Done" as message,
+        last_insert_id() as id;
+end $$
+delimiter ;

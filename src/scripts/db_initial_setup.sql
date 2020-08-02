@@ -20,3 +20,7 @@ call sp_create_api_key('Academy Network web client', 'Ale', 'ale@ucaribe.edu.mx'
 -- Selects the API key previously created. 
 -- Copy and paste this hash in the x-api-key header of your requests in postman.
 select api_key from api_keys;
+
+-- Creates group permissions.
+call group_permission_create("Permitir publicaciones", "allow_posts");
+call group_permission_create("Permitir comentarios", "allow_comments");

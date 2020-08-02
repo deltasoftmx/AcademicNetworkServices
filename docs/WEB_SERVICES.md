@@ -15,6 +15,7 @@
   * [Search users](#Search-users)
   * [Get public user types](#Get-public-user-types)
   * [Get majors data](#Get-majors-data)
+  * [Get permission of a group](#Get-permission-of-a-group)
 
 ## General information
 
@@ -81,7 +82,7 @@ working but some important features are not going to work.
 Create a new student user in the system.
 
 #### Endpoint
-`/api/social-network/users/signup`
+`/v1/api/social-network/users/signup`
 
 #### Headers
 
@@ -120,7 +121,7 @@ Generates a session token to be used by an user. This token must be sent in the 
 of a request that calls to an endpoint that requires user authentication.
 
 #### Endpoint
-`/api/social-network/users/signin`
+`/v1/api/social-network/users/signin`
 
 #### Headers
 
@@ -156,7 +157,7 @@ so within the data will be the major and the email will not show.
 
 #### Endpoint
 
-`/api/social-network/users/data/:username`
+`/v1/api/social-network/users/data/:username`
 
 #### Headers
 
@@ -196,7 +197,7 @@ Create a new user post, either only text or text with an image.
 
 #### Endpoint
 
-`/api/social-network/users/post`
+`/v1/api/social-network/users/post`
 
 #### Headers
 
@@ -237,7 +238,7 @@ This endpoint also return how much records were found with the search criteria.
 
 #### Endpoint
 
-`/api/social-network/users/search`
+`/v1/api/social-network/users/search`
 
 #### Headers
 
@@ -306,7 +307,7 @@ Return an object containing an array of names and ids of the public user types. 
 
 #### Endpoint
 
-`/api/social-network/users/types`
+`/v1/api/social-network/users/types`
 
 #### Headers
 
@@ -349,7 +350,7 @@ Return an object containing an array of names and ids of avaliable majors. Usefu
 
 #### Endpoint
 
-`/api/social-network/users/majors`
+`/v1/api/social-network/users/majors`
 
 #### Headers
 
@@ -383,3 +384,42 @@ Void
 #### Codes
 
 No particular codes.
+
+### Get permission of a group
+
+#### Description
+
+Return the permissions that a group has.
+
+#### Endpoint
+
+`/v1/api/social-network/groups/group/:group_id/permissions`
+
+#### Headers
+
+Not more than madatories.
+
+#### Method
+
+GET
+
+#### Params
+
+* `group_id`: the id of the group to request. Replace this label by the id in the url.
+
+#### Response data-structure
+
+```json
+{
+  "permissions": [
+    {
+      "name": "Allow publications",
+      "codename": "allow_posts"
+    }
+  ]
+}
+```
+
+#### Codes
+
+1. Group doesn't exists. 

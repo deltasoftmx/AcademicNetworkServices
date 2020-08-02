@@ -119,3 +119,22 @@ Creates a new API key with the owner data related.
 #### Exit codes
 
 No particular exit codes.
+
+### Creates group permission
+
+#### Type
+
+Write
+
+#### Description
+
+Create a new group permission.
+
+#### SP name
+
+`group_permission_create`
+
+#### Exit codes
+
+* 1: Name already exists.
+* 2: Codename already exists.
