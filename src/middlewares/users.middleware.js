@@ -101,6 +101,9 @@ module.exports = {
   checkSearchUserParams: function(req, res, next) {
     let validator = new Validator()
     req.query = parseNumberFromGroupIfApplic(req.query)
+    if(req.query.search != undefined) {
+      req.query.search = req.query.search.toString()
+    }
     validator(req.query).isObject(obj => {
       obj('page').isNumber().integer()
       obj('offset').isNumber().integer()

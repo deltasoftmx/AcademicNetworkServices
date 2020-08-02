@@ -264,15 +264,15 @@ module.exports = {
 
     search = search.split(' ').join('|')
     query += `(
-      users.username regexp "${search}" or
-      users.firstname regexp "${search}" or 
-      users.lastname regexp "${search}" or 
-      users.email regexp "${search}" or
-      user_types.name regexp "${search}" ) 
+      users.username regexp ? or
+      users.firstname regexp ? or 
+      users.lastname regexp ? or 
+      users.email regexp ? or
+      user_types.name regexp ? ) 
       order by users.id ${asc ? 'asc' : 'desc'}
       limit ${page * offset}, ${offset} ;`
     
-    let args = [ userTarget ]
+    let args = [ userTarget, search, search, search, search, search ]
     if(userRelativeType == 'all') {
       args = undefined
     }
