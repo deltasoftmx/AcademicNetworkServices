@@ -208,7 +208,8 @@ create table if not exists group_tags (
 
 create table if not exists group_permissions (
 	id int unsigned primary key auto_increment,
-    name varchar(100) not null
+    name varchar(100) not null,
+    codename varchar(100) not null
 );
 
 create table if not exists group_endpoint_permissions (
