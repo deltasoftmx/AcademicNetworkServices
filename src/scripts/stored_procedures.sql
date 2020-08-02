@@ -229,7 +229,7 @@ gpc_label:begin
     where gp.name = name limit 1;
     if name_exists is not null then
 		select
-			1 as exist_code,
+			1 as exit_code,
             "Name already exists.";
 		leave gpc_label;
 	end if;
@@ -238,9 +238,17 @@ gpc_label:begin
     where gp.codename = codename limit 1;
     if codename_exists is not null then
 		select
-			2 as exist_code,
+			2 as exit_code,
             "Codename already exists.";
 		leave gpc_label;
 	end if;
+    
+    insert into group_permissions (name, codename)
+    values(name, codename);
+    
+    select
+		0 as exit_code,
+        "Done" as message,
+        last_insert_id() as id;
 end $$
 delimiter ;
