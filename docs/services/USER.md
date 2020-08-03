@@ -6,6 +6,10 @@
 * [Methods](#Methods)
   * [createUser](#createUser)
   * [createStudent](#createStudent)
+  * [getPublicUserData](#getPublicUserData)
+  * [createPost](#createPost)
+  * [getPublicUserTypes](#getPublicUserTypes)
+  * [getMejorsData](#getMejorsData)
 
 ## Description
 
@@ -62,3 +66,50 @@ read and write user data.
   * 3: Username already exists.
   * 4: User type doesn't exists.
   * 5: Major doesn't exists.
+
+### `getPublicUserData`
+
+* **Description**: Retrieve the user public information according of the user type.
+* **Params**
+  * `username`: string
+* **Return data type**: Promise\<Object>
+  * `user`: Object.
+    * `username`: string.
+    * `firstname`: string.
+    * `lastname`: string.
+    * `email`: string. This will not apply if the user is a student.
+    * `type_user`: string.
+    * `description`: string.
+    * `profile_img_src`: string.
+    * `major_id`: string. This will only be if the user is a student.
+
+### `createPost`
+
+* **Description**: Create a new user post, either only text or text with an image.
+* **Params**
+  * `userId`: int.
+  * `post`: Object.
+    * `content`: string.
+    * `image`: Object.
+      * `path`: string. Path of image in the local files.
+* **Return data type**: Promise\<Object>
+  * `content`: string.
+  * `img_src`: string.
+
+### `getPublicUserTypes`
+
+* **Description**: Retrieve the name and id of all the public user types.
+* **Params**
+  * void
+* **Return data type**: Promise\<Array\<Object>>
+  * `name`: string.
+  * `id`: string.
+
+### `getMejorsData`
+
+* **Description**: Retrieve the name and id of all the available majors.
+* **Params**
+  * void
+* **Return data type**: Promise\<Array\<Object>>
+  * `name`: string.
+  * `id`: string.

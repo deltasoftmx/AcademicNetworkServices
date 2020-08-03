@@ -10,6 +10,12 @@
 * [Social Network API](#Social-Network-API)
   * [Create student](#Create-student)
   * [Sign in](#Sign-in)
+  * [Get public user data](#Get-public-user-data)
+  * [Create post](#Create-post)
+  * [Search users](#Search-users)
+  * [Get public user types](#Get-public-user-types)
+  * [Get majors data](#Get-majors-data)
+  * [Get permission of a group](#Get-permission-of-a-group)
 
 ## General information
 
@@ -62,6 +68,11 @@ working but some important features are not going to work.
   * What to do: You need to put the RSA key pair in their right place. Read the [documentation of how to setup the environment](ENV_SETUP.md)
   and read the RSA certs section.
 
+* 1001: Cloudinary credentials were not found when trying to use endpoints which use Cloudinary services.
+  * What do to: You need to set the Cloudinary credentials in the .env file. There are two options:
+      * Doing manually, read the section Setting up environment variables in the [documentation of how to setup the environment](ENV_SETUP.md). 
+      * Using the script for setup the enviroment and add the cloudinary flag options. You can find more info in the [scripts documentation](SCRIPTS.md) in the section Setup environment.
+
 ## Social Network API
 
 ### Create student
@@ -71,7 +82,7 @@ working but some important features are not going to work.
 Create a new student user in the system.
 
 #### Endpoint
-`/api/social-network/users/signup`
+`/v1/api/social-network/users/signup`
 
 #### Headers
 
@@ -87,6 +98,7 @@ POST
 * `lastname`: string
 * `email`: string
 * `passwd`: string
+* `description`: string
 * `user_type_id`: int
 * `major_id`: int
 
@@ -109,7 +121,7 @@ Generates a session token to be used by an user. This token must be sent in the 
 of a request that calls to an endpoint that requires user authentication.
 
 #### Endpoint
-`/api/social-network/users/signin`
+`/v1/api/social-network/users/signin`
 
 #### Headers
 
@@ -135,3 +147,279 @@ POST
 #### Codes
 
 No particular codes.
+
+### Get public user data
+
+#### Description
+
+Retrieve the user public information according of the user type. For example, if the user is a student
+so within the data will be the major and the email will not show.
+
+#### Endpoint
+
+`/v1/api/social-network/users/data/:username`
+
+#### Headers
+
+Not more than the mandatories.
+
+#### Method
+
+GET
+
+#### Params
+
+* `username`: string.
+
+#### Response data-structure
+
+```json
+{
+  "username": "jonhdoe",
+  "firstname": "John",
+  "lastname": "Doe",
+  "description": "Hi I'm John Doe",
+  "profile_img_src": "",
+  "created_at": "2020-07-20T16:31:31.000Z",
+  "user_type": "Estudiante",
+  "major": "Data Engineering"
+}
+```
+
+#### Codes
+* 1: Username doesn't exists.
+
+### Create post
+
+#### Description
+
+Create a new user post, either only text or text with an image.
+
+#### Endpoint
+
+`/v1/api/social-network/users/post`
+
+#### Headers
+
+* `Content-Type`: multipart/form-data
+* `Authorization`
+
+#### Method
+
+POST
+
+#### Params
+
+* `content`: string.
+* `image`: Object.
+
+#### Response data-structure
+
+```json
+{
+  "content": "Lorem ipsum",
+  "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
+}
+```
+
+#### Codes
+* 1: No data was sent.
+
+### Search users
+
+#### Description
+
+Performs a search of a certain relative kind of user, based on the user that ask for the search. It can retrieve 
+all of users, followers or users followed by the requesting user that match with a search criteria. If the search 
+field is empty, the records are not disciminated. Records are served into groups of a certain size called pages. 
+You can select the group size and what group get in a call.
+
+This endpoint also return how much records were found with the search criteria.
+
+#### Endpoint
+
+`/v1/api/social-network/users/search`
+
+#### Headers
+
+* `Authorization`
+
+#### Method
+
+GET
+
+#### Params
+
+All of the following parameters are optional. It has default values.
+
+* `user_relative_type`: string.
+
+This parameter set what relative type of user to search for. It can be all kind of users (`all`), followers of the user
+(`followers`) or the users that the user follow (`followed`). Default `all`.
+
+* `offset`: int.
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`: int.
+
+The number of the group to retrieve. Pages starts at `0`, what is also the defaul value.
+
+* `search`: string.
+
+A phrase containing keywords to perform the search. Default is an empty string.
+
+* `asc`: int.
+
+If records are retrieved in ascending order. Default `1`. Use `0` for false.
+
+#### Response data-structure
+
+```json
+{
+  "users": [
+    {
+      "username": "person 4",
+      "firstname": "person 4 firstname",
+      "lastname": "person 4 lastname",
+      "profile_img_src": ""
+    },
+    {
+      "username": "person 3",
+      "firstname": "person 3 firstname",
+      "lastname": "person 3 lastname",
+      "profile_img_src": ""
+    }
+  ],
+  "total_records": 4
+}
+```
+
+#### Codes
+
+No particular codes.
+
+### Get public user types
+
+#### Description
+
+Return an object containing an array of names and ids of the public user types. Useful as part of the sign up flow.
+
+#### Endpoint
+
+`/v1/api/social-network/users/types`
+
+#### Headers
+
+Not more than madatories.
+
+#### Method
+
+GET
+
+#### Params
+
+Void
+
+#### Response data-structure
+
+```json
+{
+  "user_types": [
+    {
+      "name": "Estudiante",
+      "id": 1
+    },
+    {
+      "name": "Invitado",
+      "id": 3
+    }
+  ]
+}
+```
+
+#### Codes
+
+No particular codes.
+
+### Get majors data
+
+#### Description
+
+Return an object containing an array of names and ids of avaliable majors. Useful as part of the sign up flow.
+
+#### Endpoint
+
+`/v1/api/social-network/users/majors`
+
+#### Headers
+
+Not more than madatories.
+
+#### Method
+
+GET
+
+#### Params
+
+Void
+
+#### Response data-structure
+
+```json
+{
+  "majors": [
+    {
+      "id": 1,
+      "name": "Data Engineering"
+    },
+    {
+      "id": 2,
+      "name": "Environmental Engineering"
+    }
+  ]
+}
+```
+
+#### Codes
+
+No particular codes.
+
+### Get permission of a group
+
+#### Description
+
+Return the permissions that a group has.
+
+#### Endpoint
+
+`/v1/api/social-network/groups/group/:group_id/permissions`
+
+#### Headers
+
+Not more than madatories.
+
+#### Method
+
+GET
+
+#### Params
+
+* `group_id`: the id of the group to request. Replace this label by the id in the url.
+
+#### Response data-structure
+
+```json
+{
+  "permissions": [
+    {
+      "name": "Allow publications",
+      "codename": "allow_posts"
+    }
+  ]
+}
+```
+
+#### Codes
+
+1. Group doesn't exists. 

@@ -9,8 +9,19 @@ require('./scripts/verify_env')
 const express = require('express')
 const bodyParser = require('body-parser')
 const path = require('path')
+const moment = require('moment')
+const cloudinary = require('cloudinary').v2
 const generalMidd = require('./middlewares/general.middleware')
-const conf = require('../conf/conf.json')
+const conf = require('../etc/conf.json')
+
+//General settings.
+moment.locale(conf.moment.language);
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 //Creating a express server.
 const app = express()

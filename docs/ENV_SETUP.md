@@ -1,5 +1,8 @@
 # How to setup the environment
 
+Here you will be introduced in how the environment is set and why. You can setup the environment following this guide or [using the
+script](SCRIPTS.md) to automate this task.
+
 ## Index
 * [Setting up environment variables](#Setting-up-environment-variables)
 * [Setting up configuration file](#Setting-up-configuration-file)
@@ -16,8 +19,13 @@ These data is ussually stored in environment variables. That is why you need to 
 * `MARIADB_DATABASE`: MariaDB database name.
 * `IANA_TIMEZONE`: Timezone of the DB.
 * `PORT`: Port where the express server will be listening.
+* `CLOUDINARY_CLOUD_NAME`: Cloudinary user's cloud name.
+* `CLOUDINARY_API_KEY`: Cloudinary user's API Key.
+* `CLOUDINARY_API_SECRET`: Cloudinary user's API Secret. 
 
 For `IANA_TIMEZONE` env var, you can see [this article](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). As exmaple, for Cancun city, you would use the `America/Cancun` value.
+
+In some endpoints we are be using [Cloudinary](https://cloudinary.com/) services. For `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET` env vars you will need the values of your Cloudinary "Account Details", to do that you can create your Cloudinary account [here](https://cloudinary.com/users/register/free).
 
 You can setup the environment vars in the host system or use a `.env` file to place them in. If you prefer use this last option,
 the file must be in the root of the project.
@@ -25,7 +33,7 @@ the file must be in the root of the project.
 ## Setting up configuration file
 
 Some setting in the server can be changed without touch the source code. This is so to avoid go through the code and getting lost while
-looking for the line where the wanted option is. The place to change such options is in `conf/conf.json` and its strcuture is as following.
+looking for the line where the wanted option is. The place to change such options is in `etc/conf.json` and its strcuture is as following.
 
 ```json
 {
@@ -38,6 +46,9 @@ looking for the line where the wanted option is. The place to change such option
   },
   "db": {
     "conn_limit": 50
+  },
+  "moment": {
+    "language": "es"
   }
 }
 ```
@@ -64,6 +75,10 @@ See [the library doc](https://www.npmjs.com/package/jsonwebtoken) if you want to
 
 We use a service to manage the DB connections. This service contains a pool of MariaDB connections and only allow a certain number of connections.
 This number is defined by this config variable.
+
+* `moment.language`
+
+Language that we use to format the date and time in the library Moment.js
 
 ## RSA certs
 

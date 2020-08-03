@@ -3,7 +3,7 @@ const PathTracker = require('../lib/path_tracker')
 const EventEmitter = require('events')
 const cryptService = require('../services/crypt.service')
 const authService = require('../services/auth.service')
-const messages = require('../../conf/messages.json')
+const messages = require('../../etc/messages.json')
 const errorHandlingService = require('../services/error_handling.service')
 
 module.exports = {
@@ -70,7 +70,7 @@ module.exports = {
   userAuth: async function(req, res, next) {
     try {
       let payload = await cryptService.verifyJWT(req.headers.authorization)
-      req.api.userId = payload.userId
+      req.api.userId = payload.user_id
       return next()
     } catch(err) {
       if(err.name) {

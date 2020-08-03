@@ -24,9 +24,12 @@ The whole documentation is in `docs/` directory. Please, read it if you want to 
 
 ## How to try it
 
+* If you don't have nodemon installed, use `npm install -g nodemon`.
 * Clone this repository to your local machine.
 * Install dependencies with `npm ci`.
-* Setup the environment. See how to do it [here](docs/ENV_SETUP.md).
+* Setup the environment.
+  * Run the environment setup command like so: `node src/scripts/setup_env.js --db-user=[db username] --db-passwd=[db password]`
+  * Or setup the environment by yourself. See how to do it [here](docs/ENV_SETUP.md).
 * Run `npm run dev` if you are in a development environment, `npm start` if production environment.
 
 ## How the application works

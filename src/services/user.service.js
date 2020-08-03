@@ -1,3 +1,5 @@
+const cloudinary = require('cloudinary').v2
+const fs = require('fs')
 const mariadb = require('./mariadb.service')
 
 module.exports = {
@@ -103,6 +105,248 @@ module.exports = {
       
       err.file = __filename
       err.func = 'createStudent'
+      throw err
+    }
+  },
+
+  /**
+   * Return the user public information according of the user type.
+   * @param {string} username 
+   */
+  getPublicUserData: async function (username) {
+    try {
+      let query = `
+        SELECT 
+          users.id,
+          users.username,
+          users.firstname,
+          users.lastname,
+          users.email,
+          user_types.name AS 'type_user',
+          users.description,
+          users.profile_img_src,
+          Date(users.created_at) AS 'created_at'
+        FROM
+          users
+            INNER JOIN
+          user_types ON users.user_type_id = user_types.id
+        WHERE
+          username = ?
+        LIMIT 1;`
+      let resultUser = await mariadb.query(query, username)
+      let userData = resultUser[0]
+      
+      if (!userData) {
+        return null;
+      }
+
+      // Determine if the user is a student, if so add his/her major and delete his/her email.
+      query = `
+        SELECT 
+          majors.name
+        FROM
+          students_data
+            INNER JOIN
+          majors ON students_data.major_id = majors.id
+        WHERE
+          user_id = ?
+        LIMIT 1;`
+      let resultMajorStudent = await mariadb.query(query, userData.id)
+      resultMajorStudent = resultMajorStudent[0]
+
+      if (resultMajorStudent) {
+        userData.major = resultMajorStudent.name
+        userData.email = undefined
+      }
+
+      userData.id = undefined
+      return userData
+    } catch (err) {
+      err.file = __filename
+      err.func = 'getUserData'
+      throw err
+    }
+  },
+
+  /**
+   * Creates a new post in the system.
+   * @param {int} userId 
+   * @param {Object} post An object with:
+   * - content: string.
+   * - image: Object. An object with:
+   *   - path: Path of image in the local files.
+   */
+  createPost: async function(userId, post) {    
+    // If the user doesn't send any data.
+    if (!post.content && !post.image) {
+      return null
+    }
+
+    let result = {}
+
+    if (post.content) {
+      result.content = post.content;
+    }
+
+    if (post.image) {
+      try {
+        // The image is uploaded to cloudinary
+        const resultUploadImage = await cloudinary.uploader.upload(post.image.path)
+        result.img_src = resultUploadImage.secure_url
+        result.cloudinary_id = resultUploadImage.public_id
+      } catch (err) {
+        err.file = __filename
+        err.func = 'createPost'
+        err.cloudinary_id = result.cloudinary_id
+        throw err
+      } finally {
+         // The local files are deleted.
+        fs.unlinkSync(post.image.path)
+      }
+    }
+
+    let args = [userId, result.content || '', result.img_src || '', result.cloudinary_id || '', 'user']
+    const query = `INSERT INTO posts (user_id, content, img_src, cloudinary_id, post_type) VALUES (?, ?, ?, ?, ?);`
+    
+    try {
+      await mariadb.query(query, args)
+      result.cloudinary_id = undefined
+      return result;
+    } catch (err) {
+      err.file = __filename
+      err.func = 'createPost'
+      err.cloudinary_id = result.cloudinary_id
+      throw err
+    }
+  },
+
+  /** Perform a search in the database retrieving all the user records that match with 'search' parameter.
+   * It gets all users, followers or users followed by a target user. This can be set in 'userRelativeType' using: all|followers|followed
+   * It can selects chunks of records of 'offset' size. The chunk number is defined by 'page'.
+   * It supports ascending and descending order by regiter date.
+   * @param {string} userRelativeType 
+   * @param {number} page 
+   * @param {number} offset 
+   * @param {string} search 
+   * @param {number} asc 
+   * @param {number} userTarget 
+   * 
+   * @returns {Object}
+   *  * users: users records
+   *  * total_records: number
+   */
+  searchUsers: async function(userRelativeType = 'all', page = 0, offset = 10, search = '', asc = 1, userTarget) {
+    //userRelativeType = all|followers|followed
+    let query = `
+      select 
+        users.username, 
+        users.firstname, 
+        users.lastname, 
+        users.profile_img_src
+      from users
+        inner join user_types
+          on users.user_type_id = user_types.id `
+    
+    if(userRelativeType != 'all') {
+      query += `inner join followers `
+      if(userRelativeType == 'followers') {
+        //This select followers of targetUser.
+        query += `on followers.follower_user_id = users.id `
+        query += `where followers.target_user_id = ? and `
+      } else if(userRelativeType == 'followed') {
+        //This select users that userTarget follow.
+        query += `on followers.target_user_id = users.id `
+        query += `where followers.follower_user_id = ? and `
+      }
+    } else {
+      query += `where `
+    }
+
+    search = search.split(' ').join('|')
+    query += `(
+      users.username regexp ? or
+      users.firstname regexp ? or 
+      users.lastname regexp ? or 
+      users.email regexp ? or
+      user_types.name regexp ? ) 
+      order by users.id ${asc ? 'asc' : 'desc'}
+      limit ${page * offset}, ${offset} ;`
+    
+    let args = [ userTarget, search, search, search, search, search ]
+    if(userRelativeType == 'all') {
+      args.shift()
+    }
+
+    //Counts how much records there are.
+    let countQuery = query.split(/[ |\n]/)
+
+    for(let i = 0; i < countQuery.length; i++) {
+      //Removes selected fields and select the amount of records.
+      if(countQuery[i] == 'select') {
+        countQuery[++i] = 'count(*) as total_records'
+        i++
+        while(countQuery[i] != 'from') {
+          countQuery.splice(i, 1)
+        }
+      }
+      //Remove limit to select all the records.
+      if(countQuery[i] == 'order') {
+        countQuery[i++] = ';'
+        //Remove the remaining elements.
+        countQuery.splice(i, countQuery.length - i)
+        break
+      }
+    }
+
+    countQuery = countQuery.join(' ')
+
+    try {
+      let result = await mariadb.query(query, args)
+      let countResult = await mariadb.query(countQuery, args)
+      return {
+        users: result,
+        total_records: countResult[0].total_records
+      }
+    } catch(err) {
+      err.file = __filename
+      err.func = 'searchUsers'
+      throw err
+    }
+  },
+
+  /**
+   * Retrieve the name and id of all the public user types.
+   */
+  getPublicUserTypes: async function() {
+    let query = `
+      select 
+        user_types.name, 
+        user_types.id 
+      from public_user_types
+        inner join user_types
+          on user_types.id = public_user_types.user_type_id`
+    try {
+      let userTypes = await mariadb.query(query)
+      return userTypes
+    } catch(err) {
+      err.file = __filename
+      err.func = 'getPublicUserTypes'
+      throw err
+    }
+  },
+
+  getMejorsData: async function() {
+    let query = `
+      select
+        majors.id,
+        majors.name
+      from majors`
+    try {
+      let majors = await mariadb.query(query)
+      return majors
+    } catch(err) {
+      err.file = __filename
+      err.func = 'getMejorsData'
       throw err
     }
   }
