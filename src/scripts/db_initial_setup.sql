@@ -12,7 +12,9 @@ insert into public_user_types (user_type_id) values(1);
 call sp_domain_create("ucaribe.edu.mx");
 
 -- Creates a major. Id will be 1.
-insert into majors (name) values("Data Engineering");
+insert into majors(name) 
+values("Ingeniría de datos"), ("Ingeniería en desarrollo de software"),
+("Ingeniería ambiental"), ("Ingeniería industrial");
 
 -- Creates an API key to send it in the request headers.
 call sp_create_api_key('Academy Network web client', 'Ale', 'ale@ucaribe.edu.mx', '9999999999');
@@ -24,3 +26,4 @@ select api_key from api_keys;
 -- Creates group permissions.
 call group_permission_create("Permitir publicaciones", "allow_posts");
 call group_permission_create("Permitir comentarios", "allow_comments");
+
