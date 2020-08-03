@@ -8,6 +8,8 @@
   * [createStudent](#createStudent)
   * [getPublicUserData](#getPublicUserData)
   * [createPost](#createPost)
+  * [getPublicUserTypes](#getPublicUserTypes)
+  * [getMejorsData](#getMejorsData)
 
 ## Description
 
@@ -93,3 +95,21 @@ read and write user data.
 * **Return data type**: Promise\<Object>
   * `content`: string.
   * `img_src`: string.
+
+### `getPublicUserTypes`
+
+* **Description**: Retrieve the name and id of all the public user types.
+* **Params**
+  * void
+* **Return data type**: Promise\<Array\<Object>>
+  * `name`: string.
+  * `id`: string.
+
+### `getMejorsData`
+
+* **Description**: Retrieve the name and id of all the available majors.
+* **Params**
+  * void
+* **Return data type**: Promise\<Array\<Object>>
+  * `name`: string.
+  * `id`: string.
