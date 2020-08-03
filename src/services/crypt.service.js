@@ -3,8 +3,8 @@ const crypto = require('crypto')
 const fs = require('fs')
 const path = require('path')
 
-publicKey = ''
-privateKey = ''
+let publicKey = ''
+let privateKey = ''
 
 function getPublicKey() {
   try {

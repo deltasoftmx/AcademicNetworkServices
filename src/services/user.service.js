@@ -274,7 +274,7 @@ module.exports = {
     
     let args = [ userTarget, search, search, search, search, search ]
     if(userRelativeType == 'all') {
-      args = undefined
+      args.shift()
     }
 
     //Counts how much records there are.
