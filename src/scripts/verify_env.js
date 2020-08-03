@@ -59,7 +59,7 @@ console.log('Required env vars found.')
 
 //Testing access to conf.json.
 try {
-  fs.accessSync(path.join(process.cwd(), 'conf', 'conf.json'), fs.constants.R_OK)
+  fs.accessSync(path.join(process.cwd(), 'etc', 'conf.json'), fs.constants.R_OK)
   console.log('Config file found and accessible.')
 } catch (err) {
   switch(err.code) {

@@ -1,7 +1,7 @@
 const fs = require('fs')
 const cloudinary = require('cloudinary').v2
 const logService = require('./log.service')
-const messages = require('../../conf/messages.json')
+const messages = require('../../etc/messages.json')
 
 module.exports = {
   handleErrorInRequest: function(req, res, err) {

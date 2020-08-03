@@ -2,8 +2,8 @@ const moment = require('moment')
 const userService = require('../../../services/user.service')
 const cryptService = require('../../../services/crypt.service')
 const authService = require('../../../services/auth.service')
-const conf = require('../../../../conf/conf.json')
-const messages = require('../../../../conf/messages.json')
+const conf = require('../../../../etc/conf.json')
+const messages = require('../../../../etc/messages.json')
 const errorHandlingService = require('../../../services/error_handling.service')
 
 module.exports = {

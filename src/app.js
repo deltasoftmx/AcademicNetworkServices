@@ -12,7 +12,7 @@ const path = require('path')
 const moment = require('moment')
 const cloudinary = require('cloudinary').v2
 const generalMidd = require('./middlewares/general.middleware')
-const conf = require('../conf/conf.json')
+const conf = require('../etc/conf.json')
 
 //General settings.
 moment.locale(conf.moment.language);

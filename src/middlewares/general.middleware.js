@@ -3,7 +3,7 @@ const PathTracker = require('../lib/path_tracker')
 const EventEmitter = require('events')
 const cryptService = require('../services/crypt.service')
 const authService = require('../services/auth.service')
-const messages = require('../../conf/messages.json')
+const messages = require('../../etc/messages.json')
 const errorHandlingService = require('../services/error_handling.service')
 
 module.exports = {

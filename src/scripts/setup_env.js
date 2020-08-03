@@ -378,7 +378,7 @@ function setupCerts(force_reconf) {
 function getConfigFile() {
   let res = { success: false }
   try {
-    res.config = require(path.join(rootDir, 'conf', 'conf.json'))
+    res.config = require(path.join(rootDir, 'etc', 'conf.json'))
     res.success = true
   } catch(err) {
     console.log('conf.json not found')
@@ -405,7 +405,7 @@ function setupConfigFile(force_reconf) {
 }  
 `
 
-  let confPath = path.join(rootDir, 'conf')
+  let confPath = path.join(rootDir, 'etc')
   let conf = getConfigFile()
   
   if(!conf.success || force_reconf) {

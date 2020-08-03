@@ -33,7 +33,7 @@ the file must be in the root of the project.
 ## Setting up configuration file
 
 Some setting in the server can be changed without touch the source code. This is so to avoid go through the code and getting lost while
-looking for the line where the wanted option is. The place to change such options is in `conf/conf.json` and its strcuture is as following.
+looking for the line where the wanted option is. The place to change such options is in `etc/conf.json` and its strcuture is as following.
 
 ```json
 {

@@ -1,5 +1,5 @@
 const mariadb = require('mariadb')
-const conf = require('../../conf/conf.json')
+const conf = require('../../etc/conf.json')
 
 const pool = mariadb.createPool({
   user: process.env.MARIADB_USER,
