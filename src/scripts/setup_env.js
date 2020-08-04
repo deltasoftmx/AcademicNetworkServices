@@ -291,7 +291,15 @@ async function setupDB(force_reconf) {
 
     if(!db_exists || force_reconf) {
       let initResult = await execSQLScript(conn, 'db_initial_setup.sql')
-      let apiKey = initResult[initResult.length - 1][0].api_key
+      let apiKey = ''
+      for(let i = 0; i < initResult.length; i++){
+        if(initResult[i][0]) {
+          if(initResult[i][0].api_key) {
+            apiKey = initResult[i][0].api_key
+            break;
+          }
+        }
+      }
       console.log('Initial setup done.')
       console.log(`API Key: ${apiKey}`)
       logger.log(`API KEY: ${apiKey}`)
