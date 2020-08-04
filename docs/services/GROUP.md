@@ -5,6 +5,7 @@
 * [Description](#Description)
 * [Methods](#Methods)
   * [getGroupPermissions](#getGroupPermissions)
+  * [searchGroups](#searchGroups)
 
 ## Description
 
@@ -28,3 +29,23 @@ Return the permissions that a group has.
     * `codename`: string
 * **Exit code**:
   * 1: Group doesn't exists.
+
+### `searchGroups`
+
+* **Description**
+
+Return all the public groups or only the groups (public and private) that belongs to the requesting user.
+
+* **Params**:
+  * `groupRelativeType`: string.
+  * `search`: string.
+  * `offset`: int.
+  * `page`: int.
+  * `asc`: int.
+  * `userId`: int.
+* **Return data type**: Promise\<Object>
+  * `groups`: Array\<Object>
+    * `name`: string.
+    * `image_src`: string.
+    * `description`: string.
+  * `total_records`: int.

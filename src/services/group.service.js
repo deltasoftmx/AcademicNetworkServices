@@ -39,5 +39,74 @@ module.exports = {
       err.func = 'getGroupPermissions'
       throw err
     }
+  },
+
+  /**
+   * Perform a search in the database retrieving all the group records that match with 'search' parameter.
+   * It gets all public groups or only the groups (public and private) of the user doing the request.
+   * It can selects chunks of records of 'offset' size. The chunk number is defined by 'page'.
+   * It supports ascending and descending order by the group id.
+   * @param {string} groupRelativeType 
+   * @param {string} search 
+   * @param {number} offset 
+   * @param {number} page 
+   * @param {number} asc 
+   * @param {number} userId 
+   * 
+   * @returns {Object}
+   *  * groups: Object. Groups records.
+   *  * total_records: number
+   */
+  searchGroups: async function(groupRelativeType = 'all', search = '', offset = 10, page = 0, asc = 1, userId) {
+    let query = `
+      SELECT 
+        user_groups.name,
+        user_groups.image_src,
+        user_groups.description
+      FROM
+        user_groups
+          INNER JOIN
+        group_tags ON group_tags.group_id = user_groups.id
+      WHERE
+    `
+    // groupRelativeType = all | mine
+    if (groupRelativeType == 'all') {
+      query += `user_groups.visibility = 'public'`
+    } else if (groupRelativeType == 'mine') {
+      query += `user_groups.owner_user_id = ${userId}`
+    }
+    
+    query += `
+        AND (user_groups.name REGEXP ?
+        OR user_groups.description REGEXP ?
+        OR group_tags.tag REGEXP ?)
+      ORDER BY user_groups.id ${asc ? 'ASC' : 'DESC'}
+      LIMIT ${offset * page}, ${offset};
+    `
+
+    search = search.split(' ').join('|')
+    regexpArgs = [search, search, search]
+
+    // Counts how much records there are.
+    let countQuery = query.split('\n')
+    // Remove selected fields and select the amount of records.
+    countQuery.splice(2, 3, 'COUNT(*) as total_records')
+    // Remove limit to select all the records.
+    countQuery.pop(); countQuery.pop(); countQuery.push(';')
+
+    countQuery = countQuery.join('\n')
+
+    try {
+      let result = await mariadb.query(query, regexpArgs)
+      let countResult = await mariadb.query(countQuery, regexpArgs)
+      return {
+        groups: result,
+        total_records: countResult[0].total_records
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'searchGroups'
+      throw err
+    }
   }
 }

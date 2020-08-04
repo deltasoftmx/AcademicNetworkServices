@@ -18,5 +18,28 @@ module.exports = {
       err.func = err.func || 'getGroupPermissions'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+  
+  searchGroups: async function(req, res) {
+    try {
+      let result = await groupService.searchGroups(
+        req.query.group_relative_type,
+        req.query.search,
+        req.query.offset,
+        req.query.page,
+        req.query.asc,
+        req.api.userId
+      )
+
+      res.finish({
+        code: 0,
+        messages: ['Done'],
+        data: result
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'searchGroups',
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }
