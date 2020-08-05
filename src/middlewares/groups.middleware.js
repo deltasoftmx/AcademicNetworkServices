@@ -28,7 +28,7 @@ module.exports = {
     }
 
     validator(req.query).isObject(obj => {
-      obj('group_relative_type').isString().isIncludedInArray(['all', 'mine', undefined])
+      obj('group_relative_type').isString().isIncludedInArray(['all', 'user', undefined])
       obj('search').isString()
       obj('offset').isNumber().integer()
       obj('page').isNumber().integer()

@@ -43,7 +43,7 @@ module.exports = {
 
   /**
    * Perform a search in the database retrieving all the group records that match with 'search' parameter.
-   * It gets all public groups or only the groups (public and private) of the user doing the request.
+   * It gets all public groups or only the groups (public and private) that user belongs to.
    * It can selects chunks of records of 'offset' size. The chunk number is defined by 'page'.
    * It supports ascending and descending order by the group id.
    * @param {string} groupRelativeType 
@@ -67,13 +67,20 @@ module.exports = {
         user_groups
           INNER JOIN
         group_tags ON group_tags.group_id = user_groups.id
-      WHERE
     `
-    // groupRelativeType = all | mine
+    // groupRelativeType = all | user
     if (groupRelativeType == 'all') {
-      query += `user_groups.visibility = 'public'`
-    } else if (groupRelativeType == 'mine') {
-      query += `user_groups.owner_user_id = ${userId}`
+      query += `
+      WHERE
+        user_groups.visibility = 'public'
+      `
+    } else if (groupRelativeType == 'user') {
+      query += `
+          INNER JOIN
+        group_memberships ON group_memberships.group_id = user_groups.id
+      WHERE
+        group_memberships.user_id = ${userId}
+      `
     }
     
     query += `
@@ -92,9 +99,9 @@ module.exports = {
     // Remove selected fields and select the amount of records.
     countQuery.splice(2, 3, 'COUNT(*) as total_records')
     // Remove limit to select all the records.
-    countQuery.pop(); countQuery.pop(); countQuery.push(';')
-
+    countQuery.pop(); countQuery.pop()
     countQuery = countQuery.join('\n')
+    countQuery += ';'
 
     try {
       let result = await mariadb.query(query, regexpArgs)

@@ -430,9 +430,9 @@ GET
 #### Description
 
 Performs a search of certain relative kind of group, based on the user that ask for the search. It can retrieve all the public 
-groups or only the groups (public and private) that belongs to the requesting user that match with a search criteria. If the 
-search field is empty the records are not discriminated. Records are served in groups of a certain size called pages. You can 
-select the group of size and what group get in a call.
+groups or only the groups (public and private) that user belongs to, that match with a search criteria. If the search field is 
+empty the records are not discriminated. Records are served in groups of a certain size (determined by offset) called pages. You 
+can select the offset size and what page get in a call.
 This endpoint also return how much records were found with the search criteria.
 
 #### Endpoint
@@ -453,8 +453,8 @@ All the following parameters are optional. It has default values.
 
 * `group_relative_type`:
 
-This parameter set what relative type of group to search for. It can be all kind of groups (`all`) or the groups of the user 
-doing the request (`mine`). Default (`all`).
+This parameter set what relative type of group to search for. It can be all kind of groups (`all`) or the groups that user belongs 
+to (`user`). Default (`all`).
 
 * `search`:
 

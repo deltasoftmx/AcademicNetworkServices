@@ -34,7 +34,7 @@ Return the permissions that a group has.
 
 * **Description**
 
-Return all the public groups or only the groups (public and private) that belongs to the requesting user.
+Return all the public groups or only the groups (public and private) that user belongs to.
 
 * **Params**:
   * `groupRelativeType`: string.
