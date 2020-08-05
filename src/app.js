@@ -30,6 +30,7 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(generalMidd.setResponseFormat)
+app.use(generalMidd.allowExternalConnections)
 
 //Importing APIs.
 const socialNetworkAPI = require('./apis/social_network/interfaces')

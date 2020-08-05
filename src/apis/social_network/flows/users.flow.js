@@ -8,7 +8,6 @@ const upload = multer({dest: 'uploads/'})
 
 module.exports = {
   signup: [
-    generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,
     userMidd.checkSignUpData,
     userMidd.checkStudentSignUpData,
@@ -16,21 +15,18 @@ module.exports = {
   ],
 
   signin: [
-    generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,
     userMidd.checkSignInData,
     userCtrl.signIn
   ],
 
   getPublicUserData: [
-    generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,
     userMidd.checkGetPublicUserDataParameter,
     userCtrl.getPublicUserData
   ],
 
   post: [
-    generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,
     generalMidd.userAuth,
     userMidd.checkNewPostData,
@@ -39,7 +35,6 @@ module.exports = {
   ],
   
   searchUsers: [
-    generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,
     generalMidd.userAuth,
     userMidd.checkSearchUserParams,
@@ -47,13 +42,11 @@ module.exports = {
   ],
 
   getPublicUserTypes: [
-    generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,
     userCtrl.getPublicUserTypes
   ],
 
   getMajorsData: [
-    generalMidd.allowExternalConnections,
     generalMidd.verifyAPIKey,
     userCtrl.getMajorsData
   ]
