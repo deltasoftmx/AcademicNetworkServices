@@ -173,19 +173,25 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
             conf = `MARIADB_PORT=${dbPort || '3306'}`
             break
           case 'CLOUDINARY_CLOUD_NAME':
-            console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_CLOUD_NAME'))
-            logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_CLOUD_NAME'))
-            conf = `CLOUDINARY_CLOUD_NAME=*`
+            if (!cdCloudName) {
+              console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_CLOUD_NAME'))
+              logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_CLOUD_NAME'))
+            }
+            conf = `CLOUDINARY_CLOUD_NAME=${cdCloudName || '*'}`
             break
           case 'CLOUDINARY_API_KEY':
-            console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_KEY'))
-            logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_KEY'))
-            conf = `CLOUDINARY_API_KEY=*`
+            if (!cdApiKey) {
+              console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_KEY'))
+              logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_KEY'))
+            }
+            conf = `CLOUDINARY_API_KEY=${cdApiKey || '*'}`
             break
           case 'CLOUDINARY_API_SECRET':
-            console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_SECRET'))
-            logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_SECRET'))
-            conf = `CLOUDINARY_API_SECRET=*`
+            if (!cdApiSecret) {
+              console.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_SECRET'))
+              logger.log(cloudinaryErrorMsg.replace('ENV_VAR', 'CLOUDINARY_API_SECRET'))
+            }
+            conf = `CLOUDINARY_API_SECRET=${cdApiSecret || '*'}`
             break
         }
         fs.appendFileSync(path.join(rootDir, '.env'), conf + '\n')
@@ -285,7 +291,15 @@ async function setupDB(force_reconf) {
 
     if(!db_exists || force_reconf) {
       let initResult = await execSQLScript(conn, 'db_initial_setup.sql')
-      let apiKey = initResult[initResult.length - 1][0].api_key
+      let apiKey = ''
+      for(let i = 0; i < initResult.length; i++){
+        if(initResult[i][0]) {
+          if(initResult[i][0].api_key) {
+            apiKey = initResult[i][0].api_key
+            break;
+          }
+        }
+      }
       console.log('Initial setup done.')
       console.log(`API Key: ${apiKey}`)
       logger.log(`API KEY: ${apiKey}`)
