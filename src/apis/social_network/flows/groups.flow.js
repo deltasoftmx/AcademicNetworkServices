@@ -8,5 +8,13 @@ module.exports = {
     generalMiddleware.verifyAPIKey,
     groupsMiddleware.checkGroupId,
     groupsController.getGroupPermissions
+  ],
+
+  createGroup: [
+    generalMiddleware.allowExternalConnections,
+    generalMiddleware.verifyAPIKey,
+    generalMiddleware.userAuth,
+    groupsMiddleware.checkCreatingData,
+    groupsController.createGroup
   ]
 }

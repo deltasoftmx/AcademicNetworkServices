@@ -5,6 +5,7 @@
 * [Description](#Description)
 * [Methods](#Methods)
   * [getGroupPermissions](#getGroupPermissions)
+  * [createGroup](#createGroup)
 
 ## Description
 
@@ -28,3 +29,27 @@ Return the permissions that a group has.
     * `codename`: string
 * **Exit code**:
   * 1: Group doesn't exists.
+
+### `createGroup`
+
+* **Descript**
+
+Creates a new group associating the user id provided as the owner.
+
+* **Params**:
+  * `userId`: int
+  * `group`: Object
+    * `group_name`: string
+    * `image_src`: string
+    * `description`: string
+    * `visibility`: string
+    * `permissions`: string
+    * `tags`: Array\<int>
+* **Return data type**: Promise\<Object>
+  * `exit_code`: int
+  * `message`: string
+  * `id`: int, if exit_code = 0
+* **Exit code**:
+  * 1: User owner does not exists.
+  * 2: Visibility not allowed.
+  * 3: Permission does not exists
