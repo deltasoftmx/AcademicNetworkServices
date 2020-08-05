@@ -6,11 +6,11 @@ This system use MariaDB v10.4 as database management system.
 
 * [SQL Schema](#SQL-Schema)
 * [Stored procedures](#Stored-procedures)
-  * [Creates user](#Creates-user)
-  * [Creates student](#Creates-student)
-  * [Creates user type](#Creates-user-type)
-  * [Creates an allowed domain](#Creates-an-allowed-domain)
-  * [Creates an API key](#Creates-an-API-key)
+  * [Create user](#Create-user)
+  * [Create student](#Create-student)
+  * [Create user type](#Create-user-type)
+  * [Create an allowed domain](#Create-an-allowed-domain)
+  * [Create an API key](#Create-an-API-key)
 
 ## SQL Schema
 ![SQL Schema](diagrams/db.png)
@@ -25,7 +25,7 @@ All SPs which aim is modify in some way the database will return an exit code. 0
 
 SPs that modify the DB are write-type. SPs that only read data are read-type.
 
-### Creates user
+### Create user
 
 #### Type
 
@@ -46,7 +46,7 @@ Creates a new base user in the system.
 * 3: Username already exists.
 * 4: User type id doesn't exists.
 
-### Creates student
+### Create student
 
 #### Type
 
@@ -66,7 +66,7 @@ Creates a new student by an existing user.
 * 2: User doesn't exists.
 * 3: Major doesn't exists.
 
-### Creates user type
+### Create user type
 
 #### Type
 
@@ -84,7 +84,7 @@ Creates a new user type.
 
 * 1: This name already exists.
 
-### Creates an allowed domain
+### Create an allowed domain
 
 #### Type
 
@@ -102,7 +102,7 @@ Creates a new allowed domain.
 
 * 1: This domain name already exists.
 
-### Creates an API key
+### Create an API key
 
 #### Type
 
@@ -120,7 +120,7 @@ Creates a new API key with the owner data related.
 
 No particular exit codes.
 
-### Creates group permission
+### Create group permission
 
 #### Type
 
@@ -138,3 +138,60 @@ Create a new group permission.
 
 * 1: Name already exists.
 * 2: Codename already exists.
+
+### Create group
+
+#### Type
+
+Write
+
+#### Description
+
+Creates a new group
+
+#### SP name
+
+`group_create`
+
+#### Exit codes
+
+* 1: User owner does not exists.
+* 2: Visibility not allowed.
+
+### Add a permission to a group
+
+#### Type
+
+Write
+
+#### Description
+
+Adds a permission to a group.
+
+#### SP name
+
+`group_grant_permission`
+
+#### Exit codes
+
+* 1: Group does not exists.
+* 2: Permission does not exists.
+* 3: Permission already granted.
+
+### Add a tag to a group
+
+#### Type
+
+Write
+
+#### Description
+
+Adds a permission to a group.
+
+#### SP name
+
+`group_add_tag`
+
+#### Exit codes
+
+* 1: Group does not exists.
