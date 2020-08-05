@@ -61,7 +61,7 @@ module.exports = {
   //Set headers to allow external connections.
   allowExternalConnections: function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Headers", "x-api-key, Authorization, content-type")
+    res.header("Access-Control-Allow-Headers", "x-api-key, Authorization, Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Request-Method, X-Requested-With")
     res.header("Access-Control-Allow-Methods", "POST, PUT, GET, DELETE")
     res.header("x-api-key")
     return next()
