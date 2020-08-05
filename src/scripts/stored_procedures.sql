@@ -320,7 +320,7 @@ ggp_label:begin
 	end if;
     
     select id into perm_already_granted from permissions_granted_to_groups as pgtg
-    where pgtg.group_permission_id = permission_id limit 1;
+    where pgtg.group_permission_id = permission_id and pgtg.group_id = group_id limit 1;
     
     if perm_already_granted is not null then
 		select
