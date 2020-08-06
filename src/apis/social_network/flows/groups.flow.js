@@ -10,7 +10,6 @@ module.exports = {
   ],
 
   searchGroups: [
-    generalMiddleware.allowExternalConnections,
     generalMiddleware.verifyAPIKey,
     generalMiddleware.userAuth,
     groupsMiddleware.checkSearchGroupsParams,
@@ -18,7 +17,6 @@ module.exports = {
   ],
 
   createGroup: [
-    generalMiddleware.allowExternalConnections,
     generalMiddleware.verifyAPIKey,
     generalMiddleware.userAuth,
     groupsMiddleware.checkCreatingData,
