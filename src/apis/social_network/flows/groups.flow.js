@@ -9,8 +9,14 @@ module.exports = {
     groupsController.getGroupPermissions
   ],
 
+  searchGroups: [
+    generalMiddleware.verifyAPIKey,
+    generalMiddleware.userAuth,
+    groupsMiddleware.checkSearchGroupsParams,
+    groupsController.searchGroups
+  ],
+
   createGroup: [
-    generalMiddleware.allowExternalConnections,
     generalMiddleware.verifyAPIKey,
     generalMiddleware.userAuth,
     groupsMiddleware.checkCreatingData,

@@ -18,6 +18,33 @@ module.exports = {
 
     return next()
   },
+  
+  checkSearchGroupsParams: function(req, res, next) {
+    let validator = new Validator()
+
+    req.query = parseNumberFromGroupIfApplic(req.query)
+    if (req.query.search != undefined) {
+      req.query.search = req.query.search.toString()
+    }
+
+    validator(req.query).isObject(obj => {
+      obj('group_relative_type').isString().isIncludedInArray(['all', 'user', undefined])
+      obj('search').isString()
+      obj('offset').isNumber().integer()
+      obj('page').isNumber().integer()
+      obj('asc').isNumber().integer().isIncludedInArray([0, 1, undefined])
+    })
+
+    let errors = parseValidatorOutput(validator.run())
+    if (errors.length != 0) {
+      return res.status(400).finish({
+        code: -1,
+        messages: errors
+      })
+    }
+
+    return next()
+  },
 
   checkCreatingData: function(req, res, next) {
     let validator = new Validator()

@@ -5,6 +5,7 @@
 * [Description](#Description)
 * [Methods](#Methods)
   * [getGroupPermissions](#getGroupPermissions)
+  * [searchGroups](#searchGroups)
   * [createGroup](#createGroup)
 
 ## Description
@@ -30,9 +31,29 @@ Return the permissions that a group has.
 * **Exit code**:
   * 1: Group doesn't exists.
 
+### `searchGroups`
+
+* **Description**
+
+Return all the public groups or only the groups (public and private) that user belongs to.
+
+* **Params**:
+  * `groupRelativeType`: string.
+  * `search`: string.
+  * `offset`: int.
+  * `page`: int.
+  * `asc`: int.
+  * `userId`: int.
+* **Return data type**: Promise\<Object>
+  * `groups`: Array\<Object>
+    * `name`: string.
+    * `image_src`: string.
+    * `description`: string.
+  * `total_records`: int.
+  
 ### `createGroup`
 
-* **Descript**
+* **Description**
 
 Creates a new group associating the user id provided as the owner.
 

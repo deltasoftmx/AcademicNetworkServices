@@ -16,6 +16,7 @@
   * [Get public user types](#Get-public-user-types)
   * [Get majors data](#Get-majors-data)
   * [Get permission of a group](#Get-permission-of-a-group)
+  * [Search groups](#search-groups)
   * [Create a group](#Create-a-group)
 
 ## General information
@@ -425,7 +426,79 @@ GET
 
 1. Group doesn't exists. 
 
----
+### Search Groups
+
+#### Description
+
+Performs a search of certain relative kind of group, based on the user that ask for the search. It can retrieve all the public 
+groups or only the groups (public and private) that user belongs to, that match with a search criteria. If the search field is 
+empty the records are not discriminated. Records are served in groups of a certain size (determined by offset) called pages. You 
+can select the offset size and what page get in a call.
+This endpoint also return how much records were found with the search criteria.
+
+#### Endpoint
+
+`/v1/api/social-network/groups/search`
+
+#### Headers
+
+* `Authorization`
+
+#### Method
+
+GET
+
+#### Params
+
+All the following parameters are optional. It has default values.
+
+* `group_relative_type`:
+
+This parameter set what relative type of group to search for. It can be all kind of groups (`all`) or the groups that user belongs 
+to (`user`). Default (`all`).
+
+* `search`:
+
+A phrase containing keywords to perform the search. The keywords are related to the name, description and tags of the group. 
+Default is an empty string.
+
+* `offset`:
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`:
+
+The number of the group of records to retrieve. Page start at `0`, what is also the default value.
+
+* `asc`:
+
+If the records are retrieved in ascending order. Default `1`. Use `0` for false.
+
+
+#### Response data-structure
+
+```json
+{
+  "groups": [
+    {
+      "name": "Group 4",
+      "image_src": "",
+      "description": "This is the Group 4"
+    },
+    {
+      "name": "Group 3",
+      "image_src": "",
+      "description": "This is the Group 3"
+    }
+  ],
+  "total_records": 4
+}
+```
+
+#### Codes
+
+No particular codes.
+
 ### Create a group
 
 #### Description
