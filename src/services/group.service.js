@@ -65,7 +65,7 @@ module.exports = {
         user_groups.description
       FROM
         user_groups
-          INNER JOIN
+          LEFT JOIN
         group_tags ON group_tags.group_id = user_groups.id
     `
     // groupRelativeType = all | user
@@ -87,6 +87,7 @@ module.exports = {
         AND (user_groups.name REGEXP ?
         OR user_groups.description REGEXP ?
         OR group_tags.tag REGEXP ?)
+      GROUP BY user_groups.id
       ORDER BY user_groups.id ${asc ? 'ASC' : 'DESC'}
       LIMIT ${offset * page}, ${offset};
     `
@@ -97,7 +98,7 @@ module.exports = {
     // Counts how much records there are.
     let countQuery = query.split('\n')
     // Remove selected fields and select the amount of records.
-    countQuery.splice(2, 3, 'COUNT(*) as total_records')
+    countQuery.splice(2, 3, 'DISTINCT COUNT(*) OVER () AS total_records')
     // Remove limit to select all the records.
     countQuery.pop(); countQuery.pop()
     countQuery = countQuery.join('\n')
