@@ -17,6 +17,7 @@
   * [Get majors data](#Get-majors-data)
   * [Get permission of a group](#Get-permission-of-a-group)
   * [Search groups](#search-groups)
+  * [Create a group](#Create-a-group)
 
 ## General information
 
@@ -497,3 +498,43 @@ If the records are retrieved in ascending order. Default `1`. Use `0` for false.
 #### Codes
 
 No particular codes.
+
+### Create a group
+
+#### Description
+
+Creates a new group associating the requesting user as owner.
+
+#### Endpoint
+
+`/v1/api/social-network/groups/create`
+
+#### Headers
+
+* Authorization
+
+#### Method
+
+POST
+
+#### Params
+
+* `group_name`: string. The name of the group. 
+* `description`: string. Group description, optional.
+* `visibility`: string. If public or private. Posible values [`public`|`private`]
+* `permissions`: Array\<int>. An array of permission ids. See [here](#) to request available permissions.
+* `tags`: Array\<string>. An array of strings representing tags that will be used to appear in searches.
+
+#### Response data-structure
+
+```json
+{
+  "group_id": 8
+}
+```
+
+#### Codes
+
+1. User owner does not exists.
+2. Visibility not allowed.
+3. Permission does not exists

@@ -41,5 +41,24 @@ module.exports = {
       err.func = err.func || 'searchGroups',
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+
+  createGroup: async function(req, res, next) {
+    try {
+      let result = await groupService.createGroup(req.api.userId, req.body)
+      let data
+      if(result.exit_code == 0) {
+        data = { group_id: result.id }
+      }
+      return res.finish({
+        code: result.exit_code,
+        messages: [result.message],
+        data
+      })
+    } catch(err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'createGroup'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }

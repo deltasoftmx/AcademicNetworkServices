@@ -2,12 +2,13 @@ const Logger = require('../lib/logger')
 const path = require('path')
 
 module.exports = {
-  crashReport: function(err) {
+  crashReport: function(err, toStdout = true) {
     logger = new Logger({
       method: err.method,
       process: err.process,
       logpath: path.join(process.cwd(), 'logs', 'crash_reports.log'),
-      writeToFile: true
+      writeToFile: true,
+      writeToStdout: toStdout
     })
 
     logger.error(err)

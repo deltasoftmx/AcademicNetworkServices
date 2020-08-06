@@ -6,6 +6,7 @@
 * [Methods](#Methods)
   * [getGroupPermissions](#getGroupPermissions)
   * [searchGroups](#searchGroups)
+  * [createGroup](#createGroup)
 
 ## Description
 
@@ -49,3 +50,27 @@ Return all the public groups or only the groups (public and private) that user b
     * `image_src`: string.
     * `description`: string.
   * `total_records`: int.
+  
+### `createGroup`
+
+* **Description**
+
+Creates a new group associating the user id provided as the owner.
+
+* **Params**:
+  * `userId`: int
+  * `group`: Object
+    * `group_name`: string
+    * `image_src`: string
+    * `description`: string
+    * `visibility`: string
+    * `permissions`: string
+    * `tags`: Array\<int>
+* **Return data type**: Promise\<Object>
+  * `exit_code`: int
+  * `message`: string
+  * `id`: int, if exit_code = 0
+* **Exit code**:
+  * 1: User owner does not exists.
+  * 2: Visibility not allowed.
+  * 3: Permission does not exists
