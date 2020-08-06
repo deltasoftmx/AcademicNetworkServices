@@ -314,7 +314,7 @@ ggp_label:begin
     
     if perm_already_granted is not null then
 		select
-			3 as exit_code,
+			2 as exit_code,
             "Permission already granted" as message;
 		leave ggp_label;
 	end if;
