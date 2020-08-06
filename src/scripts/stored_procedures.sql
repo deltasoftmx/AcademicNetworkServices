@@ -297,24 +297,14 @@ create procedure group_grant_permission (
     permission_id int unsigned
 )
 ggp_label:begin
-	declare e_group int unsigned;
     declare e_permission int unsigned;
     declare perm_already_granted int unsigned;
-    
-    select id into e_group from user_groups where id = group_id limit 1;
-    
-    if e_group is null then
-		select
-			1 as exit_code,
-            "Group does not exists" as message;
-		leave ggp_label;
-	end if;
     
     select id into e_permission from group_permissions where id = permission_id limit 1;
     
     if e_permission is null then
 		select
-			2 as exit_code,
+			1 as exit_code,
             "Permission does not exists" as message;
 		leave ggp_label;
 	end if;
@@ -347,18 +337,7 @@ create procedure group_add_tag (
 	group_id int unsigned,
     tag varchar(50)
 )
-gat_label:begin
-	declare e_group int unsigned;
-    
-    select id into e_group from user_groups where id = group_id limit 1;
-    
-    if e_group is null then
-		select
-			1 as exit_code,
-            "Group does not exists" as message;
-		leave gat_label;
-	end if;
-    
+gat_label:begin    
     insert into group_tags 
 		(group_id, tag)
 	values

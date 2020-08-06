@@ -1,5 +1,39 @@
 const mariadb = require('./mariadb.service')
 
+async function addPermissionToGroup(conn, groupId, permissions) {
+  let query = `
+  insert into group_tags 
+    (group_id, tag)
+  values
+  `
+  try {
+    if (!conn) {
+      //Internal error.
+      let errmsg = 'DB connection was not provided'
+      throw new Error(errmsg)
+    } if(!groupId) {
+      //Internal error.
+      let errmsg = 'Group id was not provided'
+      throw new Error(errmsg)
+    } if(!permissions.length) {
+      //Internal error.
+      let errmsg = 'No permissions was provided'
+      throw new Error(errmsg)
+    }
+    query += '(?, ?)'
+    let args = [groupId, permissions[0]]
+    for(let i = 1; i < permissions.length; i++) {
+      query += ', (?, ?)'
+      args.push(groupId, permissions[i])
+    }
+    await conn.query(query, args)
+  } catch(err) {
+    err.func = 'addPermissionToGroup'
+    err.file = __filename
+    throw err
+  }
+}
+
 module.exports = {
   /**
    * Return the permissions that a group has.
@@ -147,22 +181,7 @@ module.exports = {
         return groupRes
       }
 
-      query = `call group_grant_permission(?, ?)` //exit code 2 -> 3
-      for(let perm of group.permissions) {
-        let resGrantPerm = await conn.query(query, [groupRes.id, perm])
-        resGrantPerm = resGrantPerm[0][0]
-        if(resGrantPerm.exit_code == 2) {
-          //client error.
-          conn.rollback()
-          resGrantPerm.exit_code = 3
-          return resGrantPerm
-        } else if(resGrantPerm.exit_code == 1) {
-          //Internal error.
-          let errmsg = 'New group id not provided properly to "group_grant_permission" SP '
-                     + 'although it is supposed that the group was successfully created'
-          throw new Error(errmsg)
-        }
-      }
+      await addPermissionToGroup(conn, groupRes.id, group.permissions)
 
       query = `call group_add_tag(?, ?)`
       for(let tag of group.tags) {
@@ -182,8 +201,8 @@ module.exports = {
       return groupRes
     } catch(err) {
       conn.rollback()
-      err.file = __filename
-      err.func = 'createGroup'
+      err.file = err.file || __filename
+      err.func = err.func || 'createGroup'
       throw err
     }
   }

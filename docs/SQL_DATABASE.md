@@ -174,9 +174,8 @@ Adds a permission to a group.
 
 #### Exit codes
 
-* 1: Group does not exists.
-* 2: Permission does not exists.
-* 3: Permission already granted.
+* 1: Permission does not exists.
+* 2: Permission already granted.
 
 ### Add a tag to a group
 
@@ -194,4 +193,4 @@ Adds a permission to a group.
 
 #### Exit codes
 
-* 1: Group does not exists.
+* No codes.
