@@ -1,5 +1,87 @@
 const mariadb = require('./mariadb.service')
 
+/**
+ * Add the permissions in to a certain group, all by id.
+ * @param {MariaDBConnection} conn 
+ * @param {int} groupId 
+ * @param {Array<int>} permissions 
+ */
+async function addPermissionToGroup(conn, groupId, permissions) {
+  let query = `call group_grant_permission(?, ?)`
+  
+  try {
+    if (!conn) {
+      //Internal error.
+      let errmsg = 'DB connection was not provided'
+      throw new Error(errmsg)
+    } if(!groupId) {
+      //Internal error.
+      let errmsg = 'Group id was not provided'
+      throw new Error(errmsg)
+    } if(!permissions.length) {
+      //Internal error.
+      let errmsg = 'At least one permission is required'
+      throw new Error(errmsg)
+    }
+    let res
+    for(let perm of permissions) {
+      res = await conn.query(query, [groupId, perm])
+      res = res[0][0]
+      if(res.exit_code != 0) {
+        break
+      }
+    }
+    return res
+  } catch(err) {
+    err.func = 'addPermissionToGroup'
+    err.file = __filename
+    throw err
+  }
+}
+
+
+/**
+ * Add tags to a certain group by group id.
+ * @param {MariaDBConnection} conn 
+ * @param {int} groupId 
+ * @param {Array<string>} tags 
+ */
+async function addTagsToGroup(conn, groupId, tags) {
+  let query = `
+  insert into group_tags 
+    (group_id, tag)
+  values
+  `
+  
+  try {
+    if (!conn) {
+      //Internal error.
+      let errmsg = 'DB connection was not provided'
+      throw new Error(errmsg)
+    } if(!groupId) {
+      //Internal error.
+      let errmsg = 'Group id was not provided'
+      throw new Error(errmsg)
+    } if(!tags.length) {
+      //Internal error.
+      let errmsg = 'At least one tag is required'
+      throw new Error(errmsg)
+    }
+    
+    query += '(?, ?)'
+    let args = [groupId, tags[0]]
+    for(let i = 1; i < tags.length; i++) {
+      query += ', (?, ?)'
+      args.push(groupId, tags[i])
+    }
+    return await conn.query(query, args)
+  } catch(err) {
+    err.func = 'addTagsToGroup'
+    err.file = __filename
+    throw err
+  }
+}
+
 module.exports = {
   /**
    * Return the permissions that a group has.
@@ -147,34 +229,13 @@ module.exports = {
         return groupRes
       }
 
-      query = `call group_grant_permission(?, ?)` //exit code 2 -> 3
-      for(let perm of group.permissions) {
-        let resGrantPerm = await conn.query(query, [groupRes.id, perm])
-        resGrantPerm = resGrantPerm[0][0]
-        if(resGrantPerm.exit_code == 2) {
-          //client error.
-          conn.rollback()
-          resGrantPerm.exit_code = 3
-          return resGrantPerm
-        } else if(resGrantPerm.exit_code == 1) {
-          //Internal error.
-          let errmsg = 'New group id not provided properly to "group_grant_permission" SP '
-                     + 'although it is supposed that the group was successfully created'
-          throw new Error(errmsg)
-        }
+      let addPermRes = await addPermissionToGroup(conn, groupRes.id, group.permissions)
+      if(addPermRes.exit_code == 1) { //exit code 1 -> 3
+        addPermRes.exit_code = 3
+        return addPermRes
       }
 
-      query = `call group_add_tag(?, ?)`
-      for(let tag of group.tags) {
-        let resCreateTag = await conn.query(query, [groupRes.id, tag])
-        resCreateTag = resCreateTag[0][0]
-        if(resCreateTag.exit_code == 1) {
-          //Internal error.
-          let errmsg = 'New group id not provided properly to "group_add_tag" SP '
-                     + 'although it is supposed that the group was successfully created'
-          throw new Error(errmsg)
-        }
-      }
+      await addTagsToGroup(conn, groupRes.id, group.tags)
 
       conn.commit()
       conn.release()
@@ -182,8 +243,8 @@ module.exports = {
       return groupRes
     } catch(err) {
       conn.rollback()
-      err.file = __filename
-      err.func = 'createGroup'
+      err.file = err.file || __filename
+      err.func = err.func || 'createGroup'
       throw err
     }
   }
