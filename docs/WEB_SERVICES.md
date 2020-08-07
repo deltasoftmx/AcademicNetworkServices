@@ -16,8 +16,9 @@
   * [Get public user types](#Get-public-user-types)
   * [Get majors data](#Get-majors-data)
   * [Get permission of a group](#Get-permission-of-a-group)
-  * [Search groups](#search-groups)
+  * [Search groups](#Search-groups)
   * [Create a group](#Create-a-group)
+  * [Switch group notifications](#switch-group-notifications)
 
 ## General information
 
@@ -542,3 +543,40 @@ POST
 1. User owner does not exists.
 2. Visibility not allowed.
 3. Permission does not exists
+
+### Switch group notifications
+
+#### Description
+
+Turn on or turn off the group notifications.
+
+#### Endpoint
+
+`/v1/api/social-network/groups/switch-group-notifications`
+
+#### Headers
+
+* `Authorization`
+
+#### Method
+
+PUT
+
+#### Params
+
+* `group_id`: int.
+
+Target group which user wants to switch the group notifications.
+
+* `state`: int.
+
+New state of the group notifications
+
+#### Response data-structure
+
+No particular response data-structure.
+
+#### Codes
+
+1. The user does not belong to the group.
+2. Group notifications were already in that state.

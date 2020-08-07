@@ -60,5 +60,26 @@ module.exports = {
       err.func = err.func || 'createGroup'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+
+  switchGroupNotifications: async function(req, res) {
+    try {
+      let result = await groupService.switchGroupNotifications(req.body.group_id, req.body.state, req.api.userId)
+      if (!result) {
+        return res.status(404).finish({
+          code: 1,
+          messages: ['The user does not belong to the group']
+        })
+      }
+
+      res.finish({
+        code: result.code,
+        messages: [result.message]
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'switchGroupNotifications'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }

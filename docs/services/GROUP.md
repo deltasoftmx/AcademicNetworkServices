@@ -7,6 +7,7 @@
   * [getGroupPermissions](#getGroupPermissions)
   * [searchGroups](#searchGroups)
   * [createGroup](#createGroup)
+  * [switchGroupNotifications](#switchGroupNotifications)
 
 ## Description
 
@@ -74,3 +75,17 @@ Creates a new group associating the user id provided as the owner.
   * 1: User owner does not exists.
   * 2: Visibility not allowed.
   * 3: Permission does not exists
+
+### `switchGroupNotifications`
+
+* **Description**
+
+Turn on or turn off the group notifications.
+
+* **Params**
+  * `group_id`: int
+  * `state`: int
+  * `userId`: int
+* **Return data type**: Promise\<Object>
+  * `code`: int
+  * `message`: string

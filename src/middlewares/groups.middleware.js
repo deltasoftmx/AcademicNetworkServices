@@ -68,5 +68,23 @@ module.exports = {
     }
 
     return next()
+  },
+
+  checkSwitchGroupNotificationsData: function(req, res, next) {
+    let validator = new Validator()
+    validator(req.body).required().isObject( obj => {
+      obj('group_id').required().isNumber().integer().isPositive()
+      obj('state').required().isNumber().isIncludedInArray([0, 1, undefined])
+    })
+
+    let errors = parseValidatorOutput(validator.run())
+    if (errors.length) {
+      return res.status(400).finish({
+        code: -1,
+        messages: errors
+      })
+    }
+
+    next()
   }
 }

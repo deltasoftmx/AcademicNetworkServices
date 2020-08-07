@@ -247,5 +247,54 @@ module.exports = {
       err.func = err.func || 'createGroup'
       throw err
     }
+  },
+
+  /**
+   * Turn on or turn off the group notifications.
+   * @param {int} group_id 
+   * @param {int} state 
+   * @param {int} userId 
+   * @returns Object
+   *  * code: int
+   *  * message: string
+   */
+  switchGroupNotifications: async function(group_id, state, userId) {
+    try {
+      let query = `
+        SELECT active_notifications
+        FROM group_memberships
+        WHERE user_id = ? AND group_id = ?
+        LIMIT 1;
+      `
+      let resultStateNotifications = await mariadb.query(query, [userId, group_id])
+      if (!resultStateNotifications[0]) {
+        return null
+      }
+    
+      let activeNotifications = resultStateNotifications[0].active_notifications
+      if (activeNotifications === state) {
+        return {
+          code: 2,
+          message: 'Group notifications were already in that state'
+        }
+      }
+
+      query = `
+        UPDATE group_memberships 
+        SET active_notifications = ${!activeNotifications}
+        WHERE user_id = ? AND group_id = ?
+        LIMIT 1;
+      `
+      await mariadb.query(query, [userId, group_id])
+
+      return {
+        code: 0,
+        message: 'Done'
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'switchGroupNotifications'
+      throw err
+    }
   }
 }
