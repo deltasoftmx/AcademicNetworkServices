@@ -21,7 +21,7 @@ function getPublicKey() {
 
 function getPrivateKey() {
   try {
-    if(publicKey == '' || !publicKey) {
+    if(privateKey == '' || !privateKey) {
       privateKey = fs.readFileSync(path.join(process.cwd(), 'certs', 'academy_network'), { encoding: 'utf8' })
     }
     return privateKey

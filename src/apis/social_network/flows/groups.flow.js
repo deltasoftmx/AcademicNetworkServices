@@ -7,5 +7,19 @@ module.exports = {
     generalMiddleware.verifyAPIKey,
     groupsMiddleware.checkGroupId,
     groupsController.getGroupPermissions
+  ],
+
+  searchGroups: [
+    generalMiddleware.verifyAPIKey,
+    generalMiddleware.userAuth,
+    groupsMiddleware.checkSearchGroupsParams,
+    groupsController.searchGroups
+  ],
+
+  createGroup: [
+    generalMiddleware.verifyAPIKey,
+    generalMiddleware.userAuth,
+    groupsMiddleware.checkCreatingData,
+    groupsController.createGroup
   ]
 }

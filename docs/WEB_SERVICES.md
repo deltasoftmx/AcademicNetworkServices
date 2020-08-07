@@ -16,6 +16,8 @@
   * [Get public user types](#Get-public-user-types)
   * [Get majors data](#Get-majors-data)
   * [Get permission of a group](#Get-permission-of-a-group)
+  * [Search groups](#search-groups)
+  * [Create a group](#Create-a-group)
 
 ## General information
 
@@ -79,7 +81,7 @@ working but some important features are not going to work.
 
 #### Description
 
-Create a new student user in the system.
+Create a new student user in the system and return a session token.
 
 #### Endpoint
 `/v1/api/social-network/users/signup`
@@ -104,7 +106,11 @@ POST
 
 #### Response data-structure
 
-Void
+```json
+{
+  "session_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJpYXQiOjE1OTY3NjYzOTcsImV4cCI6MTU5NzM3MTE5N30.AAuRetvF60kCqMYjUatkvhVKu75WHBGiYAv3K-yw5LOk-WIAWVlwmaXEzC5VVVYlHs3VfteCT52LFpkJSdQPsaCalEmngOx2tqshfwtK7PolRQN7j_Qcvqh-ckhwyPW_oVux5OjBqbbq9XYg3y5uhHpkNur9ouOFbMdPYx95YWp_gR0KfI5n8j7xjOyNLvNEg7X4wxHh7k-APWY8kt9rPTHaOxjUBsBKS-Uf3G4qoWQ1mqqRawH9YkpmNzmqjfj_hnV-Plvl-pAzc5fznkAYWiSFFQtyAPS5r7hAK2uzNxPT38q-Eo_YghukfLhqbPZyCutIf5HDy3VJnAJ2CSLLonAr9_uXqtTizyg4ijv61sFz30HfnbxZ5lsllJm2rggTNQm7XafQNjG1L1uukjLKtO39a-BA1RPZQuv0vnXCihArFdY1NNMCyL4eUehNxlDWj56VyLIq_DqIFtdXHKiuoqEFq7Mr4gkYQI4Qu3hshbjxrD1y_ELJnE44D4qbdVdK"
+}
+```
 
 #### Codes
 * 1: Domain name not allowed.
@@ -423,3 +429,116 @@ GET
 #### Codes
 
 1. Group doesn't exists. 
+
+### Search Groups
+
+#### Description
+
+Performs a search of certain relative kind of group, based on the user that ask for the search. It can retrieve all the public 
+groups or only the groups (public and private) that user belongs to, that match with a search criteria. If the search field is 
+empty the records are not discriminated. Records are served in groups of a certain size (determined by offset) called pages. You 
+can select the offset size and what page get in a call.
+This endpoint also return how much records were found with the search criteria.
+
+#### Endpoint
+
+`/v1/api/social-network/groups/search`
+
+#### Headers
+
+* `Authorization`
+
+#### Method
+
+GET
+
+#### Params
+
+All the following parameters are optional. It has default values.
+
+* `group_relative_type`:
+
+This parameter set what relative type of group to search for. It can be all kind of groups (`all`) or the groups that user belongs 
+to (`user`). Default (`all`).
+
+* `search`:
+
+A phrase containing keywords to perform the search. The keywords are related to the name, description and tags of the group. 
+Default is an empty string.
+
+* `offset`:
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`:
+
+The number of the group of records to retrieve. Page start at `0`, what is also the default value.
+
+* `asc`:
+
+If the records are retrieved in ascending order. Default `1`. Use `0` for false.
+
+
+#### Response data-structure
+
+```json
+{
+  "groups": [
+    {
+      "name": "Group 4",
+      "image_src": "",
+      "description": "This is the Group 4"
+    },
+    {
+      "name": "Group 3",
+      "image_src": "",
+      "description": "This is the Group 3"
+    }
+  ],
+  "total_records": 4
+}
+```
+
+#### Codes
+
+No particular codes.
+
+### Create a group
+
+#### Description
+
+Creates a new group associating the requesting user as owner.
+
+#### Endpoint
+
+`/v1/api/social-network/groups/create`
+
+#### Headers
+
+* Authorization
+
+#### Method
+
+POST
+
+#### Params
+
+* `group_name`: string. The name of the group. 
+* `description`: string. Group description, optional.
+* `visibility`: string. If public or private. Posible values [`public`|`private`]
+* `permissions`: Array\<int>. An array of permission ids. See [here](#) to request available permissions.
+* `tags`: Array\<string>. An array of strings representing tags that will be used to appear in searches.
+
+#### Response data-structure
+
+```json
+{
+  "group_id": 8
+}
+```
+
+#### Codes
+
+1. User owner does not exists.
+2. Visibility not allowed.
+3. Permission does not exists

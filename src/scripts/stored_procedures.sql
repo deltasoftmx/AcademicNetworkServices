@@ -252,3 +252,98 @@ gpc_label:begin
         last_insert_id() as id;
 end $$
 delimiter ;
+
+drop procedure if exists group_create;
+delimiter $$
+create procedure group_create (
+	user_id int unsigned,
+    gname varchar(100),
+    image_src varchar(700),
+    description varchar(700),
+    visibility varchar(15)
+)
+gc_label:begin
+	declare exists_user int unsigned;
+    
+    select id into exists_user from users where id = user_id limit 1;
+    if exists_user is null then
+		select
+			1 as exit_code,
+            "User does not exists" as message;
+		leave gc_label;
+	elseif visibility != "public" and visibility != "private" then
+		select
+			2 as exit_code,
+            "Visibility not allowed" as message;
+		leave gc_label;
+	end if;
+    
+    insert into user_groups 
+		(owner_user_id, name, image_src, description, visibility)
+	values
+		(user_id, gname, image_src, description, visibility);
+	
+    select
+		0 as exit_code,
+        "Done" as message,
+        last_insert_id() as id;
+end $$
+delimiter ;
+
+drop procedure if exists group_grant_permission;
+delimiter $$
+create procedure group_grant_permission (
+	group_id int unsigned,
+    permission_id int unsigned
+)
+ggp_label:begin
+    declare e_permission int unsigned;
+    declare perm_already_granted int unsigned;
+    
+    select id into e_permission from group_permissions where id = permission_id limit 1;
+    
+    if e_permission is null then
+		select
+			1 as exit_code,
+            "Permission does not exists" as message;
+		leave ggp_label;
+	end if;
+    
+    select id into perm_already_granted from permissions_granted_to_groups as pgtg
+    where pgtg.group_permission_id = permission_id and pgtg.group_id = group_id limit 1;
+    
+    if perm_already_granted is not null then
+		select
+			2 as exit_code,
+            "Permission already granted" as message;
+		leave ggp_label;
+	end if;
+    
+    insert into permissions_granted_to_groups
+		(group_id, group_permission_id)
+	values
+		(group_id, permission_id);
+        
+	select
+		0 as exit_code,
+        "Done" as message,
+        last_insert_id() as id;
+end $$
+delimiter ;
+
+drop procedure if exists group_add_tag;
+delimiter $$
+create procedure group_add_tag (
+	group_id int unsigned,
+    tag varchar(50)
+)
+gat_label:begin    
+    insert into group_tags 
+		(group_id, tag)
+	values
+		(group_id, tag);
+	
+    select
+		0 as exit_code,
+        "Done" as message;
+end $$

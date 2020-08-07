@@ -5,16 +5,18 @@ const messages = require('../../etc/messages.json')
 
 module.exports = {
   handleErrorInRequest: function(req, res, err) {
+    let reportToStdout = true
     if(!res.headersSent) {
       req.api.logger.error(err)
       res.status(500).finish({
         code: -5,
         messages: [messages.error_messages.e500]
       })
+      reportToStdout = false
     }
     err.method = req.method
     err.process = req.api.endpoint.path
-    logService.crashReport(err)
+    logService.crashReport(err, reportToStdout)
   },
 
   handleImageUploadError: function(req, res, err) {
