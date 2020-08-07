@@ -81,7 +81,7 @@ working but some important features are not going to work.
 
 #### Description
 
-Create a new student user in the system.
+Create a new student user in the system and return a session token.
 
 #### Endpoint
 `/v1/api/social-network/users/signup`
@@ -106,7 +106,11 @@ POST
 
 #### Response data-structure
 
-Void
+```json
+{
+  "session_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJpYXQiOjE1OTY3NjYzOTcsImV4cCI6MTU5NzM3MTE5N30.AAuRetvF60kCqMYjUatkvhVKu75WHBGiYAv3K-yw5LOk-WIAWVlwmaXEzC5VVVYlHs3VfteCT52LFpkJSdQPsaCalEmngOx2tqshfwtK7PolRQN7j_Qcvqh-ckhwyPW_oVux5OjBqbbq9XYg3y5uhHpkNur9ouOFbMdPYx95YWp_gR0KfI5n8j7xjOyNLvNEg7X4wxHh7k-APWY8kt9rPTHaOxjUBsBKS-Uf3G4qoWQ1mqqRawH9YkpmNzmqjfj_hnV-Plvl-pAzc5fznkAYWiSFFQtyAPS5r7hAK2uzNxPT38q-Eo_YghukfLhqbPZyCutIf5HDy3VJnAJ2CSLLonAr9_uXqtTizyg4ijv61sFz30HfnbxZ5lsllJm2rggTNQm7XafQNjG1L1uukjLKtO39a-BA1RPZQuv0vnXCihArFdY1NNMCyL4eUehNxlDWj56VyLIq_DqIFtdXHKiuoqEFq7Mr4gkYQI4Qu3hshbjxrD1y_ELJnE44D4qbdVdK"
+}
+```
 
 #### Codes
 * 1: Domain name not allowed.
