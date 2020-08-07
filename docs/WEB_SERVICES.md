@@ -552,7 +552,7 @@ Turn on or turn off the group notifications.
 
 #### Endpoint
 
-`/v1/api/social-network/groups/switch-group-notifications`
+`/v1/api/social-network/groups/group/:group_id/switch-notifications`
 
 #### Headers
 
@@ -570,7 +570,7 @@ Target group which user wants to switch the group notifications.
 
 * `state`: int.
 
-New state of the group notifications
+New state of the group notifications. Use `0` to turn off or `1` to turn on the notifications.
 
 #### Response data-structure
 
@@ -578,5 +578,5 @@ No particular response data-structure.
 
 #### Codes
 
-1. The user does not belong to the group.
-2. Group notifications were already in that state.
+1. User doesn't exist in the group memberships or the group doesn't exist.
+2. Group notifications are already in that state.

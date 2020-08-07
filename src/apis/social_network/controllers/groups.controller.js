@@ -64,16 +64,10 @@ module.exports = {
 
   switchGroupNotifications: async function(req, res) {
     try {
-      let result = await groupService.switchGroupNotifications(req.body.group_id, req.body.state, req.api.userId)
-      if (!result) {
-        return res.status(404).finish({
-          code: 1,
-          messages: ['The user does not belong to the group']
-        })
-      }
+      let result = await groupService.switchGroupNotifications(req.api.userId, req.params.group_id, req.body.state)
 
-      res.finish({
-        code: result.code,
+      return res.finish({
+        code: result.exit_code,
         messages: [result.message]
       })
     } catch (err) {

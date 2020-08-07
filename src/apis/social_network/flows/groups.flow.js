@@ -26,6 +26,7 @@ module.exports = {
   switchGroupNotifications: [
     generalMiddleware.verifyAPIKey,
     generalMiddleware.userAuth,
+    groupsMiddleware.checkGroupId,
     groupsMiddleware.checkSwitchGroupNotificationsData,
     groupsController.switchGroupNotifications
   ]
