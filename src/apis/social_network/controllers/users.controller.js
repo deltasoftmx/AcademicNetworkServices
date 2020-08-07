@@ -13,9 +13,16 @@ module.exports = {
     req.body.passwd = cryptService.hash(req.body.passwd)
     try {
       let result = await userService.createStudent(req.body)
+      let data
+      if(result.exit_code == 0) {
+        let token = await cryptService.generateJWT( { user_id: result.user_id },
+                                                    conf.session.expires_in)
+        data = { session_token: token }
+      }
       res.finish({
         code: result.exit_code,
-        messages: [result.message]
+        messages: [result.message],
+        data
       })
     } catch(err) {
       err.file = err.file || __filename
