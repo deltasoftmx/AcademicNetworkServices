@@ -60,5 +60,20 @@ module.exports = {
       err.func = err.func || 'createGroup'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+
+  switchGroupNotifications: async function(req, res) {
+    try {
+      let result = await groupService.switchGroupNotifications(req.api.userId, req.params.group_id, req.body.state)
+
+      return res.finish({
+        code: result.exit_code,
+        messages: [result.message]
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'switchGroupNotifications'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }

@@ -347,3 +347,39 @@ gat_label:begin
 		0 as exit_code,
         "Done" as message;
 end $$
+delimiter ;
+
+drop procedure if exists group_switch_notifications;
+delimiter $$
+create procedure group_switch_notifications (
+	user_id int unsigned,
+    group_id int unsigned,
+    state bool
+)
+gsn_label:begin
+    declare current_state bool;
+    
+    select active_notifications into current_state from group_memberships as gp
+    where gp.user_id = user_id and gp.group_id = group_id limit 1;
+    
+    if current_state is null then
+		select 
+			1 as exit_code,
+			"User doesn't exist in the group memberships or the group doesn't exist" as message;
+        leave gsn_label;
+    elseif current_state = state then
+		select 
+			2 as exit_code,
+            "Group notifications are already in that state" as message;
+		leave gsn_label;
+    end if;
+    
+    update group_memberships as gp
+	set active_notifications = state
+	where gp.user_id = user_id and gp.group_id = group_id 
+    limit 1;
+
+	select
+		0 as exit_code,
+        "Done" as message;
+end $$
