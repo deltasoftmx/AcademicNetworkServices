@@ -250,7 +250,7 @@ module.exports = {
   },
 
   /**
-   * Turn on or turn off the group notifications.
+   * Turn on or turn off the group notifications which the user requesting belongs to.
    * @param {int} userId 
    * @param {int} group_id 
    * @param {int} state 
