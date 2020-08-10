@@ -30,8 +30,9 @@ sp_user_create_label:begin
     where dom.domain_name = domain_name limit 1;
     
     if exist_domain is null then
-		select 1 as exit_code,
-        "Domain name not allowed" as message;
+		select 
+			1 as exit_code,
+			"Domain name not allowed" as message;
 		leave sp_user_create_label;
     end if;
     
@@ -61,7 +62,7 @@ sp_user_create_label:begin
     if exist_user_type is null then
 		select 
 			4 as exit_code,
-            "This user-type id doesn't exists" as message;
+            "This user-type id doesn't exist" as message;
 		leave sp_user_create_label;
 	end if;
     
@@ -107,7 +108,7 @@ sp_create_student_label:begin
     if exist_user_id is null then
 		select
 			2 as exit_code,
-            "User doesn't exists" as message;
+            "User doesn't exist" as message;
 		leave sp_create_student_label;
 	end if;
     
@@ -117,7 +118,7 @@ sp_create_student_label:begin
     if exist_major_id is null then
 		select
 			3 as exit_code,
-            "Major doesn't exists" as message;
+            "Major doesn't exist" as message;
 		leave sp_create_student_label;
 	end if; 
     
@@ -173,8 +174,9 @@ sp_domain_create_label:begin
     where dom.domain_name = domain_name limit 1;
     
     if exist_domain is not null then
-		select 1 as exit_code,
-        "Domain name already exists" as message;
+		select 
+			1 as exit_code,
+			"Domain name already exists" as message;
 		leave sp_domain_create_label;
     end if;
     
@@ -269,7 +271,7 @@ gc_label:begin
     if exists_user is null then
 		select
 			1 as exit_code,
-            "User does not exists" as message;
+            "User does not exist" as message;
 		leave gc_label;
 	elseif visibility != "public" and visibility != "private" then
 		select
@@ -305,7 +307,7 @@ ggp_label:begin
     if e_permission is null then
 		select
 			1 as exit_code,
-            "Permission does not exists" as message;
+            "Permission does not exist" as message;
 		leave ggp_label;
 	end if;
     

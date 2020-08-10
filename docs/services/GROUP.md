@@ -80,7 +80,7 @@ Creates a new group associating the user id provided as the owner.
 
 * **Description**
 
-Turn on or turn off the group notifications.
+Turn on or turn off the group notifications which the user requesting belongs to.
 
 * **Params**
   * `userId`: int
