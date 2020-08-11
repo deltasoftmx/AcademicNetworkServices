@@ -30,8 +30,8 @@ module.exports = {
     validator(req.query).isObject(obj => {
       obj('group_relative_type').isString().isIncludedInArray(['all', 'user', undefined])
       obj('search').isString()
-      obj('offset').isNumber().integer()
-      obj('page').isNumber().integer()
+      obj('offset').isNumber().integer().isPositive()
+      obj('page').isNumber().integer().notNegative()
       obj('asc').isNumber().integer().isIncludedInArray([0, 1, undefined])
     })
 

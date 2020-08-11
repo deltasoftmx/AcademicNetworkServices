@@ -486,11 +486,13 @@ If the records are retrieved in ascending order. Default `1`. Use `0` for false.
 {
   "groups": [
     {
+      "id": 4,
       "name": "Group 4",
       "image_src": "",
       "description": "This is the Group 4"
     },
     {
+      "id": 3,
       "name": "Group 3",
       "image_src": "",
       "description": "This is the Group 3"

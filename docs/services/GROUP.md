@@ -47,6 +47,7 @@ Return all the public groups or only the groups (public and private) that user b
   * `userId`: int.
 * **Return data type**: Promise\<Object>
   * `groups`: Array\<Object>
+    * `id`: int.
     * `name`: string.
     * `image_src`: string.
     * `description`: string.

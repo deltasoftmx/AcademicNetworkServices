@@ -142,6 +142,7 @@ module.exports = {
   searchGroups: async function(groupRelativeType = 'all', search = '', offset = 10, page = 0, asc = 1, userId) {
     let query = `
       SELECT 
+        user_groups.id,
         user_groups.name,
         user_groups.image_src,
         user_groups.description
@@ -180,7 +181,7 @@ module.exports = {
     // Counts how much records there are.
     let countQuery = query.split('\n')
     // Remove selected fields and select the amount of records.
-    countQuery.splice(2, 3, 'DISTINCT COUNT(*) OVER () AS total_records')
+    countQuery.splice(2, 4, 'DISTINCT COUNT(*) OVER () AS total_records')
     // Remove limit to select all the records.
     countQuery.pop(); countQuery.pop()
     countQuery = countQuery.join('\n')
