@@ -84,5 +84,21 @@ module.exports = {
     }
 
     next()
+  },
+
+  checkUpdateGroupImageData: function(req, res, next) {
+    let validator = new Validator()
+    validator(req.file).required().isObject( obj => {
+      obj('path').required().isString()
+    })
+    let errors = parseValidatorOutput(validator.run())
+    if (errors.length) {
+      return res.status(400).finish({
+        code: -1,
+        messages: errors
+      })
+    }
+
+    next()
   }
 }

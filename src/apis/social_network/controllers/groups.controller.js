@@ -75,5 +75,23 @@ module.exports = {
       err.func = err.func || 'switchGroupNotifications'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+
+  updateGroupImage: async function(req, res) {
+    try {
+      let result = await groupService.updateGroupImage(req.params.group_id, req.file, req.api.userId)
+
+      return res.finish({
+        code: result.code,
+        messages: [result.message],
+        data: {
+          image_src: result.image_src
+        }
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'updateGroupImage'
+      errorHandlingService.handleImageUploadError(req, res, err)
+    }
   }
 }
