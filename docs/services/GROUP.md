@@ -108,9 +108,8 @@ Update the group image. To do that the user requesting must be the group owner.
   * `userId`: int.
 
 * **Return data type**: Promise\<Object>
-  * `code`: int.
-  * `message`: string.
-  * `image_src`: string, if code = 0.
+  * `exit_code`: int.
+  * `image_src`: string, only if code = 0.
 
 * **Exit code**:
   * 1: The group does not exist.

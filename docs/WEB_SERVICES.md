@@ -73,7 +73,7 @@ working but some important features are not going to work.
   and read the RSA certs section.
 
 * 1001: Cloudinary credentials were not found when trying to use endpoints which use Cloudinary services.
-  * What do to: You need to set the Cloudinary credentials in the .env file. There are two options:
+  * What to do: You need to set the Cloudinary credentials in the .env file. There are two options:
       * Doing manually, read the section Setting up environment variables in the [documentation of how to setup the environment](ENV_SETUP.md). 
       * Using the script for setup the enviroment and add the cloudinary flag options. You can find more info in the [scripts documentation](SCRIPTS.md) in the section Setup environment.
 

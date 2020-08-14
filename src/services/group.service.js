@@ -1,5 +1,4 @@
 const cloudinary = require('cloudinary').v2
-const fs = require('fs')
 const mariadb = require('./mariadb.service')
 
 /**
@@ -279,46 +278,57 @@ module.exports = {
    * @param {Object} image 
    * @param {int} userId 
    * @returns {Object}
-   *  * code: int
-   *  * message: string
-   *  * image_src: string. Only if code = 0.
+   *  * exit_code: int
+   *  * image_src: string. Only if exit_code = 0.
    */
   updateGroupImage: async function(group_id, image, userId) {
     let cloudinary_id = undefined
 
     try {
-      // Verify if the group exist and the user requesting is the group owner.
-      let query = `select owner_user_id from user_groups where id = ?;`
+      let query = `
+        select
+          owner_user_id,
+          cloudinary_id
+        from user_groups
+        where id = ?;
+      `
       let resultQuery = await mariadb.query(query, [group_id])
       resultQuery = resultQuery[0]
       
+      // Verify if the group exist and the user requesting is the group owner.
       if (!resultQuery) {
-        fs.unlinkSync(image.path)
         return {
-          code: 1,
-          message: 'The group does not exist'
+          exit_code: 1
         }
       } else if (resultQuery.owner_user_id != userId){
-        fs.unlinkSync(image.path)
         return {
-          code: 2,
-          message: 'Permission denied. You are not the group owner'
+          exit_code: 2
         }
       }
 
-      // Uploading the image to Cloduinary.
+      // If the group currently has an image, then it is deleted from Cloudinary.
+      if (resultQuery.cloudinary_id) {
+        await cloudinary.uploader.destroy(resultQuery.cloudinary_id)
+      }
+
+      // Uploading the new image to Cloudinary.
       let resultUploadImage = await cloudinary.uploader.upload(image.path)
       cloudinary_id = resultUploadImage.public_id
-      fs.unlinkSync(image.path)
+      let image_src = resultUploadImage.secure_url
 
-      // If all before is successfully complete so the group image is updated.
-      query = `update user_groups set image_src = ? where id = ?;`
-      await mariadb.query(query, [resultUploadImage.secure_url, group_id])
+      // If all before is successfully complete so the group image is updated in the DB.
+      query = `
+        update user_groups
+        set
+          image_src = ?,
+          cloudinary_id = ?
+        where id = ?;
+      `
+      await mariadb.query(query, [image_src, cloudinary_id, group_id])
       
       return {
-        code: 0,
-        message: 'Done',
-        image_src: resultUploadImage.secure_url
+        exit_code: 0,
+        image_src
       }
     } catch (err) {
       err.file = __filename
