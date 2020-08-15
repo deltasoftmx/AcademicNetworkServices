@@ -1,5 +1,6 @@
 const cloudinary = require('cloudinary').v2
 const mariadb = require('./mariadb.service')
+const logService = require('./log.service')
 
 /**
  * Add the permissions in to a certain group, all by id.
@@ -290,7 +291,8 @@ module.exports = {
           owner_user_id,
           cloudinary_id
         from user_groups
-        where id = ?;
+        where id = ?
+        limit 1;
       `
       let resultQuery = await mariadb.query(query, [group_id])
       resultQuery = resultQuery[0]
@@ -308,7 +310,13 @@ module.exports = {
 
       // If the group currently has an image, then it is deleted from Cloudinary.
       if (resultQuery.cloudinary_id) {
-        await cloudinary.uploader.destroy(resultQuery.cloudinary_id)
+        cloudinary.uploader.destroy(resultQuery.cloudinary_id).catch( err => {
+          err.file = __filename
+          err.func = 'updateGroupImage'
+          err.method = 'PUT'
+          err.process = `/v1/api/social-network/groups/group/${group_id}/update-image`
+          logService.crashReport(err)
+        })
       }
 
       // Uploading the new image to Cloudinary.
@@ -322,7 +330,8 @@ module.exports = {
         set
           image_src = ?,
           cloudinary_id = ?
-        where id = ?;
+        where id = ?
+        limit 1;
       `
       await mariadb.query(query, [image_src, cloudinary_id, group_id])
       
