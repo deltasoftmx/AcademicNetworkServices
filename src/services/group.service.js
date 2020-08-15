@@ -313,8 +313,9 @@ module.exports = {
         cloudinary.uploader.destroy(resultQuery.cloudinary_id).catch( err => {
           err.file = __filename
           err.func = 'updateGroupImage'
-          err.method = 'PUT'
-          err.process = `/v1/api/social-network/groups/group/${group_id}/update-image`
+          err.code = err.http_code
+          err.method = 'cloudinary.uploader.destroy'
+          err.process = `Removing image from Cloudinary`
           logService.crashReport(err)
         })
       }

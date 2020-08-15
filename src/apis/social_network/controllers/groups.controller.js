@@ -113,6 +113,8 @@ module.exports = {
     } catch (err) {
       err.file = err.file || __filename
       err.func = err.func || 'updateGroupImage'
+      // err.http_code = error code of Cloudinary.
+      err.code = err.code || err.http_code
 
       // If exist some Cloudinary env var not configured.
       if (err.http_code === 401) {
