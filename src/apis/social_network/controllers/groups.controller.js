@@ -1,5 +1,7 @@
+const fs = require('fs')
 const groupService = require('../../../services/group.service')
 const errorHandlingService = require('../../../services/error_handling.service')
+const messages = require('../../../../etc/messages.json')
 
 module.exports = {
   getGroupPermissions: async function(req, res) {
@@ -74,6 +76,55 @@ module.exports = {
       err.file = err.file || __filename
       err.func = err.func || 'switchGroupNotifications'
       errorHandlingService.handleErrorInRequest(req, res, err)
+    }
+  },
+
+  updateGroupImage: async function(req, res) {
+    try {
+      let result = await groupService.updateGroupImage(req.params.group_id, req.file, req.api.userId)
+      // The image stored in local files is deleted.
+      fs.unlinkSync(req.file.path)
+
+      let httpStatusCode = undefined
+      let message = undefined
+
+      switch (result.exit_code) {
+        case 0:
+          httpStatusCode = 200
+          message = 'Done'
+          break;
+        case 1:
+          httpStatusCode = 404
+          message = 'The group does not exist'
+          break;
+        case 2:
+          httpStatusCode = 403
+          message = 'Permission denied. You are not the group owner'
+          break;
+      }
+
+      return res.status(httpStatusCode).finish({
+        code: result.exit_code,
+        messages: [message],
+        data: {
+          image_src: result.image_src
+        }
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'updateGroupImage'
+      // err.http_code = error code of Cloudinary.
+      err.code = err.code || err.http_code
+
+      // If exist some Cloudinary env var not configured.
+      if (err.http_code === 401) {
+        req.api.logger.error(err)
+        res.status(500).finish({
+          code: 1001,
+          messages: [messages.error_messages.e500]
+        })
+      }
+      errorHandlingService.handleImageUploadError(req, res, err)
     }
   }
 }

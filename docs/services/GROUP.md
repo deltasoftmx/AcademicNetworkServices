@@ -8,6 +8,7 @@
   * [searchGroups](#searchGroups)
   * [createGroup](#createGroup)
   * [switchGroupNotifications](#switchGroupNotifications)
+  * [updateGroupImage](#updateGroupImage)
 
 ## Description
 
@@ -93,3 +94,23 @@ Turn on or turn off the group notifications which the user requesting belongs to
 * **Exit code**:
   * 1: User doesn't exist in the group memberships or the group doesn't exist
   * 2: Group notifications are already in that state.
+
+### `updateGroupImage`
+
+* **Description**
+
+Update the group image. To do that the user requesting must be the group owner.
+
+* **Params**
+  * `group_id`: int.
+  * `image`: Object.
+      * `path`: string. Path of image in the local files.
+  * `userId`: int.
+
+* **Return data type**: Promise\<Object>
+  * `exit_code`: int.
+  * `image_src`: string, only if code = 0.
+
+* **Exit code**:
+  * 1: The group does not exist.
+  * 2: Permission denied. You are not the group owner.

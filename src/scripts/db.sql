@@ -191,6 +191,7 @@ create table if not exists user_groups (
     owner_user_id int unsigned not null,
     name varchar(100) not null,
     image_src varchar(700),
+    cloudinary_id varchar(100),
     description varchar(700),
     visibility varchar(15) not null,
     created_at timestamp,
