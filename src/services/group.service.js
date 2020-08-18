@@ -150,8 +150,8 @@ module.exports = {
         user_groups.description
       FROM
         user_groups
-          LEFT JOIN
-        group_tags ON group_tags.group_id = user_groups.id
+          RIGHT JOIN
+        group_tags ON user_groups.id = group_tags.group_id
     `
     // groupRelativeType = all | user
     if (groupRelativeType == 'all') {
@@ -162,7 +162,7 @@ module.exports = {
     } else if (groupRelativeType == 'user') {
       query += `
           INNER JOIN
-        group_memberships ON group_memberships.group_id = user_groups.id
+        group_memberships ON user_groups.id = group_memberships.group_id
       WHERE
         group_memberships.user_id = ${userId}
       `
@@ -190,11 +190,13 @@ module.exports = {
     countQuery += ';'
 
     try {
-      let result = await mariadb.query(query, regexpArgs)
+      let groupsResult = await mariadb.query(query, regexpArgs)
       let countResult = await mariadb.query(countQuery, regexpArgs)
+      countResult = countResult[0]
+
       return {
-        groups: result,
-        total_records: countResult[0].total_records
+        groups: groupsResult,
+        total_records: countResult ? countResult.total_records : 0
       }
     } catch (err) {
       err.file = __filename
