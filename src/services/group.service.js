@@ -1,4 +1,6 @@
+const cloudinary = require('cloudinary').v2
 const mariadb = require('./mariadb.service')
+const logService = require('./log.service')
 
 /**
  * Add the permissions in to a certain group, all by id.
@@ -142,13 +144,14 @@ module.exports = {
   searchGroups: async function(groupRelativeType = 'all', search = '', offset = 10, page = 0, asc = 1, userId) {
     let query = `
       SELECT 
+        user_groups.id,
         user_groups.name,
         user_groups.image_src,
         user_groups.description
       FROM
         user_groups
-          LEFT JOIN
-        group_tags ON group_tags.group_id = user_groups.id
+          RIGHT JOIN
+        group_tags ON user_groups.id = group_tags.group_id
     `
     // groupRelativeType = all | user
     if (groupRelativeType == 'all') {
@@ -159,7 +162,7 @@ module.exports = {
     } else if (groupRelativeType == 'user') {
       query += `
           INNER JOIN
-        group_memberships ON group_memberships.group_id = user_groups.id
+        group_memberships ON user_groups.id = group_memberships.group_id
       WHERE
         group_memberships.user_id = ${userId}
       `
@@ -180,18 +183,20 @@ module.exports = {
     // Counts how much records there are.
     let countQuery = query.split('\n')
     // Remove selected fields and select the amount of records.
-    countQuery.splice(2, 3, 'DISTINCT COUNT(*) OVER () AS total_records')
+    countQuery.splice(2, 4, 'DISTINCT COUNT(*) OVER () AS total_records')
     // Remove limit to select all the records.
     countQuery.pop(); countQuery.pop()
     countQuery = countQuery.join('\n')
     countQuery += ';'
 
     try {
-      let result = await mariadb.query(query, regexpArgs)
+      let groupsResult = await mariadb.query(query, regexpArgs)
       let countResult = await mariadb.query(countQuery, regexpArgs)
+      countResult = countResult[0]
+
       return {
-        groups: result,
-        total_records: countResult[0].total_records
+        groups: groupsResult,
+        total_records: countResult ? countResult.total_records : 0
       }
     } catch (err) {
       err.file = __filename
@@ -245,6 +250,102 @@ module.exports = {
       conn.rollback()
       err.file = err.file || __filename
       err.func = err.func || 'createGroup'
+      throw err
+    }
+  },
+
+  /**
+   * Turn on or turn off the group notifications which the user requesting belongs to.
+   * @param {int} userId 
+   * @param {int} group_id 
+   * @param {int} state 
+   * @returns {Object}
+   *  * exit_code: int
+   *  * message: string
+   */
+  switchGroupNotifications: async function(userId, group_id, state) {
+    try {
+      let query = 'call group_switch_notifications(?, ?, ?);' // exit codes: 1, 2.
+      let result = await mariadb.query(query, [userId, group_id, state])
+      return result[0][0]
+    } catch (err) {
+      err.file = __filename
+      err.func = 'switchGroupNotifications'
+      throw err
+    }
+  },
+
+  /**
+   * Update the group image. To do that the user requesting must be the group owner.
+   * @param {int} group_id 
+   * @param {Object} image 
+   * @param {int} userId 
+   * @returns {Object}
+   *  * exit_code: int
+   *  * image_src: string. Only if exit_code = 0.
+   */
+  updateGroupImage: async function(group_id, image, userId) {
+    let cloudinary_id = undefined
+
+    try {
+      let query = `
+        select
+          owner_user_id,
+          cloudinary_id
+        from user_groups
+        where id = ?
+        limit 1;
+      `
+      let resultQuery = await mariadb.query(query, [group_id])
+      resultQuery = resultQuery[0]
+      
+      // Verify if the group exist and the user requesting is the group owner.
+      if (!resultQuery) {
+        return {
+          exit_code: 1
+        }
+      } else if (resultQuery.owner_user_id != userId){
+        return {
+          exit_code: 2
+        }
+      }
+
+      // If the group currently has an image, then it is deleted from Cloudinary.
+      if (resultQuery.cloudinary_id) {
+        cloudinary.uploader.destroy(resultQuery.cloudinary_id).catch( err => {
+          err.file = __filename
+          err.func = 'updateGroupImage'
+          err.code = err.http_code
+          err.method = 'cloudinary.uploader.destroy'
+          err.process = `Removing image from Cloudinary`
+          logService.crashReport(err)
+        })
+      }
+
+      // Uploading the new image to Cloudinary.
+      let resultUploadImage = await cloudinary.uploader.upload(image.path)
+      cloudinary_id = resultUploadImage.public_id
+      let image_src = resultUploadImage.secure_url
+
+      // If all before is successfully complete so the group image is updated in the DB.
+      query = `
+        update user_groups
+        set
+          image_src = ?,
+          cloudinary_id = ?
+        where id = ?
+        limit 1;
+      `
+      await mariadb.query(query, [image_src, cloudinary_id, group_id])
+      
+      return {
+        exit_code: 0,
+        image_src
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'updateGroupImage'
+      err.cloudinary_id = cloudinary_id
       throw err
     }
   }

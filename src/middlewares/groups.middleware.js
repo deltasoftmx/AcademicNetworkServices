@@ -6,7 +6,7 @@ module.exports = {
     let validator = new Validator()
     req.params = parseNumberFromGroupIfApplic(req.params)
     validator(req.params).required().isObject( obj =>{
-      obj('group_id').required().isNumber().integer()
+      obj('group_id').required().isNumber().integer().isPositive()
     })
     let errors = parseValidatorOutput(validator.run())
     if(errors.length) {
@@ -30,8 +30,8 @@ module.exports = {
     validator(req.query).isObject(obj => {
       obj('group_relative_type').isString().isIncludedInArray(['all', 'user', undefined])
       obj('search').isString()
-      obj('offset').isNumber().integer()
-      obj('page').isNumber().integer()
+      obj('offset').isNumber().integer().isPositive()
+      obj('page').isNumber().integer().notNegative()
       obj('asc').isNumber().integer().isIncludedInArray([0, 1, undefined])
     })
 
@@ -68,5 +68,36 @@ module.exports = {
     }
 
     return next()
+  },
+
+  checkSwitchGroupNotificationsData: function(req, res, next) {
+    let validator = new Validator()
+    validator(req.body).required().isObject( obj => {
+      obj('state').required().isNumber().integer().isIncludedInArray([0, 1, undefined])
+    })
+    let errors = parseValidatorOutput(validator.run())
+    if (errors.length) {
+      return res.status(400).finish({
+        code: -1,
+        messages: errors
+      })
+    }
+
+    next()
+  },
+
+  checkUpdateGroupImageData: function(req, res, next) {
+    let validator = new Validator()
+    validator(req.file).display('image').required()
+    
+    let errors = parseValidatorOutput(validator.run())
+    if (errors.length) {
+      return res.status(400).finish({
+        code: -1,
+        messages: errors
+      })
+    }
+
+    next()
   }
 }

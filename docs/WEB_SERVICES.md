@@ -16,8 +16,10 @@
   * [Get public user types](#Get-public-user-types)
   * [Get majors data](#Get-majors-data)
   * [Get permission of a group](#Get-permission-of-a-group)
-  * [Search groups](#search-groups)
+  * [Search groups](#Search-groups)
   * [Create a group](#Create-a-group)
+  * [Switch group notifications](#Switch-group-notifications)
+  * [Update group image](#Update-group-image)
 
 ## General information
 
@@ -71,7 +73,7 @@ working but some important features are not going to work.
   and read the RSA certs section.
 
 * 1001: Cloudinary credentials were not found when trying to use endpoints which use Cloudinary services.
-  * What do to: You need to set the Cloudinary credentials in the .env file. There are two options:
+  * What to do: You need to set the Cloudinary credentials in the .env file. There are two options:
       * Doing manually, read the section Setting up environment variables in the [documentation of how to setup the environment](ENV_SETUP.md). 
       * Using the script for setup the enviroment and add the cloudinary flag options. You can find more info in the [scripts documentation](SCRIPTS.md) in the section Setup environment.
 
@@ -485,11 +487,13 @@ If the records are retrieved in ascending order. Default `1`. Use `0` for false.
 {
   "groups": [
     {
+      "id": 4,
       "name": "Group 4",
       "image_src": "",
       "description": "This is the Group 4"
     },
     {
+      "id": 3,
       "name": "Group 3",
       "image_src": "",
       "description": "This is the Group 3"
@@ -542,3 +546,77 @@ POST
 1. User owner does not exists.
 2. Visibility not allowed.
 3. Permission does not exists
+
+### Switch group notifications
+
+#### Description
+
+Turn on or turn off the group notifications.
+
+#### Endpoint
+
+`/v1/api/social-network/groups/group/:group_id/switch-notifications`
+
+#### Headers
+
+* `Authorization`
+
+#### Method
+
+PUT
+
+#### Params
+
+* `group_id`: int.
+
+The id of the group to request. Replace this label by the id in the url.
+
+* `state`: int.
+
+New state of the group notifications. Use `0` to turn off or `1` to turn on the notifications.
+
+#### Response data-structure
+
+No particular response data-structure.
+
+#### Codes
+
+1. User doesn't exist in the group memberships or the group doesn't exist.
+2. Group notifications are already in that state.
+
+### Update group image
+
+#### Description
+
+Update the group image. To do that the user requesting must be the group owner.
+
+#### Endpoint
+
+`/v1/api/social-network/groups/group/:group_id/update-image`
+
+#### Headers
+
+* `Content-Type`: multipart/form-data
+* `Authorization`
+
+#### Method
+
+PUT
+
+#### Params
+
+* `group_id`: int. The id of the group to request. Replace this label by the id in the url.
+* `image`: Object. The new image for the group.
+
+#### Response data-structure
+
+```json
+{
+  "image_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg"
+}
+```
+
+#### Codes
+
+1. The group does not exist.
+2. Permission denied. You are not the group owner.

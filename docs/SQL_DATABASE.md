@@ -11,6 +11,11 @@ This system use MariaDB v10.4 as database management system.
   * [Create user type](#Create-user-type)
   * [Create an allowed domain](#Create-an-allowed-domain)
   * [Create an API key](#Create-an-API-key)
+  * [Create group permission](#Create-group-permission)
+  * [Create group](#Create-group)
+  * [Add a permission to a group](#Add-a-permission-to-a-group)
+  * [Add a tag to a group](#Add-a-tag-to-a-group)
+  * [Switch group notifications](#Switch-group-notifications)
 
 ## SQL Schema
 ![SQL Schema](diagrams/db.png)
@@ -39,12 +44,24 @@ Creates a new base user in the system.
 
 `sp_user_create`
 
+#### Parameters
+
+* `firstname`: varchar(70)
+* `lastname`: varchar(70)
+* `username`: varchar(50)
+* `email`: varchar(100)
+* `passwd`: varchar(300)
+* `profile_img_src`: varchar(700)
+* `description`: varchar(700)
+* `user_type_id`: int unsigned
+* `domain_name`: varchar(255)
+
 #### Exit codes
 
 * 1: Domain name not allowed.
 * 2: Email already exists.
 * 3: Username already exists.
-* 4: User type id doesn't exists.
+* 4: User type id doesn't exist.
 
 ### Create student
 
@@ -60,11 +77,17 @@ Creates a new student by an existing user.
 
 `sp_create_student`
 
+#### Parameters
+
+* `user_id`: int unsigned
+* `student_id`: varchar(50)
+* `major_id`: int unsigned
+
 #### Exit codes
 
 * 1: User already registered as student.
-* 2: User doesn't exists.
-* 3: Major doesn't exists.
+* 2: User doesn't exist.
+* 3: Major doesn't exist.
 
 ### Create user type
 
@@ -79,6 +102,10 @@ Creates a new user type.
 #### SP name
 
 `sp_user_type_create`
+
+#### Parameters
+
+* `name`: varchar(255)
 
 #### Exit codes
 
@@ -98,6 +125,10 @@ Creates a new allowed domain.
 
 `sp_domain_create`
 
+#### Parameters
+
+* `domain_name`: varchar(255)
+
 #### Exit codes
 
 * 1: This domain name already exists.
@@ -116,9 +147,16 @@ Creates a new API key with the owner data related.
 
 `sp_create_api_key`
 
+#### Parameters
+
+* `appname`: varchar(100)
+* `owner_name`: varchar(100)
+* `email`: varchar(100)
+* `phone`: varchar(20)
+
 #### Exit codes
 
-No particular exit codes.
+* No codes.
 
 ### Create group permission
 
@@ -134,6 +172,11 @@ Create a new group permission.
 
 `group_permission_create`
 
+#### Parameters
+
+* `name`: varchar(100)
+* `codename`: varchar(100)
+
 #### Exit codes
 
 * 1: Name already exists.
@@ -147,15 +190,23 @@ Write
 
 #### Description
 
-Creates a new group
+Creates a new group.
 
 #### SP name
 
 `group_create`
 
+#### Parameters
+
+* `user_id`: int unsigned
+* `gname`: varchar(100)
+* `image_src`: varchar(700)
+* `description`: varchar(700)
+* `visibility`: varchar(15)
+
 #### Exit codes
 
-* 1: User owner does not exists.
+* 1: User owner does not exist.
 * 2: Visibility not allowed.
 
 ### Add a permission to a group
@@ -172,9 +223,14 @@ Adds a permission to a group.
 
 `group_grant_permission`
 
+#### Parameters
+
+* `group_id`: int unsigned
+* `permission_id`: int unsigned
+
 #### Exit codes
 
-* 1: Permission does not exists.
+* 1: Permission does not exist.
 * 2: Permission already granted.
 
 ### Add a tag to a group
@@ -185,12 +241,42 @@ Write
 
 #### Description
 
-Adds a permission to a group.
+Adds a tag to a group.
 
 #### SP name
 
 `group_add_tag`
 
+#### Parameters
+
+* `group_id`: int unsigned
+* `tag`: varchar(50)
+
 #### Exit codes
 
 * No codes.
+
+### Switch group notifications
+
+#### Type
+
+Write
+
+#### Description
+
+Turn on or turn off the group notifications which the user requesting belongs to.
+
+#### SP name
+
+`group_switch_notifications`
+
+#### Parameters
+
+* `user_id`:` int unsigned
+* `group_id`: int unsigned
+* `state`: bool
+
+#### Exit codes
+
+* 1: User doesn't exist in the group memberships or the group doesn't exist.
+* 2: Group notifications are already in that state.
