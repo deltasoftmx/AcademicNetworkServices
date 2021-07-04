@@ -7,7 +7,6 @@ require('./scripts/verify_env')
 
 //Including dependencies.
 const express = require('express')
-const bodyParser = require('body-parser')
 const path = require('path')
 const moment = require('moment')
 const cloudinary = require('cloudinary').v2
@@ -27,8 +26,8 @@ cloudinary.config({
 const app = express()
 
 //Setting gobal middlewares.
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 app.use(generalMidd.setResponseFormat)
 app.use(generalMidd.allowExternalConnections)
 

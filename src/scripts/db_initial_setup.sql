@@ -13,7 +13,7 @@ call sp_domain_create("ucaribe.edu.mx");
 
 -- Creates a major. Id will be 1.
 insert into majors(name) 
-values("Ingeniría de datos"), ("Ingeniería en desarrollo de software"),
+values("Ingeniería en datos"), ("Ingeniería en desarrollo de software"),
 ("Ingeniería ambiental"), ("Ingeniería industrial");
 
 -- Creates an API key to send it in the request headers.

@@ -4,9 +4,10 @@ Here you will be introduced in how the environment is set and why. You can setup
 script](SCRIPTS.md) to automate this task.
 
 ## Index
-* [Setting up environment variables](#Setting-up-environment-variables)
-* [Setting up configuration file](#Setting-up-configuration-file)
-* [RSA certs](#RSA-certs)
+* [Setting up environment variables](#setting-up-environment-variables)
+* [Setting up configuration file](#setting-up-configuration-file)
+* [RSA certs](#rsa-certs)
+* [SQL scripts](#sql-scripts)
 
 ## Setting up environment variables
 
@@ -19,6 +20,7 @@ These data is ussually stored in environment variables. That is why you need to 
 * `MARIADB_DATABASE`: MariaDB database name.
 * `IANA_TIMEZONE`: Timezone of the DB.
 * `PORT`: Port where the express server will be listening.
+* `MARIADB_PORT`: MariaDB port. The default port for MariaDB is 3306.
 * `CLOUDINARY_CLOUD_NAME`: Cloudinary user's cloud name.
 * `CLOUDINARY_API_KEY`: Cloudinary user's API Key.
 * `CLOUDINARY_API_SECRET`: Cloudinary user's API Secret. 
@@ -99,3 +101,13 @@ ssh-keygen -e -f academy_network -m PEM > academy_network.pem
 
 The first command will generate a public/private RSA key pair in the current directory. The second will generate a public key in PEM format
 based on the private key.
+
+## SQL scripts
+
+Make sure to run the following sql scripts in the same order before to run the application and start to use the web services. 
+
+1. `src/scripts/db.sql`: This script creates the database and tables to be used.
+
+2. `src/scripts/stored_procedures.sql`: This script creates the stored procedures to be used.
+
+3. `src/scripts/db_initial_setup.sql`: This script will setup the DB with some values to test the current endpoints.

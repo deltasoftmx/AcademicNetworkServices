@@ -163,7 +163,7 @@ module.exports = {
       return userData
     } catch (err) {
       err.file = __filename
-      err.func = 'getUserData'
+      err.func = 'getPublicUserData'
       throw err
     }
   },
@@ -335,7 +335,7 @@ module.exports = {
     }
   },
 
-  getMejorsData: async function() {
+  getMajorsData: async function() {
     let query = `
       select
         majors.id,
@@ -346,7 +346,7 @@ module.exports = {
       return majors
     } catch(err) {
       err.file = __filename
-      err.func = 'getMejorsData'
+      err.func = 'getMajorsData'
       throw err
     }
   }

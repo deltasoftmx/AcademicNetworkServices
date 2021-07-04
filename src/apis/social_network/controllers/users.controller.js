@@ -38,7 +38,7 @@ module.exports = {
       if(!userId) {
         return res.status(406).finish({
           code: 1,
-          message: ['Invalid credentials']
+          messages: ['Invalid credentials']
         })
       }
       let token = await cryptService.generateJWT( { user_id: userId }, 
@@ -86,7 +86,7 @@ module.exports = {
       
     } catch (err) {
       err.file = err.file || __filename
-      err.func = err.func || 'getUserData'
+      err.func = err.func || 'getPublicUserData'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
   },
@@ -168,7 +168,7 @@ module.exports = {
 
   getMajorsData: async function(req, res) {
     try {
-      let majors = await userService.getMejorsData()
+      let majors = await userService.getMajorsData()
       res.finish({
         code: 0,
         messages: ['Done'],

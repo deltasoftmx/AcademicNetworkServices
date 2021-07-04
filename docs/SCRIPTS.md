@@ -2,8 +2,8 @@
 
 ## Index
 
-* [Description](#Description)
-* [Setup environment](#Setup-environment)
+* [Description](#description)
+* [Setup environment](#setup-environment)
 
 ## Description
 
@@ -28,8 +28,12 @@ Default values of the environment variable are:
 * MARIADB_DATABASE=academy_network
 * IANA_TIMEZONE=America/Cancun
 * PORT=3000
+* MARIADB_PORT=3306
+* CLOUDINARY_CLOUD_NAME=*
+* CLOUDINARY_API_KEY=*
+* CLOUDINARY_API_SECRET=*
 
-The rest of the default values are shown [here](ENV_SETUP.md).
+Some endpoints needs to send images, this images are uploaded to Cloudinary service, to do that is necesary to set the correct values in the 3 cloudinary env vars, click [here](ENV_SETUP.md#setting-up-environment-variables) to see how to it.
 
 **Options**
 
