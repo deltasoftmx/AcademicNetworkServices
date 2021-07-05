@@ -231,6 +231,7 @@ module.exports = {
       groupRes = groupRes[0][0]
       if(groupRes.exit_code != 0) {
         conn.rollback()
+        conn.release()
         return groupRes
       }
 
@@ -248,6 +249,7 @@ module.exports = {
       return groupRes
     } catch(err) {
       conn.rollback()
+      conn.release()
       err.file = err.file || __filename
       err.func = err.func || 'createGroup'
       throw err

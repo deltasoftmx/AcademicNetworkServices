@@ -2,10 +2,10 @@
 
 ## Index
 
-* [Description](#Description)
-* [Methods](#Methods)
-  * [handleErrorInRequest](#handleErrorInRequest)
-  * [handleImageUploadError](#handleImageUploadError)
+* [Description](#description)
+* [Methods](#methods)
+  * [handleErrorInRequest](#handleerrorinrequest)
+  * [handleImageUploadError](#handleimageuploaderror)
 
 ## Description
 
@@ -31,7 +31,7 @@ and keep the application running. See the [web services doc](../WEB_SERVICES.md)
     * `stack`: string. The tracking made for Node.js.
 * **Return data type**: void
 
-### handleImageUploadError`
+### `handleImageUploadError`
 
 * **Description**: Check if the uploaded image still exists in local files, if so it will be deleted. Something similar occurs 
 with the image stored in Cloudinary services.

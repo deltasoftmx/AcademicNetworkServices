@@ -2,15 +2,15 @@
 
 ## Index
 
-* [Directory structure](#Directory-structure)
-* [Entry point, bootstrap file and boot sequence](#Entry-point,-bootstrap-file-and-boot-sequence)
-* [Explanation of the directories](#Explanation-of-the-directories)
+* [Directory structure](#directory-structure)
+* [Entry point, bootstrap file and boot sequence](#entry-point-bootstrap-file-and-boot-sequence)
+* [Explanation of the directories](#explanation-of-the-directories)
 
 ## Directory structure
 
 * certs/
-* conf/
 * docs/
+* etc/
 * logs/
 * src/
   * apis/
@@ -22,6 +22,7 @@
   * middlewares/
   * scripts/
   * services/
+* uploads/
 
 ## Entry point, bootstrap file and boot sequence
 
@@ -37,13 +38,13 @@ the whole application will be in memory.
 
 Here are the certificates that the application use for encryption processes. For example, certs
 
-* `conf/`
-
-Some configuration files and other things such as messages.
-
 * `docs/`
 
 The documentation of the repository.
+
+* `etc/`
+
+Some configuration files and other things such as messages.
 
 * `src/`
 
@@ -82,3 +83,7 @@ Here are scripts that are not necessary loaded when the server starts. They are 
 
 Here is logic that is required in different parts of the application almost all the time. They are loaded and kept listening for
 calls to their APIs.
+
+* `uploads`
+
+Here the images are temporarily stored meanwhile are uploaded to Cloudinary. 

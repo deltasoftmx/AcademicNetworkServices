@@ -2,14 +2,15 @@
 
 ## Index
 
-* [Description](#Description)
-* [Methods](#Methods)
-  * [createUser](#createUser)
-  * [createStudent](#createStudent)
-  * [getPublicUserData](#getPublicUserData)
-  * [createPost](#createPost)
-  * [getPublicUserTypes](#getPublicUserTypes)
-  * [getMejorsData](#getMejorsData)
+* [Description](#description)
+* [Methods](#methods)
+  * [createUser](#createuser)
+  * [createStudent](#createstudent)
+  * [getPublicUserData](#getpublicuserdata)
+  * [createPost](#createpost)
+  * [searchUsers](#searchusers)
+  * [getPublicUserTypes](#getpublicusertypes)
+  * [getMajorsData](#getmajorsdata)
 
 ## Description
 
@@ -96,6 +97,33 @@ read and write user data.
   * `content`: string.
   * `img_src`: string.
 
+### `searchUsers`
+
+* **Description**: 
+
+Perform a search in the database retrieving all the user records that match with 'search' parameter.
+
+It gets all users, followers or users followed by a target user. This can be set in 'userRelativeType' using: all|followers|followed.
+
+It can selects chunks of records of 'offset' size. The chunk number is defined by 'page'.
+
+It supports ascending and descending order by register date.
+
+* **Params**:
+  * `userRelativeType`: string.
+  * `page`: int.
+  * `offset`: int.
+  * `search`: string.
+  * `asc`: int.
+  * `userTarget`: int.
+* **Return data type**: Promise\<Object>
+  * `users`: Array\<Object>
+    * `username`: string.
+    * `firstname`: string.
+    * `lastname`: string.
+    * `profile_img_src`: string.
+  * `total_records`: int.
+
 ### `getPublicUserTypes`
 
 * **Description**: Retrieve the name and id of all the public user types.
@@ -105,7 +133,7 @@ read and write user data.
   * `name`: string.
   * `id`: string.
 
-### `getMejorsData`
+### `getMajorsData`
 
 * **Description**: Retrieve the name and id of all the available majors.
 * **Params**

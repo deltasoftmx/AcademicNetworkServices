@@ -1,25 +1,27 @@
 # Web services documentation
 
 ## Index
-* [General information](#General-information)
-  * [Response data structure](#Response-data-structure)
-  * [Mandatory headers](#Mandatory-headers)
-  * [Codes](#Codes)
-    * [General codes](#General-codes)
-    * [Fatal error codes](#Fatal-error-codes)
-* [Social Network API](#Social-Network-API)
-  * [Create student](#Create-student)
-  * [Sign in](#Sign-in)
-  * [Get public user data](#Get-public-user-data)
-  * [Create post](#Create-post)
-  * [Search users](#Search-users)
-  * [Get public user types](#Get-public-user-types)
-  * [Get majors data](#Get-majors-data)
-  * [Get permission of a group](#Get-permission-of-a-group)
-  * [Search groups](#Search-groups)
-  * [Create a group](#Create-a-group)
-  * [Switch group notifications](#Switch-group-notifications)
-  * [Update group image](#Update-group-image)
+* [General information](#general-information)
+  * [Response data structure](#response-data-structure)
+  * [Mandatory headers](#mandatory-headers)
+  * [Codes](#codes)
+    * [General codes](#general-codes)
+    * [Fatal error codes](#fatal-error-codes)
+* [Social Network API](#social-network-api)
+  * [Users](#users)
+    * [Create student](#create-student)
+    * [Sign in](#sign-in)
+    * [Get public user data](#get-public-user-data)
+    * [Create post](#create-post)
+    * [Search users](#search-users)
+    * [Get public user types](#get-public-user-types)
+    * [Get majors data](#get-majors-data)
+  * [Groups](#groups)
+    * [Get permission of a group](#get-permission-of-a-group)
+    * [Search groups](#search-groups)
+    * [Create a group](#create-a-group)
+    * [Switch group notifications](#switch-group-notifications)
+    * [Update group image](#update-group-image)
 
 ## General information
 
@@ -53,8 +55,8 @@ Following codes are common in all endpoints of the **Social Network API** and th
 #### General codes
 
 The kind of codes are negative numbers. They represents errors with the data provided by the client. They DO NOT
-represent an invalid comvination of data, but a invalid data type, a missing argument, an unauthorized use of the API
-or in a spetial case, an unknown error.
+represent an invalid combination of data, but a invalid data type, a missing argument, an unauthorized use of the API
+or in a special case, an unknown error.
 
 * 0: Success.
 * -1: Params are not corrects.
@@ -79,24 +81,26 @@ working but some important features are not going to work.
 
 ## Social Network API
 
-### Create student
+### Users
 
-#### Description
+#### Create student
+
+##### Description
 
 Create a new student user in the system and return a session token.
 
-#### Endpoint
+##### Endpoint
 `/v1/api/social-network/users/signup`
 
-#### Headers
+##### Headers
 
 Not more than the mandatories.
 
-#### Method
+##### Method
 
 POST
 
-#### Params
+##### Params
 
 * `firstname`: string
 * `lastname`: string
@@ -106,7 +110,7 @@ POST
 * `user_type_id`: int
 * `major_id`: int
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -114,37 +118,37 @@ POST
 }
 ```
 
-#### Codes
+##### Codes
 * 1: Domain name not allowed.
 * 2: Email already exists.
 * 3: Username already exists.
 * 4: User type doesn't exists.
 * 5: Major doesn't exists.
 
-### Sign in
+#### Sign in
 
-#### Description
+##### Description
 
 Generates a session token to be used by an user. This token must be sent in the `Authorization` header
 of a request that calls to an endpoint that requires user authentication.
 
-#### Endpoint
+##### Endpoint
 `/v1/api/social-network/users/signin`
 
-#### Headers
+##### Headers
 
 Not more than the mandatories.
 
-#### Method
+##### Method
 
 POST
 
-#### Params
+##### Params
 
 * `username`: string. It can be the username or email.
 * `passwd`: string
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -152,34 +156,34 @@ POST
 }
 ```
 
-#### Codes
+##### Codes
 
-No particular codes.
+* 1: Invalid credentials.
 
-### Get public user data
+#### Get public user data
 
-#### Description
+##### Description
 
 Retrieve the user public information according of the user type. For example, if the user is a student
 so within the data will be the major and the email will not show.
 
-#### Endpoint
+##### Endpoint
 
 `/v1/api/social-network/users/data/:username`
 
-#### Headers
+##### Headers
 
 Not more than the mandatories.
 
-#### Method
+##### Method
 
 GET
 
-#### Params
+##### Params
 
 * `username`: string.
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -194,34 +198,34 @@ GET
 }
 ```
 
-#### Codes
+##### Codes
 * 1: Username doesn't exists.
 
-### Create post
+#### Create post
 
-#### Description
+##### Description
 
 Create a new user post, either only text or text with an image.
 
-#### Endpoint
+##### Endpoint
 
 `/v1/api/social-network/users/post`
 
-#### Headers
+##### Headers
 
 * `Content-Type`: multipart/form-data
 * `Authorization`
 
-#### Method
+##### Method
 
 POST
 
-#### Params
+##### Params
 
 * `content`: string.
 * `image`: Object.
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -230,33 +234,33 @@ POST
 }
 ```
 
-#### Codes
+##### Codes
 * 1: No data was sent.
 
-### Search users
+#### Search users
 
-#### Description
+##### Description
 
 Performs a search of a certain relative kind of user, based on the user that ask for the search. It can retrieve 
 all of users, followers or users followed by the requesting user that match with a search criteria. If the search 
-field is empty, the records are not disciminated. Records are served into groups of a certain size called pages. 
+field is empty, the records are not discriminated. Records are served into groups of a certain size called pages. 
 You can select the group size and what group get in a call.
 
 This endpoint also return how much records were found with the search criteria.
 
-#### Endpoint
+##### Endpoint
 
 `/v1/api/social-network/users/search`
 
-#### Headers
+##### Headers
 
 * `Authorization`
 
-#### Method
+##### Method
 
 GET
 
-#### Params
+##### Params
 
 All of the following parameters are optional. It has default values.
 
@@ -271,7 +275,7 @@ The size of the group of records to retrieve. Default `10`.
 
 * `page`: int.
 
-The number of the group to retrieve. Pages starts at `0`, what is also the defaul value.
+The number of the group to retrieve. Pages starts at `0`, what is also the default value.
 
 * `search`: string.
 
@@ -281,7 +285,7 @@ A phrase containing keywords to perform the search. Default is an empty string.
 
 If records are retrieved in ascending order. Default `1`. Use `0` for false.
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -303,33 +307,33 @@ If records are retrieved in ascending order. Default `1`. Use `0` for false.
 }
 ```
 
-#### Codes
+##### Codes
 
 No particular codes.
 
-### Get public user types
+#### Get public user types
 
-#### Description
+##### Description
 
 Return an object containing an array of names and ids of the public user types. Useful as part of the sign up flow.
 
-#### Endpoint
+##### Endpoint
 
 `/v1/api/social-network/users/types`
 
-#### Headers
+##### Headers
 
 Not more than madatories.
 
-#### Method
+##### Method
 
 GET
 
-#### Params
+##### Params
 
 Void
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -346,33 +350,33 @@ Void
 }
 ```
 
-#### Codes
+##### Codes
 
 No particular codes.
 
-### Get majors data
+#### Get majors data
 
-#### Description
+##### Description
 
 Return an object containing an array of names and ids of avaliable majors. Useful as part of the sign up flow.
 
-#### Endpoint
+##### Endpoint
 
 `/v1/api/social-network/users/majors`
 
-#### Headers
+##### Headers
 
 Not more than madatories.
 
-#### Method
+##### Method
 
 GET
 
-#### Params
+##### Params
 
 Void
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -389,33 +393,35 @@ Void
 }
 ```
 
-#### Codes
+##### Codes
 
 No particular codes.
 
-### Get permission of a group
+### Groups
 
-#### Description
+#### Get permission of a group
+
+##### Description
 
 Return the permissions that a group has.
 
-#### Endpoint
+##### Endpoint
 
 `/v1/api/social-network/groups/group/:group_id/permissions`
 
-#### Headers
+##### Headers
 
 Not more than madatories.
 
-#### Method
+##### Method
 
 GET
 
-#### Params
+##### Params
 
 * `group_id`: the id of the group to request. Replace this label by the id in the url.
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -428,13 +434,13 @@ GET
 }
 ```
 
-#### Codes
+##### Codes
 
 1. Group doesn't exists. 
 
-### Search Groups
+#### Search Groups
 
-#### Description
+##### Description
 
 Performs a search of certain relative kind of group, based on the user that ask for the search. It can retrieve all the public 
 groups or only the groups (public and private) that user belongs to, that match with a search criteria. If the search field is 
@@ -442,19 +448,19 @@ empty the records are not discriminated. Records are served in groups of a certa
 can select the offset size and what page get in a call.
 This endpoint also return how much records were found with the search criteria.
 
-#### Endpoint
+##### Endpoint
 
 `/v1/api/social-network/groups/search`
 
-#### Headers
+##### Headers
 
 * `Authorization`
 
-#### Method
+##### Method
 
 GET
 
-#### Params
+##### Params
 
 All the following parameters are optional. It has default values.
 
@@ -481,7 +487,7 @@ The number of the group of records to retrieve. Page start at `0`, what is also 
 If the records are retrieved in ascending order. Default `1`. Use `0` for false.
 
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -503,29 +509,29 @@ If the records are retrieved in ascending order. Default `1`. Use `0` for false.
 }
 ```
 
-#### Codes
+##### Codes
 
 No particular codes.
 
-### Create a group
+#### Create a group
 
-#### Description
+##### Description
 
 Creates a new group associating the requesting user as owner.
 
-#### Endpoint
+##### Endpoint
 
 `/v1/api/social-network/groups/create`
 
-#### Headers
+##### Headers
 
 * Authorization
 
-#### Method
+##### Method
 
 POST
 
-#### Params
+##### Params
 
 * `group_name`: string. The name of the group. 
 * `description`: string. Group description, optional.
@@ -533,7 +539,7 @@ POST
 * `permissions`: Array\<int>. An array of permission ids. See [here](#) to request available permissions.
 * `tags`: Array\<string>. An array of strings representing tags that will be used to appear in searches.
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -541,31 +547,31 @@ POST
 }
 ```
 
-#### Codes
+##### Codes
 
 1. User owner does not exists.
 2. Visibility not allowed.
 3. Permission does not exists
 
-### Switch group notifications
+#### Switch group notifications
 
-#### Description
+##### Description
 
 Turn on or turn off the group notifications.
 
-#### Endpoint
+##### Endpoint
 
 `/v1/api/social-network/groups/group/:group_id/switch-notifications`
 
-#### Headers
+##### Headers
 
 * `Authorization`
 
-#### Method
+##### Method
 
 PUT
 
-#### Params
+##### Params
 
 * `group_id`: int.
 
@@ -575,40 +581,40 @@ The id of the group to request. Replace this label by the id in the url.
 
 New state of the group notifications. Use `0` to turn off or `1` to turn on the notifications.
 
-#### Response data-structure
+##### Response data-structure
 
 No particular response data-structure.
 
-#### Codes
+##### Codes
 
 1. User doesn't exist in the group memberships or the group doesn't exist.
 2. Group notifications are already in that state.
 
-### Update group image
+#### Update group image
 
-#### Description
+##### Description
 
 Update the group image. To do that the user requesting must be the group owner.
 
-#### Endpoint
+##### Endpoint
 
 `/v1/api/social-network/groups/group/:group_id/update-image`
 
-#### Headers
+##### Headers
 
 * `Content-Type`: multipart/form-data
 * `Authorization`
 
-#### Method
+##### Method
 
 PUT
 
-#### Params
+##### Params
 
 * `group_id`: int. The id of the group to request. Replace this label by the id in the url.
 * `image`: Object. The new image for the group.
 
-#### Response data-structure
+##### Response data-structure
 
 ```json
 {
@@ -616,7 +622,7 @@ PUT
 }
 ```
 
-#### Codes
+##### Codes
 
 1. The group does not exist.
 2. Permission denied. You are not the group owner.
