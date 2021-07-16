@@ -47,7 +47,7 @@ module.exports = {
     //Setting data to create a new user.
     let at_index = user.email.indexOf('@')
     let domain_name = user.email.substring(at_index + 1)
-    let createUserArgs = [user.firstname, user.lastname, user.student_id, user.email, user.passwd, 
+    let createUserArgs = [user.firstname, user.lastname, user.username, user.email, user.passwd, 
                 user.profile_img_src || '', user.description || '', user.user_type_id, domain_name]
     let conn
     try {
@@ -88,6 +88,8 @@ module.exports = {
         //Also the documentation of this function in the services documentation for more details.
         if(result.exit_code == 3) {
           result.exit_code = 5;
+        } else if(result.exit_code == 4) {
+          result.exit_code = 6;
         } else {
           throw new Error(`Error trying to create a new student by a new user. 
                           sp_create_student's exit_code: ${result.exit_code}`)
@@ -111,7 +113,7 @@ module.exports = {
 
   /**
    * Return the user public information according of the user type.
-   * @param {string} username 
+   * @param {string} username Username or email.
    */
   getPublicUserData: async function (username) {
     try {
@@ -131,9 +133,9 @@ module.exports = {
             INNER JOIN
           user_types ON users.user_type_id = user_types.id
         WHERE
-          username = ?
+          username = ? or email = ?
         LIMIT 1;`
-      let resultUser = await mariadb.query(query, username)
+      let resultUser = await mariadb.query(query, [username, username])
       let userData = resultUser[0]
       
       if (!userData) {

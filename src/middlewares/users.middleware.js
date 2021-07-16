@@ -6,6 +6,7 @@ module.exports = {
     validator(req.body).required().isObject( obj => {
       obj('firstname').required().isString()
       obj('lastname').required().isString()
+      obj('username').isString().isMatch(/^[a-zA-Z0-9_\-]*$/)
       obj('email').required().isString().isEmail()
       obj('passwd').required().isString()
       obj('description').isString()
@@ -26,6 +27,7 @@ module.exports = {
     let validator = new Validator()
     validator(req.body).required().isObject( obj => {
       obj('major_id').required().isNumber().integer()
+      obj('student_id').isString().isMatch(/^[a-zA-Z0-9_\-]*$/)
     })
     let errors = parseValidatorOutput(validator.run())
     if(errors.length != 0) {
