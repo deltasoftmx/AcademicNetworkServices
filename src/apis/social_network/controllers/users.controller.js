@@ -9,21 +9,44 @@ const errorHandlingService = require('../../../services/error_handling.service')
 module.exports = {
   createStudent: async function(req, res) {
     let at_index = req.body.email.indexOf('@')
-    req.body.student_id = req.body.email.substring(0, at_index)
+    if (!req.body.username) {
+      req.body.username = req.body.email.substring(0, at_index)
+    }
+    if (!req.body.student_id) {
+      req.body.student_id = req.body.email.substring(0, at_index)
+    }
     req.body.passwd = cryptService.hash(req.body.passwd)
     try {
       let result = await userService.createStudent(req.body)
-      let data
+      
       if(result.exit_code == 0) {
         let token = await cryptService.generateJWT( { user_id: result.user_id },
                                                     conf.session.expires_in)
-        data = { session_token: token }
+        let publicUserData = await userService.getPublicUserData(req.body.email)
+
+        return res.finish({
+          code: result.exit_code,
+          messages: [result.message],
+          data: {
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            username: req.body.username,
+            description: req.body.description || '',
+            user_type_id: req.body.user_type_id,
+            user_type_name: publicUserData.type_user,
+            major_id: req.body.major_id,
+            major_name: publicUserData.major,
+            student_id: req.body.student_id || '',
+            session_token: token
+          }
+        })
       }
+
       res.finish({
         code: result.exit_code,
-        messages: [result.message],
-        data
+        messages: [result.message]
       })
+
     } catch(err) {
       err.file = err.file || __filename
       err.func = err.func || 'createStudent'
@@ -72,7 +95,7 @@ module.exports = {
       if (!resultUserData) {
         res.status(404).finish({
           code: 1,
-          messages: [`Username doesn't exists.`]
+          messages: [`Username or email doesn't exists.`]
         })
       } else {
         resultUserData.created_at = moment(resultUserData.created_at).format("LL")

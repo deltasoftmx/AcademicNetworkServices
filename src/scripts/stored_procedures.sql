@@ -91,6 +91,7 @@ sp_create_student_label:begin
 	declare exist_user_id int unsigned;
     declare exist_major_id int unsigned;
     declare exist_student int unsigned;
+    declare exist_student_id int unsigned;
     
     select id into exist_student from students_data as sd
     where sd.user_id = user_id limit 1;
@@ -119,6 +120,16 @@ sp_create_student_label:begin
 		select
 			3 as exit_code,
             "Major doesn't exist" as message;
+		leave sp_create_student_label;
+	end if; 
+    
+    select id into exist_student_id from students_data as sd
+    where sd.student_id = student_id limit 1;
+    
+    if exist_student_id is not null then
+		select
+			4 as exit_code,
+            "Student id already exists." as message;
 		leave sp_create_student_label;
 	end if; 
     

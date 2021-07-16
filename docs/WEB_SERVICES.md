@@ -124,6 +124,7 @@ POST
 * 3: Username already exists.
 * 4: User type doesn't exists.
 * 5: Major doesn't exists.
+* 6: Student id already exists.
 
 #### Sign in
 
@@ -190,10 +191,10 @@ GET
   "username": "jonhdoe",
   "firstname": "John",
   "lastname": "Doe",
+  "type_user": "Estudiante",
   "description": "Hi I'm John Doe",
   "profile_img_src": "",
   "created_at": "2020-07-20T16:31:31.000Z",
-  "user_type": "Estudiante",
   "major": "Data Engineering"
 }
 ```
