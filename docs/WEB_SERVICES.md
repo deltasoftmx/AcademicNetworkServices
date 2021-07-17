@@ -114,6 +114,17 @@ POST
 
 ```json
 {
+  "username": "jonhdoe",
+  "firstname": "John",
+  "lastname": "Doe",
+  "description": "Hi I'm John Doe",
+  "profile_img_src": "",
+  "user_type_id": 1,
+  "user_type_name": "Estudiante",
+  "major_id": 2,
+  "major_name": "Data Engineering",
+  "student_id": "-_john06",
+  "created_at": "2020-07-20T16:31:31.000Z",
   "session_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJpYXQiOjE1OTY3NjYzOTcsImV4cCI6MTU5NzM3MTE5N30.AAuRetvF60kCqMYjUatkvhVKu75WHBGiYAv3K-yw5LOk-WIAWVlwmaXEzC5VVVYlHs3VfteCT52LFpkJSdQPsaCalEmngOx2tqshfwtK7PolRQN7j_Qcvqh-ckhwyPW_oVux5OjBqbbq9XYg3y5uhHpkNur9ouOFbMdPYx95YWp_gR0KfI5n8j7xjOyNLvNEg7X4wxHh7k-APWY8kt9rPTHaOxjUBsBKS-Uf3G4qoWQ1mqqRawH9YkpmNzmqjfj_hnV-Plvl-pAzc5fznkAYWiSFFQtyAPS5r7hAK2uzNxPT38q-Eo_YghukfLhqbPZyCutIf5HDy3VJnAJ2CSLLonAr9_uXqtTizyg4ijv61sFz30HfnbxZ5lsllJm2rggTNQm7XafQNjG1L1uukjLKtO39a-BA1RPZQuv0vnXCihArFdY1NNMCyL4eUehNxlDWj56VyLIq_DqIFtdXHKiuoqEFq7Mr4gkYQI4Qu3hshbjxrD1y_ELJnE44D4qbdVdK"
 }
 ```
@@ -153,6 +164,14 @@ POST
 
 ```json
 {
+  "username": "jonhdoe",
+  "firstname": "John",
+  "lastname": "Doe",
+  "type_user": "Estudiante",
+  "description": "Hi I'm John Doe",
+  "profile_img_src": "",
+  "created_at": "2020-07-20T16:31:31.000Z",
+  "major": "Data Engineering",
   "session_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjp7ImlkIjoyMH0sImlhdCI6MTU5NTA1MzM5NSwiZXhwIjoxNTk1NjU4MTk1fQ.n39rxTNk6z64hIAh4BmJLucIjawBN0UGuU_IyVgCBa2vkzqsRhntU8YHQXMkmpZyzZTDWlowFSMfaNWOXthcK0O2U5gxKtXB-suRoEOijZu03c7B3BnIBZt4lid7KBhi3WME_JUJIV3xVQQiy-XIW0qMSsG3dJyHDB-jLAv1YL9vrGZdIobsAD0cipUyBrRfez4N824-EtlLjxyHHjsnmGeMMqhebIL3Lkgb-OaHDzqVgEcULRqqXozuGXHYw4a5Qs41eIF2q7zrq1DQueXGuNG-NKnB8gP8Hx_0Z_zT0syI6tfCyfFtF11-BAL7fEOOIBjsRW7grifqbZ3x8OXRiVdRewydvLHDqUqY5B4EdJEAK-q3WvxiolXZ-obYGY48enMuM4kLvrSL19Uu-NYbRk5Q3INoSecIsr2s_Kp2Ac8d-4gYjzCLyad8cmhXRZP8kzLVfdx6wpWvcG5vJB1YVa1rqms-ldsecZNhsTE5eqcv7TDxrSMJPR11RTqDx-DK"
 }
 ```

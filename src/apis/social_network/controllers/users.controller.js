@@ -32,11 +32,13 @@ module.exports = {
             lastname: req.body.lastname,
             username: req.body.username,
             description: req.body.description || '',
+            profile_img_src: publicUserData.profile_img_src,
             user_type_id: req.body.user_type_id,
             user_type_name: publicUserData.type_user,
             major_id: req.body.major_id,
             major_name: publicUserData.major,
-            student_id: req.body.student_id || '',
+            student_id: req.body.student_id,
+            created_at: publicUserData.created_at,
             session_token: token
           }
         })
@@ -66,11 +68,11 @@ module.exports = {
       }
       let token = await cryptService.generateJWT( { user_id: userId }, 
                                                   conf.session.expires_in)
+      let publicUserData = await userService.getPublicUserData(req.body.username)
+      publicUserData.session_token = token
       res.finish({
         code: 0, 
-        data: {
-          session_token: token
-        },
+        data: publicUserData,
         message: ['Done']
       })
     } catch(err) {
