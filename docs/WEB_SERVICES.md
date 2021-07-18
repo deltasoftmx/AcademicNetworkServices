@@ -22,6 +22,8 @@
     * [Create a group](#create-a-group)
     * [Switch group notifications](#switch-group-notifications)
     * [Update group image](#update-group-image)
+  * [Posts](#posts)
+    * [Get posts for timeline](#get-posts-for-timeline)
 
 ## General information
 
@@ -646,3 +648,98 @@ PUT
 
 1. The group does not exist.
 2. Permission denied. You are not the group owner.
+
+### Posts
+
+#### Get posts for timeline
+
+##### Description
+
+Retrieves a list of publications made by users that the requesting user is following and publications 
+that are associated to groups that the requesting user is part of. The publications are sorted in 
+descending order according to their last modified date. Records are served into groups of a certain size called pages. 
+You can select the group size and what group get in a call.
+
+##### Endpoint
+
+`/v1/api/social-network/posts/timeline`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+GET
+
+##### Params
+
+The following two parameters are optional. It has default values.
+
+* `offset`: int.
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`: int.
+
+The number of the group to retrieve. Pages starts at `0`, what is also the default value.
+
+##### Response data-structure
+
+```json
+{
+  "posts": [
+    {
+      "id": 16,
+      "username": "user one",
+      "firstname": "user one",
+      "lastname": "user one",
+      "profile_img_src": "",
+      "content": "Post of user one. This is a shared post",
+      "img_src": "",
+      "post_type": "user",
+      "like_counter": 1,
+      "created_at": "2021-07-18T15:02:48.000Z",
+      "liked_by_user": 0,
+      "group_name": null,
+      "group_id": null,
+      "referenced_post": {
+        "id": 5,
+        "username": "user two",
+        "firstname": "user two",
+        "lastname": "user two",
+        "profile_img_src": "",
+        "content": "Post of user two. Marked favorite by the user requesting.",
+        "img_src": "https://res.cloudinary.com/ajulian-cloud/image/upload/v1626619985/programming-meme_jni2ji.jpg",
+        "post_type": "user",
+        "like_counter": 1,
+        "created_at": "2021-07-18T14:55:17.000Z",
+        "liked_by_user": 1,
+        "group_name": null,
+        "group_id": null
+      }
+    },
+    {
+      "id": 9,
+      "username": "user two",
+      "firstname": "user two",
+      "lastname": "user two",
+      "profile_img_src": "",
+      "content": "Second Post of user two. Marked favorite by the user requesting.",
+      "img_src": null,
+      "post_type": "group",
+      "like_counter": 1,
+      "created_at": "2021-07-12T18:23:32.000Z",
+      "liked_by_user": 1,
+      "group_name": "Random group",
+      "group_id": 1,
+      "referenced_post": null
+    }
+  ],
+  "total_records": 7
+}
+```
+
+##### Codes
+
+No particular codes.
