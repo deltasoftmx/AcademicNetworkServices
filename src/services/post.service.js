@@ -81,23 +81,12 @@ module.exports = {
   /**
    * Retrieves a list of publications made by users that the requesting user is following 
    * and publications that are associated to groups that the requesting user is part of. 
-   * The publications are sorted in descending order according to their last modified date.
+   * The publications are sorted in descending order according to their creation date.
+   * Regarding the referenced post only sends the id of the post.
    * @param {number} user_id Id of user requesting.
-   * @returns {[object]} An array of objects, with:
-   * - id: number,
-   * - username: string,
-   * - firstname: string,
-   * - lastname: string,
-   * - profile_img_src: string,
-   * - content: string,
-   * - img_src: string,
-   * - post_type: string,
-   * - like_counter: number,
-   * - created_at: datetime,
-   * - liked_by_user: bool,
-   * - group_name: string,
-   * - group_id: string,
-   * - referenced_post_id: number
+   * @returns {Object}
+   *  * posts: posts records
+   *  * total_records: number
    */
   getPostsForTimeline: async function(user_id, offset = 10, page = 0) {
     const query = `
@@ -145,7 +134,8 @@ module.exports = {
           on posts.id = favorite_posts.post_id
         where 
           followers.follower_user_id = ? and 
-          posts.post_type = 'user'
+          (posts.post_type = 'user' or
+          posts.post_type = 'shared')
       ) 
       union 
       (

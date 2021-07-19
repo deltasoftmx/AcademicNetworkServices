@@ -657,7 +657,7 @@ PUT
 
 Retrieves a list of publications made by users that the requesting user is following and publications 
 that are associated to groups that the requesting user is part of. The publications are sorted in 
-descending order according to their last modified date. Records are served into groups of a certain size called pages. 
+descending order according to their creation date. Records are served into groups of a certain size called pages. 
 You can select the group size and what group get in a call.
 
 ##### Endpoint
@@ -697,9 +697,9 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
       "profile_img_src": "",
       "content": "Post of user one. This is a shared post",
       "img_src": "",
-      "post_type": "user",
+      "post_type": "shared",
       "like_counter": 1,
-      "created_at": "2021-07-18T15:02:48.000Z",
+      "created_at": "2021-07-18T05:00:00.000Z",
       "liked_by_user": 0,
       "group_name": null,
       "group_id": null,
@@ -713,7 +713,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
         "img_src": "https://res.cloudinary.com/ajulian-cloud/image/upload/v1626619985/programming-meme_jni2ji.jpg",
         "post_type": "user",
         "like_counter": 1,
-        "created_at": "2021-07-18T14:55:17.000Z",
+        "created_at": "2021-07-18T05:00:00.000Z",
         "liked_by_user": 1,
         "group_name": null,
         "group_id": null
@@ -729,7 +729,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
       "img_src": null,
       "post_type": "group",
       "like_counter": 1,
-      "created_at": "2021-07-12T18:23:32.000Z",
+      "created_at": "2021-07-12T05:00:00.000Z",
       "liked_by_user": 1,
       "group_name": "Random group",
       "group_id": 1,
