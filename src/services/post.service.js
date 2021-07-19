@@ -174,7 +174,7 @@ module.exports = {
       )
       ) results
       order by created_at desc
-      limit ${page * offset}, ${offset};
+      limit ?, ?;
     `
     // Counts how much records there are.
     let countQuery = query.split('\n')
@@ -184,8 +184,10 @@ module.exports = {
     countQuery.pop(); countQuery.pop()
     countQuery = countQuery.join('\n')
 
+    let params = new Array(5).fill(user_id)
+    params.push(page * offset, offset)
+    
     try {
-      const params = new Array(5).fill(user_id)
       const postsResult = await mariadb.query(query, params)
       let countResult = await mariadb.query(countQuery, params)
       countResult = countResult[0]
