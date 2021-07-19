@@ -272,9 +272,9 @@ module.exports = {
       users.email regexp ? or
       user_types.name regexp ? ) 
       order by users.id ${asc ? 'asc' : 'desc'}
-      limit ${page * offset}, ${offset} ;`
+      limit ?, ?;`
     
-    let args = [ userTarget, search, search, search, search, search ]
+    let args = [ userTarget, search, search, search, search, search, page*offset, offset ]
     if(userRelativeType == 'all') {
       args.shift()
     }
@@ -304,6 +304,7 @@ module.exports = {
 
     try {
       let result = await mariadb.query(query, args)
+      args.pop(); args.pop()
       let countResult = await mariadb.query(countQuery, args)
       return {
         users: result,

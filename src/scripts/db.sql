@@ -124,7 +124,7 @@ create table if not exists posts (
     referenced_post_id int unsigned,
     post_type varchar(50) not null,
     like_counter int unsigned not null default 1,
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key(user_id) references users(id)
 );
