@@ -45,7 +45,7 @@ module.exports = {
         if (userId === undefined) {
           return res.status(401).finish({
             code: 1,
-            messages: ['Unauthenticated. Must authenticate to get the requested response.']
+            messages: ['Unauthenticated. User must authenticate to get the requested response.']
           })
         }
         // User authenticated
@@ -65,7 +65,7 @@ module.exports = {
         } else {
           return res.status(403).finish({
             code: 2,
-            messages: ['Unauthorized. The requested post belongs to a private group to which you do not belong.']
+            messages: [`Forbidden. The requested post belongs to a private group to which the user requesting doesn't belong.`]
           })
         }
       } 

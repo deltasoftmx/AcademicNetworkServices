@@ -2,7 +2,8 @@ const mariadb = require('./mariadb.service')
 
 module.exports = {
   /**
-   * Get base data of a single publication.
+   * Gets base data of a single publication.
+   * Includes if the user requesting likes the post.
    * @param {number} post_id Id of post to get the data.
    * @param {number} user_id Id of user requesting.
    * @returns {object} An object with:
@@ -18,7 +19,7 @@ module.exports = {
    * - created_at: datetime,
    * - liked_by_user: bool,
    * - group_name: string,
-   * - group_id: string
+   * - group_id: number
    */
   getBasePostDataUserAuth: async function(post_id, user_id) {
     const query = `
@@ -79,7 +80,7 @@ module.exports = {
   },
 
   /**
-   * Get base data of a single publication.
+   * Gets base data of a single publication.
    * @param {number} post_id Id of post to get the data.
    * @returns {object} An object with:
    * - id: number,
@@ -272,6 +273,28 @@ module.exports = {
     }
   },
 
+  /**
+   * Gets data of a single publication, this includes the reference post id
+   * in case that the post is "shared" type.
+   * Includes if the user requesting likes the post.
+   * @param {number} post_id Id of post to get the data.
+   * @param {number} user_id Id of user requesting.
+   * @returns {obejct} An object with:
+   * - id: number,
+   * - username: string,
+   * - firstname: string,
+   * - lastname: string,
+   * - profile_img_src: string,
+   * - content: string,
+   * - img_src: string,
+   * - post_type: string,
+   * - like_counter: number,
+   * - created_at: datetime,
+   * - liked_by_user: bool,
+   * - group_name: string,
+   * - group_id: number,
+   * - referenced_post_id: number
+   */
   getPostDataUserAuth: async function(post_id, user_id) {
     const query = `
       select
@@ -331,6 +354,25 @@ module.exports = {
     }
   },
 
+  /**
+   * Gets data of a single publication, this includes the reference post id
+   * in case that the post is "shared" type.
+   * @param {number} post_id Id of post to get the data.
+   * @returns {object} An object with:
+   * - id: number,
+   * - username: string,
+   * - firstname: string,
+   * - lastname: string,
+   * - profile_img_src: string,
+   * - content: string,
+   * - img_src: string,
+   * - post_type: string,
+   * - like_counter: number,
+   * - created_at: datetime,
+   * - group_name: string,
+   * - group_id: number,
+   * - referenced_post_id: number
+   */
   getPostData: async function(post_id) {
     const query = `
       select
@@ -384,6 +426,12 @@ module.exports = {
     }
   },
 
+  /**
+   * Checks if the post provided is part of a private group, returns true or false. 
+   * In case the post is not found it returns -1
+   * @param {number} post_id 
+   * @returns {boolean | number}
+   */
   postBelongsToPrivateGroup: async function(post_id) {
     const query = `
       select 
@@ -413,6 +461,13 @@ module.exports = {
     }
   },
 
+  /**
+   * Checks if the user provided belongs to the group provided.
+   * Returns true or false.
+   * @param {number} user_id 
+   * @param {number} group_id 
+   * @returns {boolean}
+   */
   userBelongsToGroup: async function(user_id, group_id) {
     const query = `
       select id

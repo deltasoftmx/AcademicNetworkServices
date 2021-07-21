@@ -5,6 +5,12 @@
 * [Description](#description)
 * [Methods](#methods)
   * [getPostsForTimeline](#getpostsfortimeline)
+  * [getBasePostDataUserAuth](#getbasepostdatauserauth)
+  * [getBasePostData](#getbasepostdata)
+  * [getPostDataUserAuth](#getpostdatauserauth)
+  * [getPostData](#getpostdata)
+  * [postBelongsToPrivateGroup](#postbelongstoprivategroup)
+  * [userBelongsToGroup](#userbelongstogroup)
 
 ## Description
 
@@ -40,3 +46,136 @@ descending order according to their creation date. Records are served into group
     * `group_id`: string,
     * `referenced_post_id`: int
   * `total_records`: int.
+
+### `getBasePostDataUserAuth`
+
+* **Description**: 
+
+Gets base data of a single publication. 
+Includes if the user requesting likes the post.
+
+* **Params**:
+
+  * `post_id`: int.
+  * `user_id`: int.
+
+* **Return data type**: Promise\<Object>
+  * `id`: number,
+  * `username`: string,
+  * `firstname`: string,
+  * `lastname`: string,
+  * `profile_img_src`: string,
+  * `content`: string,
+  * `img_src`: string,
+  * `post_type`: string,
+  * `like_counter`: number,
+  * `created_at`: datetime,
+  * `liked_by_user`: bool,
+  * `group_name`: string,
+  * `group_id`: number
+
+### `getBasePostData`
+
+* **Description**: 
+
+Gets base data of a single publication. 
+
+* **Params**:
+
+  * `post_id`: int.
+
+* **Return data type**: Promise\<Object>
+  * `id`: number,
+  * `username`: string,
+  * `firstname`: string,
+  * `lastname`: string,
+  * `profile_img_src`: string,
+  * `content`: string,
+  * `img_src`: string,
+  * `post_type`: string,
+  * `like_counter`: number,
+  * `created_at`: datetime,
+  * `group_name`: string,
+  * `group_id`: number
+
+### `getPostDataUserAuth`
+
+* **Description**: 
+
+Gets data of a single publication, this includes the reference post id in case that the post 
+is "shared" type.
+Includes if the user requesting likes the post.
+
+* **Params**:
+
+  * `post_id`: int.
+  * `user_id`: int.
+
+* **Return data type**: Promise\<Object>
+  * `id`: number,
+  * `username`: string,
+  * `firstname`: string,
+  * `lastname`: string,
+  * `profile_img_src`: string,
+  * `content`: string,
+  * `img_src`: string,
+  * `post_type`: string,
+  * `like_counter`: number,
+  * `created_at`: datetime,
+  * `liked_by_user`: bool,
+  * `group_name`: string,
+  * `group_id`: number
+  * `referenced_post_id`: number
+
+### `getPostData`
+
+* **Description**: 
+
+Gets data of a single publication, this includes the reference post id in case that the post 
+is "shared" type.
+
+* **Params**:
+
+  * `post_id`: int.
+
+* **Return data type**: Promise\<Object>
+  * `id`: number,
+  * `username`: string,
+  * `firstname`: string,
+  * `lastname`: string,
+  * `profile_img_src`: string,
+  * `content`: string,
+  * `img_src`: string,
+  * `post_type`: string,
+  * `like_counter`: number,
+  * `created_at`: datetime,
+  * `group_name`: string,
+  * `group_id`: number
+  * `referenced_post_id`: number
+
+### `postBelongsToPrivateGroup`
+
+* **Description**: 
+
+Checks if the post provided is part of a private group, returns true or false. 
+In case the post is not found it returns -1
+
+* **Params**:
+
+  * `post_id`: int.
+
+* **Return data type**: Promise\<boolean | number>
+
+### `userBelongsToGroup`
+
+* **Description**: 
+
+Checks if the user provided belongs to the group provided.
+Returns true or false.
+
+* **Params**:
+
+  * `user_id`: int.
+  * `group_id`: int.
+
+* **Return data type**: Promise\<boolean>
