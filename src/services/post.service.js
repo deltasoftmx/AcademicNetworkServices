@@ -20,7 +20,7 @@ module.exports = {
    * - group_name: string,
    * - group_id: string
    */
-  getBasePostData: async function(post_id, user_id) {
+  getBasePostDataUserAuth: async function(post_id, user_id) {
     const query = `
       select
         posts.id,
@@ -70,6 +70,75 @@ module.exports = {
     `
     try {
       const basePost = await mariadb.query(query, [user_id, post_id, post_id, post_id])
+      return basePost[0]
+    } catch (err) {
+      err.file = __filename
+      err.func = 'getBasePostDataUserAuth'
+      throw err
+    }
+  },
+
+  /**
+   * Get base data of a single publication.
+   * @param {number} post_id Id of post to get the data.
+   * @returns {object} An object with:
+   * - id: number,
+   * - username: string,
+   * - firstname: string,
+   * - lastname: string,
+   * - profile_img_src: string,
+   * - content: string,
+   * - img_src: string,
+   * - post_type: string,
+   * - like_counter: number,
+   * - created_at: datetime,
+   * - group_name: string,
+   * - group_id: string
+   */
+   getBasePostData: async function(post_id) {
+    const query = `
+      select
+        posts.id,
+        users.username,
+        users.firstname,
+        users.lastname,
+        users.profile_img_src,
+        posts.content,
+        posts.img_src,	
+        posts.post_type,
+        posts.like_counter,
+        posts.created_at,
+        case 
+          when posts.post_type = 'group' then (
+            select user_groups.name
+            from posts
+            inner join group_posts
+              on posts.id = group_posts.post_id
+            inner join user_groups
+              on group_posts.group_id = user_groups.id
+            where posts.id = ?
+          )
+        end as group_name,
+        case 
+          when posts.post_type = 'group' then (
+            select user_groups.id
+            from posts
+            inner join group_posts
+              on posts.id = group_posts.post_id
+            inner join user_groups
+              on group_posts.group_id = user_groups.id
+            where posts.id = ?
+          )
+        end as group_id
+      from posts
+      inner join users
+        on posts.user_id = users.id
+      where 
+        posts.id = ?
+      limit 1;
+    `
+    try {
+      const basePost = await mariadb.query(query, [post_id, post_id, post_id])
       return basePost[0]
     } catch (err) {
       err.file = __filename
@@ -199,6 +268,166 @@ module.exports = {
     } catch (err) {
       err.file = __filename
       err.func = 'getPostsForTimeline'
+      throw err
+    }
+  },
+
+  getPostDataUserAuth: async function(post_id, user_id) {
+    const query = `
+      select
+        posts.id,
+        users.username,
+        users.firstname,
+        users.lastname,
+        users.profile_img_src,
+        posts.content,
+        posts.img_src,	
+        posts.post_type,
+        posts.like_counter,
+        posts.created_at,
+        case 
+          when favorite_posts.user_id = ? then 1 
+          else 0
+        end as liked_by_user,
+        case 
+          when posts.post_type = 'group' then (
+            select user_groups.name
+            from posts
+            inner join group_posts
+              on posts.id = group_posts.post_id
+            inner join user_groups
+              on group_posts.group_id = user_groups.id
+            where posts.id = ?
+          )
+        end as group_name,
+        case 
+          when posts.post_type = 'group' then (
+            select user_groups.id
+            from posts
+            inner join group_posts
+              on posts.id = group_posts.post_id
+            inner join user_groups
+              on group_posts.group_id = user_groups.id
+            where posts.id = ?
+          )
+        end as group_id,
+        posts.referenced_post_id
+      from posts
+      inner join users
+        on posts.user_id = users.id
+      left join favorite_posts
+        on posts.id = favorite_posts.post_id
+      where 
+        posts.id = ?
+      limit 1;
+    `
+    try {
+      const post = await mariadb.query(query, [user_id, post_id, post_id, post_id])
+      return post[0]
+    } catch (err) {
+      err.file = __filename
+      err.func = 'getPostDataUserAuth'
+      throw err
+    }
+  },
+
+  getPostData: async function(post_id) {
+    const query = `
+      select
+        posts.id,
+        users.username,
+        users.firstname,
+        users.lastname,
+        users.profile_img_src,
+        posts.content,
+        posts.img_src,	
+        posts.post_type,
+        posts.like_counter,
+        posts.created_at,
+        case 
+          when posts.post_type = 'group' then (
+            select user_groups.name
+            from posts
+            inner join group_posts
+              on posts.id = group_posts.post_id
+            inner join user_groups
+              on group_posts.group_id = user_groups.id
+            where posts.id = ?
+          )
+        end as group_name,
+        case 
+          when posts.post_type = 'group' then (
+            select user_groups.id
+            from posts
+            inner join group_posts
+              on posts.id = group_posts.post_id
+            inner join user_groups
+              on group_posts.group_id = user_groups.id
+            where posts.id = ?
+          )
+        end as group_id,
+        posts.referenced_post_id
+      from posts
+      inner join users
+        on posts.user_id = users.id
+      where 
+        posts.id = ?
+      limit 1;
+    `
+    try {
+      const post = await mariadb.query(query, [post_id, post_id, post_id])
+      return post[0]
+    } catch (err) {
+      err.file = __filename
+      err.func = 'getPostData'
+      throw err
+    }
+  },
+
+  postBelongsToPrivateGroup: async function(post_id) {
+    const query = `
+      select 
+        user_groups.id as group_id,
+        user_groups.visibility
+      from posts
+      inner join group_posts
+        on posts.id = group_posts.post_id
+      inner join user_groups
+        on group_posts.group_id = user_groups.id
+      where posts.id = ?
+      limit 1;
+    `
+    try {
+      let result = await mariadb.query(query, [post_id])
+      result = result[0]
+
+      if (result === undefined) return -1
+      return {
+        group_id: result.group_id,
+        group_private: result.visibility === 'private' ? true : false
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'postBelongsToPrivateGroup'
+      throw err
+    }
+  },
+
+  userBelongsToGroup: async function(user_id, group_id) {
+    const query = `
+      select id
+      from group_memberships
+      where user_id = ? and group_id = ?
+      limit 1;
+    `
+    try {
+      let result = await mariadb.query(query, [user_id, group_id])
+      result = result[0]
+
+      return (result === undefined ? false : true)
+    } catch (err) {
+      err.file = __filename
+      err.func = 'userBelongsToGroup'
       throw err
     }
   }

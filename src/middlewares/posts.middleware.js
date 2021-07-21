@@ -1,4 +1,9 @@
-const { Validator, parseValidatorOutput, parseNumberFromGroupIfApplic } = require('../services/validator.service')
+const { 
+  Validator, 
+  parseValidatorOutput, 
+  parseNumberFromGroupIfApplic,
+  parseNumberIfApplicable
+} = require('../services/validator.service')
 
 module.exports = {
   checkPaginationParams: function(req, res, next) {
@@ -18,6 +23,23 @@ module.exports = {
       })
     }
     
+    next()
+  },
+
+  checkPostId: function(req, res, next) {
+    req.params.post_id = parseNumberIfApplicable(req.params.post_id)
+    
+    let validator = new Validator()
+    validator(req.params).required().isObject( obj => {
+      obj('post_id').required().isNumber().integer().isPositive()
+    })
+    let errors = parseValidatorOutput(validator.run())
+    if(errors.length != 0) {
+      return res.status(400).finish({
+        code: -1,
+        messages: errors
+      })
+    }
     next()
   }
 }
