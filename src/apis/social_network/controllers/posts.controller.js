@@ -1,5 +1,6 @@
 const postService = require('../../../services/post.service')
 const errorHandlingService = require('../../../services/error_handling.service')
+const messages = require('../../../../etc/messages.json')
 
 module.exports = {
   getPostsForTimeline: async function(req, res) {
@@ -20,7 +21,7 @@ module.exports = {
 
       res.finish({
         code: 0,
-        messages: ['Done'],
+        messages: [messages.success_messages.c200],
         data: {
           posts,
           total_records: result.total_records
@@ -45,7 +46,7 @@ module.exports = {
         if (userId === undefined) {
           return res.status(401).finish({
             code: 1,
-            messages: ['Unauthenticated. User must authenticate to get the requested response.']
+            messages: [messages.error_messages.e401]
           })
         }
         // User authenticated
@@ -59,7 +60,7 @@ module.exports = {
           post.referenced_post_id = undefined
           return res.finish({
             code: 0,
-            messages: ['Done'],
+            messages: [messages.success_messages.c200],
             data: post
           })
         } else {
@@ -74,7 +75,7 @@ module.exports = {
       if (!post) {
         return res.status(404).finish({
           code: 3,
-          messages: ['Post not found']
+          messages: [messages.error_messages.e404]
         })
       }
       if (post.referenced_post_id != null) {
@@ -83,7 +84,7 @@ module.exports = {
       post.referenced_post_id = undefined
       return res.finish({
         code: 0,
-        messages: ['Done'],
+        messages: [messages.success_messages.c200],
         data: post
       })
       
