@@ -5,7 +5,6 @@
 * [Description](#description)
 * [Methods](#methods)
   * [getPostsForTimeline](#getpostsfortimeline)
-  * [getBasePostData](#getbasepostdata)
   * [getPostData](#getpostdata)
   * [postBelongsToPrivateGroup](#postbelongstoprivategroup)
   * [userBelongsToGroup](#userbelongstogroup)
@@ -45,44 +44,22 @@ descending order according to their creation date. Records are served into group
     * `referenced_post_id`: int
   * `total_records`: int.
 
-### `getBasePostData`
-
-* **Description**: 
-
-Gets base data of a single publication. 
-If the user_id has a value, in the response is added if the user requesting likes the post.
-
-* **Params**:
-
-  * `post_id`: int.
-  * `user_id`: null | undefined | int. Not required.
-
-* **Return data type**: Promise\<Object>
-  * `id`: number,
-  * `username`: string,
-  * `firstname`: string,
-  * `lastname`: string,
-  * `profile_img_src`: string,
-  * `content`: string,
-  * `img_src`: string,
-  * `post_type`: string,
-  * `like_counter`: number,
-  * `created_at`: datetime,
-  * `liked_by_user`: bool (if user_id has a value),
-  * `group_name`: string,
-  * `group_id`: number
-
 ### `getPostData`
 
 * **Description**: 
 
-Gets data of a single publication, this includes the reference post id in case that the post 
-is "shared" type.
-If the user_id has a value, in the response is added if the user requesting likes the post.
+Gets data of a single publication.
+
+The response can add the following fields:
+
+'liked_by_user' if the user_id has an integer value (the user is authenticated).
+
+'referenced_post_id' if withReferencedPostId is equals true.
 
 * **Params**:
 
   * `post_id`: int.
+  * `withReferencedPostId`: boolean.
   * `user_id`: null | undefined | int. Not required.
 
 * **Return data type**: Promise\<Object>
@@ -99,7 +76,7 @@ If the user_id has a value, in the response is added if the user requesting like
   * `liked_by_user`: bool (if user_id has a value),
   * `group_name`: string,
   * `group_id`: number
-  * `referenced_post_id`: number
+  * `referenced_post_id`: number (if withReferencedPostId == true.)
 
 ### `postBelongsToPrivateGroup`
 

@@ -2,100 +2,6 @@ const mariadb = require('./mariadb.service')
 
 module.exports = {
   /**
-   * Gets base data of a single publication.
-   * If the user_id has a value, in the response is added if the user requesting likes the post.
-   * @param {number} post_id Id of post to get the data.
-   * @param {number} user_id Id of user requesting (optional).
-   * @returns {object} An object with:
-   * - id: number,
-   * - username: string,
-   * - firstname: string,
-   * - lastname: string,
-   * - profile_img_src: string,
-   * - content: string,
-   * - img_src: string,
-   * - post_type: string,
-   * - like_counter: number,
-   * - created_at: datetime,
-   * - liked_by_user: bool (if the user is authenticated),
-   * - group_name: string,
-   * - group_id: number
-   */
-  getBasePostData: async function(post_id, user_id = null) {
-    let query = `
-      select
-        posts.id,
-        users.username,
-        users.firstname,
-        users.lastname,
-        users.profile_img_src,
-        posts.content,
-        posts.img_src,	
-        posts.post_type,
-        posts.like_counter,
-        posts.created_at,
-    `
-    if (user_id) {
-      query += `
-        case 
-          when favorite_posts.user_id = ? then 1 
-          else 0
-        end as liked_by_user,
-      `
-    }
-    query += `
-        case 
-          when posts.post_type = 'group' then (
-            select user_groups.name
-            from posts
-            inner join group_posts
-              on posts.id = group_posts.post_id
-            inner join user_groups
-              on group_posts.group_id = user_groups.id
-            where posts.id = ?
-          )
-        end as group_name,
-        case 
-          when posts.post_type = 'group' then (
-            select user_groups.id
-            from posts
-            inner join group_posts
-              on posts.id = group_posts.post_id
-            inner join user_groups
-              on group_posts.group_id = user_groups.id
-            where posts.id = ?
-          )
-        end as group_id
-      from posts
-      inner join users
-        on posts.user_id = users.id
-    `
-    if (user_id) {
-      query += `
-        left join favorite_posts
-          on posts.id = favorite_posts.post_id
-      `
-    }
-    query += `
-      where 
-        posts.id = ?
-      limit 1;
-    `
-    try {
-      let params = [post_id, post_id, post_id]
-      if (user_id){
-        params.unshift(user_id)
-      }
-      const basePost = await mariadb.query(query, params)
-      return basePost[0]
-    } catch (err) {
-      err.file = __filename
-      err.func = 'getBasePostData'
-      throw err
-    }
-  },
-
-  /**
    * Retrieves a list of publications made by users that the requesting user is following 
    * and publications that are associated to groups that the requesting user is part of. 
    * The publications are sorted in descending order according to their creation date.
@@ -221,10 +127,12 @@ module.exports = {
   },
 
   /**
-   * Gets data of a single publication, this includes the reference post id
-   * in case that the post is "shared" type.
-   * If the user_id has a value, in the response is added if the user requesting likes the post.
+   * Gets data of a single publication.
+   * The response can add the following fields:
+   * - 'liked_by_user' if the user_id has an integer value (the user is authenticated).
+   * - 'referenced_post_id' if withReferencedPostId is equals true.
    * @param {number} post_id Id of post to get the data.
+   * @param {boolean} withReferencedPostId
    * @param {number} user_id Id of user requesting (optional).
    * @returns {object} An object with:
    * - id: number,
@@ -240,9 +148,9 @@ module.exports = {
    * - liked_by_user: bool (if the user is authenticated),
    * - group_name: string,
    * - group_id: number,
-   * - referenced_post_id: number
+   * - referenced_post_id: number (if withReferencedPostId == true)
    */
-  getPostData: async function(post_id, user_id = null) {
+  getPostData: async function(post_id, withReferencedPostId, user_id = null) {
     let query = `
       select
         posts.id,
@@ -286,8 +194,12 @@ module.exports = {
               on group_posts.group_id = user_groups.id
             where posts.id = ?
           )
-        end as group_id,
-        posts.referenced_post_id
+        end as group_id
+    `
+    if (withReferencedPostId) {
+      query += `, posts.referenced_post_id`
+    } 
+    query += `
       from posts
       inner join users
         on posts.user_id = users.id
@@ -295,11 +207,11 @@ module.exports = {
     if (user_id) {
       query += `
         left join favorite_posts
-          on posts.id = favorite_posts.post_id`
+          on posts.id = favorite_posts.post_id
+      `
     }
     query += `
-      where 
-        posts.id = ?
+      where posts.id = ?
       limit 1;
     `
     try {

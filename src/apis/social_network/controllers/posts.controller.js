@@ -15,7 +15,7 @@ module.exports = {
       for (let i = 0; i < posts.length; i++) {
         let post = posts[i]
         post.referenced_post = (post.referenced_post_id != null) ? 
-          await postService.getBasePostData(post.referenced_post_id, req.api.userId) : null
+          await postService.getPostData(post.referenced_post_id, false, req.api.userId) : null
         post.referenced_post_id = undefined
       }
 
@@ -53,9 +53,9 @@ module.exports = {
         const userIsMember = await postService.userBelongsToGroup(userId, postInPrivateGroup.group_id)
 
         if (userIsMember) {
-          const post = await postService.getPostData(postId, userId)
+          const post = await postService.getPostData(postId, true, userId)
           if (post.referenced_post_id != null) {
-            post.referenced_post = await postService.getBasePostData(post.referenced_post_id, userId)
+            post.referenced_post = await postService.getPostData(post.referenced_post_id, false, userId)
           }
           post.referenced_post_id = undefined
           return res.finish({
@@ -71,7 +71,7 @@ module.exports = {
         }
       } 
 
-      const post = await postService.getPostData(postId, userId)
+      const post = await postService.getPostData(postId, true, userId)
       if (!post) {
         return res.status(404).finish({
           code: 3,
@@ -79,7 +79,7 @@ module.exports = {
         })
       }
       if (post.referenced_post_id != null) {
-        post.referenced_post = await postService.getBasePostData(post.referenced_post_id, userId)
+        post.referenced_post = await postService.getPostData(post.referenced_post_id, false, userId)
       }
       post.referenced_post_id = undefined
       return res.finish({
