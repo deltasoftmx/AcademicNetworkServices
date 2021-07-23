@@ -811,4 +811,4 @@ Publication that the user is requesting.
 
 * 1: Unauthenticated. User must authenticate to get the requested response.
 * 2: Unauthorized. The requested post belongs to a private group to which the user requesting doesn't belong.
-* 3: Post not found.
+* 3: Resource not found.
