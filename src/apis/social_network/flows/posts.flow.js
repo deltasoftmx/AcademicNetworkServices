@@ -9,4 +9,11 @@ module.exports = {
     postMidd.checkPaginationParams,
     postCtrl.getPostsForTimeline
   ],
+
+  getPostData: [
+    generalMidd.verifyAPIKey,
+    generalMidd.userAuthIfTokenSent,
+    postMidd.checkPostId,
+    postCtrl.getPostData
+  ]
 }

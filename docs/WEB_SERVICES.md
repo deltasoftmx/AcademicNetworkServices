@@ -24,6 +24,7 @@
     * [Update group image](#update-group-image)
   * [Posts](#posts)
     * [Get posts for timeline](#get-posts-for-timeline)
+    * [Get data of one publication](#get-data-of-one-publication)
 
 ## General information
 
@@ -743,3 +744,71 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
 ##### Codes
 
 No particular codes.
+
+#### Get data of one publication
+
+##### Description
+
+Retrieves the data of one publication. If the publication belongs to a private group, the user must be 
+authenticated and authorized to see the content (be member of the group), in other cases the 
+authentication is optional, the response add a field indicating if the user requesting likes the post 
+only if the user is authenticated.
+
+##### Endpoint
+
+`/v1/api/social-network/posts/post/:post_id`
+
+##### Headers
+
+
+* `Authorization`. This header is optional, except if the post belongs to a private group then is mandatory.
+
+##### Method
+
+GET
+
+##### Params
+
+* `post_id`: int.
+
+Publication that the user is requesting.
+
+##### Response data-structure
+
+```json
+{
+  "id": 16,
+  "username": "anton",
+  "firstname": "anton",
+  "lastname": "anton",
+  "profile_img_src": "",
+  "content": "Shared post",
+  "img_src": "",
+  "post_type": "shared",
+  "like_counter": 1,
+  "created_at": "2021-07-18T05:00:00.000Z",
+  "liked_by_user": 0,
+  "group_name": null,
+  "group_id": null,
+  "referenced_post": {
+    "id": 5,
+    "username": "tars",
+    "firstname": "tars",
+    "lastname": "tars",
+    "profile_img_src": "",
+    "content": "Post of tars. Marked as favorite by the user requesting.",
+    "img_src": null,
+    "post_type": "user",
+    "like_counter": 1,
+    "created_at": "2021-07-18T05:00:00.000Z",
+    "liked_by_user": 1,
+    "group_name": null,
+    "group_id": null
+}
+```
+
+##### Codes
+
+* 1: Unauthenticated. User must authenticate to get the requested response.
+* 2: Unauthorized. The requested post belongs to a private group to which the user requesting doesn't belong.
+* 3: Resource not found.

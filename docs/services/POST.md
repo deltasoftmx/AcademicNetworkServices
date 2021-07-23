@@ -5,6 +5,9 @@
 * [Description](#description)
 * [Methods](#methods)
   * [getPostsForTimeline](#getpostsfortimeline)
+  * [getPostData](#getpostdata)
+  * [postBelongsToPrivateGroup](#postbelongstoprivategroup)
+  * [userBelongsToGroup](#userbelongstogroup)
 
 ## Description
 
@@ -40,3 +43,64 @@ descending order according to their creation date. Records are served into group
     * `group_id`: string,
     * `referenced_post_id`: int
   * `total_records`: int.
+
+### `getPostData`
+
+* **Description**: 
+
+Gets data of a single publication.
+
+The response can add the following fields:
+
+'liked_by_user' if the user_id has an integer value (the user is authenticated).
+
+'referenced_post_id' if withReferencedPostId is equals true.
+
+* **Params**:
+
+  * `post_id`: int.
+  * `withReferencedPostId`: boolean.
+  * `user_id`: null | undefined | int. Not required.
+
+* **Return data type**: Promise\<Object>
+  * `id`: number,
+  * `username`: string,
+  * `firstname`: string,
+  * `lastname`: string,
+  * `profile_img_src`: string,
+  * `content`: string,
+  * `img_src`: string,
+  * `post_type`: string,
+  * `like_counter`: number,
+  * `created_at`: datetime,
+  * `liked_by_user`: bool (if user_id has a value),
+  * `group_name`: string,
+  * `group_id`: number
+  * `referenced_post_id`: number (if withReferencedPostId == true.)
+
+### `postBelongsToPrivateGroup`
+
+* **Description**: 
+
+Checks if the post provided is part of a private group, returns true or false. 
+In case the post is not found it returns -1
+
+* **Params**:
+
+  * `post_id`: int.
+
+* **Return data type**: Promise\<boolean | number>
+
+### `userBelongsToGroup`
+
+* **Description**: 
+
+Checks if the user provided belongs to the group provided.
+Returns true or false.
+
+* **Params**:
+
+  * `user_id`: int.
+  * `group_id`: int.
+
+* **Return data type**: Promise\<boolean>

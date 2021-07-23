@@ -101,6 +101,43 @@ module.exports = {
     }
   },
 
+  userAuthIfTokenSent: async function(req, res, next) {
+    if (req.headers.authorization == undefined) {
+      return next()
+    }
+    try {
+      let payload = await cryptService.verifyJWT(req.headers.authorization)
+      req.api.userId = payload.user_id
+      return next()
+    } catch(err) {
+      if(err.name) {
+        if(err.name == 'TokenExpiredError') {
+          return res.status(403).finish({
+            code: -2,
+            messages: ['Authorization token expired']
+          })
+        } else if(err.name == 'JsonWebTokenError') {
+          return res.status(403).finish({
+            code: -3,
+            messages: ['Invalid authorization token']
+          })
+        }
+      }
+
+      err.file = err.file || __filename
+      err.func = err.func || 'userAuth'
+
+      if(err.code == 'ENOENT') {
+        req.api.logger.error(err)
+        res.status(500).finish({
+          code: 1000,
+          messages: [messages.error_messages.e500]
+        })
+      }
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
+  },
+
   verifyAPIKey: async function(req, res, next) {
     try {
       let APIKey = req.headers['x-api-key']
