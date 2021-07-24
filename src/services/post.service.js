@@ -287,5 +287,86 @@ module.exports = {
       err.func = 'userBelongsToGroup'
       throw err
     }
+  },
+
+  /**
+   * Retrieves a list of favorite publications of a user.
+   * The publications are sorted in descending order according to their creation date.
+   * Regarding the referenced post only sends the id of the post.
+   * The resulting posts are paginated according to the 'offset' and the 'page' received.
+   * @param {number} user_id Id of user requesting.
+   * @returns {Object}
+   *  * posts: favorite posts records
+   *  * total_records: number
+   */
+  favoritePosts: async function(user_id, offset = 10, page = 0) {
+    const query = `
+      select 
+        posts.id,
+        users.username,
+        users.firstname,
+        users.lastname,
+        users.profile_img_src,
+        posts.content,
+        posts.img_src,	
+        posts.post_type,
+        posts.like_counter,
+        posts.created_at,
+        case 
+          when posts.post_type = 'group' then (
+            select user_groups.name
+            from group_posts 
+            inner join user_groups
+              on group_posts.group_id = user_groups.id
+            where group_posts.post_id = posts.id
+            limit 1
+          )
+          else null
+        end as group_name,
+        case 
+          when posts.post_type = 'group' then (
+            select user_groups.id
+            from group_posts 
+            inner join user_groups
+              on group_posts.group_id = user_groups.id
+            where group_posts.post_id = posts.id
+            limit 1
+          )
+          else null
+        end as group_id,
+        posts.referenced_post_id
+      from posts
+      inner join users
+        on posts.user_id = users.id
+      inner join favorite_posts
+        on posts.id = favorite_posts.post_id
+      where favorite_posts.user_id = ?
+      order by posts.created_at desc
+      limit ?, ?;
+    `
+    // Prepare query to counts how much records there are.
+    let countQuery = query.split('\n')
+    // Remove selected fields and select the amount of records.
+    countQuery.splice(2, 33, 'count(*) as total_records')
+    // Remove limit to select all the records.
+    countQuery.pop(); countQuery.pop()
+    countQuery = countQuery.join('\n')
+
+    const params = [user_id, page*offset, offset]
+    
+    try {
+      const postsResult = await mariadb.query(query, params)
+      let countResult = await mariadb.query(countQuery, params)
+      countResult = countResult[0]
+
+      return {
+        posts: postsResult,
+        total_records: countResult ? countResult.total_records : 0
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'favoritePosts'
+      throw err
+    }
   }
 }

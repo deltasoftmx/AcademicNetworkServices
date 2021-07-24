@@ -15,5 +15,12 @@ module.exports = {
     generalMidd.userAuthIfTokenSent,
     postMidd.checkPostId,
     postCtrl.getPostData
+  ],
+
+  favoritePosts: [
+    generalMidd.verifyAPIKey,
+    generalMidd.userAuth,
+    postMidd.checkPaginationParams,
+    postCtrl.favoritePosts
   ]
 }
