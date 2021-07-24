@@ -8,6 +8,7 @@
   * [getPostData](#getpostdata)
   * [postBelongsToPrivateGroup](#postbelongstoprivategroup)
   * [userBelongsToGroup](#userbelongstogroup)
+  * [getFavoritePosts](#getfavoriteposts)
 
 ## Description
 
@@ -104,3 +105,37 @@ Returns true or false.
   * `group_id`: int.
 
 * **Return data type**: Promise\<boolean>
+
+### `getFavoritePosts`
+
+* **Description**: 
+
+Retrieves a list of favorite publications of a user.
+
+The publications are sorted in descending order according to their creation date.
+
+Regarding the referenced post only sends the id of the post.
+
+The resulting posts are paginated according to the 'offset' and the 'page' parameters.
+
+* **Params**:
+
+  * `page`: int.
+  * `offset`: int.
+
+* **Return data type**: Promise\<Object>
+  * `posts`: Array\<Object>
+    * `id`: int,
+    * `username`: string,
+    * `firstname`: string,
+    * `lastname`: string,
+    * `profile_img_src`: string,
+    * `content`: string,
+    * `img_src`: string,
+    * `post_type`: string,
+    * `like_counter`: int,
+    * `created_at`: date,
+    * `group_name`: string (if apply),
+    * `group_id`: string (if apply),
+    * `referenced_post_id`: int
+  * `total_records`: int.

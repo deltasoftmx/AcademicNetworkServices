@@ -93,5 +93,36 @@ module.exports = {
       err.func = err.func || 'getPostData'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
-  }
+  },
+
+  favoritePosts: async function(req, res) {
+    try {
+      let result = await postService.getFavoritePosts(
+        req.api.userId,
+        req.query.offset,
+        req.query.page
+      )
+      let posts = result.posts
+      
+      for (let i = 0; i < posts.length; i++) {
+        let post = posts[i]
+        post.referenced_post = (post.referenced_post_id != null) ? 
+          await postService.getPostData(post.referenced_post_id, false) : null
+        post.referenced_post_id = undefined
+      }
+
+      res.finish({
+        code: 0,
+        messages: [messages.success_messages.c200],
+        data: {
+          favorite_posts: posts,
+          total_records: result.total_records
+        }
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'favoritePosts'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
+  },
 }
