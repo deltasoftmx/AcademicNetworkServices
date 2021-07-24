@@ -299,7 +299,7 @@ module.exports = {
    *  * posts: favorite posts records
    *  * total_records: number
    */
-  favoritePosts: async function(user_id, offset = 10, page = 0) {
+  getFavoritePosts: async function(user_id, offset = 10, page = 0) {
     const query = `
       select 
         posts.id,
@@ -365,7 +365,7 @@ module.exports = {
       }
     } catch (err) {
       err.file = __filename
-      err.func = 'favoritePosts'
+      err.func = 'getFavoritePosts'
       throw err
     }
   }

@@ -97,7 +97,7 @@ module.exports = {
 
   favoritePosts: async function(req, res) {
     try {
-      let result = await postService.favoritePosts(
+      let result = await postService.getFavoritePosts(
         req.api.userId,
         req.query.offset,
         req.query.page
@@ -107,7 +107,7 @@ module.exports = {
       for (let i = 0; i < posts.length; i++) {
         let post = posts[i]
         post.referenced_post = (post.referenced_post_id != null) ? 
-          await postService.getPostData(post.referenced_post_id, false, req.api.userId) : null
+          await postService.getPostData(post.referenced_post_id, false) : null
         post.referenced_post_id = undefined
       }
 
