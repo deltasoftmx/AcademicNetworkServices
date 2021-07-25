@@ -42,7 +42,11 @@ module.exports = {
           posts.like_counter,
           posts.created_at,
           case 
-            when favorite_posts.user_id = ? then 1 
+            when (
+              select id from favorite_posts 
+              where post_id = posts.id and user_id = ?
+              limit 1
+            ) is not null then 1 
             else 0
           end as liked_by_user,
           null as group_name,
@@ -53,8 +57,6 @@ module.exports = {
           on posts.user_id = followers.target_user_id
         inner join users
           on posts.user_id = users.id
-        left join favorite_posts
-          on posts.id = favorite_posts.post_id
         where 
           followers.follower_user_id = ? and 
           (posts.post_type = 'user' or
@@ -74,7 +76,11 @@ module.exports = {
           posts.like_counter,
           posts.created_at,
           case 
-            when favorite_posts.user_id = ? then 1 
+            when (
+              select id from favorite_posts 
+              where post_id = posts.id and user_id = ?
+              limit 1
+            ) is not null then 1  
             else 0
           end as liked_by_user,
           user_groups.name as group_name,
@@ -83,14 +89,12 @@ module.exports = {
         from posts
         inner join group_posts
           on posts.id = group_posts.post_id
-        inner join group_memberships
-          on group_posts.group_id = group_memberships.group_id
         inner join user_groups
-          on group_memberships.group_id = user_groups.id
+          on group_posts.group_id = user_groups.id
+        inner join group_memberships
+          on user_groups.id = group_memberships.group_id
         inner join users
           on posts.user_id = users.id
-        left join favorite_posts
-          on posts.id = favorite_posts.post_id
         where 
           group_memberships.user_id = ? and
           posts.user_id != ?
@@ -99,7 +103,7 @@ module.exports = {
       order by created_at desc
       limit ?, ?;
     `
-    // Counts how much records there are.
+    // Prepare query to counts how much records there are.
     let countQuery = query.split('\n')
     // Remove selected fields and select the amount of records.
     countQuery.splice(2, 14, 'count(*) as total_records')
