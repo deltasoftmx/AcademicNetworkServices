@@ -89,10 +89,10 @@ module.exports = {
         from posts
         inner join group_posts
           on posts.id = group_posts.post_id
-        inner join group_memberships
-          on group_posts.group_id = group_memberships.group_id
         inner join user_groups
-          on group_memberships.group_id = user_groups.id
+          on group_posts.group_id = user_groups.id
+        inner join group_memberships
+          on user_groups.id = group_memberships.group_id
         inner join users
           on posts.user_id = users.id
         where 
