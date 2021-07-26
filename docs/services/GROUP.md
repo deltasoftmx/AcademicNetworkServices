@@ -6,6 +6,7 @@
 * [Methods](#Methods)
   * [getGroupPermissions](#getGroupPermissions)
   * [getAvailableGroupPermissions](#getavailablegrouppermissions)
+  * [getGroupInformation](#getgroupinformation)
   * [searchGroups](#searchGroups)
   * [createGroup](#createGroup)
   * [switchGroupNotifications](#switchGroupNotifications)
@@ -45,6 +46,34 @@ Return an array of available permissions that can be assigned to a group.
   * `id`: int. 
   * `name`: string
   * `codename`: string.
+
+### `getGroupInformation`
+
+* **Description**
+
+Return information of a group such as who is its owner, name, image, permissions, tags and so on.
+
+* **Params**:
+  * `groupId`: int
+* **Return data type**: Promise\<Object>
+  - exit_code: int
+  - groupData: Objetc
+    - owner_firstname: string
+    - owner_firstname: string
+    - owner_profile_img_src: string
+    - group_name: string
+    - group_image_src: string
+    - group_description: string
+    - group_visibility: string
+    - group_created_at: string
+  - permissions: Object[]
+    - id: number
+    - name: string
+    - codename: string
+  - tags: Object[]
+    - tag: string
+* **Exit code**:
+  * 1: Group doesn't exists.
 
 ### `searchGroups`
 

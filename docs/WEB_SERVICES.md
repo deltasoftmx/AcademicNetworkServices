@@ -17,7 +17,7 @@
     * [Get public user types](#get-public-user-types)
     * [Get majors data](#get-majors-data)
   * [Groups](#groups)
-    * [Get permission of a group](#get-permission-of-a-group)
+    * [Get information of a group](#get-information-of-a-group)
     * [Search groups](#search-groups)
     * [Create a group](#create-a-group)
     * [Switch group notifications](#switch-group-notifications)
@@ -423,15 +423,15 @@ No particular codes.
 
 ### Groups
 
-#### Get permission of a group
+#### Get information of a group
 
 ##### Description
 
-Return the permissions that a group has.
+Return information about a certain group.
 
 ##### Endpoint
 
-`/v1/api/social-network/groups/group/:group_id/permissions`
+`/v1/api/social-network/groups/group/:group_id/information`
 
 ##### Headers
 
@@ -449,6 +449,17 @@ GET
 
 ```json
 {
+  "group_data": {
+    "owner_firstname": "Jhon",
+    "owner_lastname": "Doe",
+    "owner_username": "jhondoe",
+    "owner_profile_img_src": "",
+    "group_name": "Engineering",
+    "group_image_src": "",
+    "group_description": "Python where we can, C++ where we must.",
+    "group_visibility": "public",
+    "group_created_at": "2021-07-04T22:37:15.000Z"
+  },
   "permissions": [
     {
       "id": 1,
@@ -461,6 +472,11 @@ GET
       "name": "Permitir comentarios",
       "codename": "allow_comments",
       "granted": 0
+    }
+  ],
+  "tags": [
+    {
+      "tag": "Ciencia"
     }
   ]
 }

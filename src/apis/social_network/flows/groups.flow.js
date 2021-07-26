@@ -7,10 +7,10 @@ const groupsMiddleware = require('../../../middlewares/groups.middleware')
 const upload = multer({dest: 'uploads/'})
 
 module.exports = {
-  getGroupPermissions: [
+  getGroupInformation: [
     generalMiddleware.verifyAPIKey,
     groupsMiddleware.checkGroupId,
-    groupsController.getGroupPermissions
+    groupsController.getGroupInformation
   ],
 
   searchGroups: [
