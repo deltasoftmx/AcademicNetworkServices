@@ -171,7 +171,14 @@ module.exports = {
     if (user_id) {
       query += `
         case 
-          when favorite_posts.user_id = ? then 1 
+          when (
+            select id
+              from favorite_posts
+              where 
+                user_id = ? and
+                post_id = ?
+            limit 1
+          ) is not null then 1 
           else 0
         end as liked_by_user,
       `
@@ -207,21 +214,13 @@ module.exports = {
       from posts
       inner join users
         on posts.user_id = users.id
-    `
-    if (user_id) {
-      query += `
-        left join favorite_posts
-          on posts.id = favorite_posts.post_id
-      `
-    }
-    query += `
       where posts.id = ?
       limit 1;
     `
     try {
       let params = [post_id, post_id, post_id]
       if (user_id) {
-        params.unshift(user_id)
+        params.unshift(user_id, post_id)
       }
       const post = await mariadb.query(query, params)
       return post[0]
