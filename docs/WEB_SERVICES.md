@@ -451,8 +451,16 @@ GET
 {
   "permissions": [
     {
-      "name": "Allow publications",
-      "codename": "allow_posts"
+      "id": 1,
+      "name": "Permitir publicaciones",
+      "codename": "allow_posts",
+      "granted": 1
+    },
+    {
+      "id": 2,
+      "name": "Permitir comentarios",
+      "codename": "allow_comments",
+      "granted": 0
     }
   ]
 }
