@@ -226,7 +226,9 @@ module.exports = {
         tags: groupTags
       }
     } catch(err) {
-      //
+      err.file = __filename
+      err.func = 'getGroupInformation'
+      throw err
     }
   },
 

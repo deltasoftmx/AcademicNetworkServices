@@ -72,6 +72,8 @@ Return information of a group such as who is its owner, name, image, permissions
     - codename: string
   - tags: Object[]
     - tag: string
+* **Exit code**:
+  * 1: Group doesn't exists.
 
 ### `searchGroups`
 
