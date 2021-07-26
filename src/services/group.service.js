@@ -93,25 +93,35 @@ module.exports = {
    *  * codename: string
    */
   getGroupPermissions: async function(groupId) {
+    //Select permission that the group has.
     let query = `
-      select
+      select 
+        gp.id,
         gp.name,
-        gp.codename
-      from permissions_granted_to_groups as pgtg
-        inner join group_permissions as gp
-          on pgtg.group_permission_id = gp.id
-      where pgtg.group_id = ?`
+        gp.codename,
+        case 
+          when (
+            select 
+              pgtg.group_permission_id
+            from permissions_granted_to_groups as pgtg
+            where 
+              pgtg.group_permission_id = gp.id and
+              pgtg.group_id = ?
+            limit 1
+          ) is not null then 1
+          else 0
+        end as granted
+      from group_permissions as gp`
     
     try {
       let permissions = await mariadb.query(query, [groupId])
       let exists_group = true
 
-      if(!permissions.length) {
-        query = `select id from user_groups where id = ? limit 1`
-        let group = await mariadb.query(query, [groupId])
-        if(!group.length) {
-          exists_group = false
-        }
+      //Verify if group exists.
+      query = `select id from user_groups where id = ? limit 1`
+      let group = await mariadb.query(query, [groupId])
+      if(!group.length) {
+        exists_group = false
       }
       
       return {
@@ -121,6 +131,32 @@ module.exports = {
     } catch(err) {
       err.file = __filename
       err.func = 'getGroupPermissions'
+      throw err
+    }
+  },
+
+  /**
+   * Return an array of available permissions that can be
+   * assigned to a group.
+   * @returns Promise<Object[]>
+   *  - id
+   *  - name
+   *  - codename
+   */
+  getAvailableGroupPermissions: async function() {
+    let query = `
+          select
+            gp.id,
+            gp.name,
+            gp.codename
+              from group_permissions as gp;`
+    try {
+      let availablePermissions = await mariadb.query(query)
+      delete availablePermissions.meta
+      return availablePermissions
+    } catch(err) {
+      err.file = __filename
+      err.func = 'getAvailableGroupPermissions'
       throw err
     }
   },

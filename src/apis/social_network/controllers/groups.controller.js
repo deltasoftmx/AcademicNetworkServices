@@ -10,9 +10,9 @@ module.exports = {
       let code = groupPerm.exists_group ? 0 : 1
       res.finish({
         code,
-        messages: code == 0 ? ['Done'] : ['Group does not exists'],
+        messages: code == 0 ? ['Done'] : ['Group does not exist'],
         data: {
-          permissions: groupPerm.permissions
+          permissions: code == 0 ? groupPerm.permissions : []
         }
       })
     } catch(err) {

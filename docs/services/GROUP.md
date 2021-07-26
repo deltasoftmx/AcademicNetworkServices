@@ -5,6 +5,7 @@
 * [Description](#Description)
 * [Methods](#Methods)
   * [getGroupPermissions](#getGroupPermissions)
+  * [getAvailableGroupPermissions](#getavailablegrouppermissions)
   * [searchGroups](#searchGroups)
   * [createGroup](#createGroup)
   * [switchGroupNotifications](#switchGroupNotifications)
@@ -32,6 +33,18 @@ Return the permissions that a group has.
     * `codename`: string
 * **Exit code**:
   * 1: Group doesn't exists.
+
+### `getAvailableGroupPermissions`
+
+* **Description**
+
+Return an array of available permissions that can be assigned to a group.
+
+* **Params**: void
+* **Return data type**: Promise\<Object[]>
+  * `id`: int. 
+  * `name`: string
+  * `codename`: string.
 
 ### `searchGroups`
 
