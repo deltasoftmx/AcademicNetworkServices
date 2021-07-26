@@ -89,6 +89,7 @@ module.exports = {
    * Return the permissions that a group has.
    * @param {number} groupId 
    * @returns {Promise<Array<object>>}
+   *  * id: number
    *  * name: string
    *  * codename: string
    */
@@ -158,6 +159,74 @@ module.exports = {
       err.file = __filename
       err.func = 'getAvailableGroupPermissions'
       throw err
+    }
+  },
+
+  /**
+   * Return information of a group such as who is its owner,
+   * name, image, permissions, tags and so on.
+   * @param {number} groupId 
+   * @returns Object
+   *  - exit_code: int
+   *  - groupData: Objetc
+   *    - owner_firstname: string
+   *    - owner_firstname: string
+   *    - owner_profile_img_src: string
+   *    - group_name: string
+   *    - group_image_src: string
+   *    - group_description: string
+   *    - group_visibility: string
+   *    - group_created_at: string
+   *  - permissions: Object[]
+   *    - id: number
+   *    - name: string
+   *    - codename: string
+   *  - tags: Object[]
+   *    - tag: string
+   */
+  getGroupInformation: async function(groupId) {
+    let groupPermissions = await this.getGroupPermissions(groupId)
+    if(!groupPermissions.exists_group) {
+      return {
+        exit_code: 1 //Group does not exist.
+      }
+    }
+
+    let query = `
+      select
+        usr.firstname as owner_firstname,
+        usr.lastname as owner_firstname,
+        usr.username as owner_username,
+        usr.profile_img_src as owner_profile_img_src,
+        grp.name as group_name,
+        grp.image_src as group_image_src,
+        grp.description as group_description,
+        grp.visibility as group_visibility,
+        grp.created_at as group_created_at
+          from user_groups as grp
+            inner join users as usr
+              on grp.owner_user_id = usr.id
+          where grp.id = ?
+          limit 1;`
+    try {
+      let groupData = await mariadb.query(query, [groupId])
+      
+      //Query tags.
+      query = `
+        select
+          tag
+            from group_tags
+            where group_id = ?;`
+      let groupTags = await mariadb.query(query, [groupId])
+
+      return {
+        exit_code: 0,
+        groupData: groupData[0],
+        permissions: groupPermissions.permissions,
+        tags: groupTags
+      }
+    } catch(err) {
+      //
     }
   },
 

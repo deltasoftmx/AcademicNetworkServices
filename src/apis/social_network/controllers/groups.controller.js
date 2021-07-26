@@ -4,20 +4,22 @@ const errorHandlingService = require('../../../services/error_handling.service')
 const messages = require('../../../../etc/messages.json')
 
 module.exports = {
-  getGroupPermissions: async function(req, res) {
+  getGroupInformation: async function(req, res) {
     try {
-      let groupPerm = await groupService.getGroupPermissions(req.params.group_id)
-      let code = groupPerm.exists_group ? 0 : 1
+      let groupPerm = await groupService.getGroupInformation(req.params.group_id)
+      let code = groupPerm.exit_code
       res.finish({
         code,
         messages: code == 0 ? ['Done'] : ['Group does not exist'],
         data: {
-          permissions: code == 0 ? groupPerm.permissions : []
+          group_data: groupPerm.groupData,
+          permissions: groupPerm.permissions,
+          tags: groupPerm.tags
         }
       })
     } catch(err) {
       err.file = err.file || __filename
-      err.func = err.func || 'getGroupPermissions'
+      err.func = err.func || 'getGroupInformation'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
   },
