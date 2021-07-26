@@ -277,6 +277,7 @@ create procedure group_create (
 )
 gc_label:begin
 	declare exists_user int unsigned;
+    declare user_group_id int unsigned;
     
     select id into exists_user from users where id = user_id limit 1;
     if exists_user is null then
@@ -295,11 +296,16 @@ gc_label:begin
 		(owner_user_id, name, image_src, description, visibility)
 	values
 		(user_id, gname, image_src, description, visibility);
+        
+	set user_group_id = last_insert_id();
+    
+    insert into group_memberships(user_id, group_id) 
+    values (user_id, user_group_id);
 	
     select
 		0 as exit_code,
         "Done" as message,
-        last_insert_id() as id;
+        user_group_id as id;
 end $$
 delimiter ;
 

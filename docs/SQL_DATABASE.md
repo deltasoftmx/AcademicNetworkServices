@@ -190,7 +190,7 @@ Write
 
 #### Description
 
-Creates a new group.
+Creates a new group and register the membership of the owner user id with the new group id.
 
 #### SP name
 
