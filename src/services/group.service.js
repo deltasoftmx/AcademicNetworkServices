@@ -195,7 +195,7 @@ module.exports = {
     let query = `
       select
         usr.firstname as owner_firstname,
-        usr.lastname as owner_firstname,
+        usr.lastname as owner_lastname,
         usr.username as owner_username,
         usr.profile_img_src as owner_profile_img_src,
         grp.name as group_name,
