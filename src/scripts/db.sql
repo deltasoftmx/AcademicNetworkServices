@@ -20,7 +20,7 @@ create table if not exists users (
     description varchar(700),
     user_type_id int unsigned not null,
     active tinyint not null default 0,
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key (user_type_id) references user_types(id)
 );
@@ -100,7 +100,7 @@ create table if not exists pending_for_confirm (
     user_id int unsigned not null,
     confirm_token varchar(750) not null,
     confirmed tinyint not null default 0,
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key(user_id) references users(id)
 );
@@ -110,7 +110,7 @@ create table if not exists passwd_recovery (
     user_id int unsigned not null,
     token varchar(750) not null,
     still_valid tinyint not null default 1,
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key(user_id) references users(id)
 );
@@ -135,7 +135,7 @@ create table if not exists post_comments (
     user_id int unsigned not null,
     content text,
     image_src varchar(700),
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key(post_id) references posts(id),
     foreign key(user_id) references users(id)
@@ -145,7 +145,7 @@ create table if not exists favorite_posts (
 	id int unsigned primary key auto_increment,
     user_id int unsigned not null,
     post_id int unsigned not null,
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key(user_id) references users(id),
     foreign key(post_id) references posts(id)
@@ -155,7 +155,7 @@ create table if not exists followers (
 	id int unsigned primary key auto_increment,
     target_user_id int unsigned not null,
     follower_user_id int unsigned not null,
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key(target_user_id) references users(id),
     foreign key(follower_user_id) references users(id)
@@ -176,7 +176,7 @@ create table if not exists user_chat_messages (
     issuing_user_id int unsigned not null,
     message text not null,
     file_src varchar(700),
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key (chat_id) references user_chats(id),
     foreign key (issuing_user_id) references users(id)
@@ -194,7 +194,7 @@ create table if not exists user_groups (
     cloudinary_id varchar(100),
     description varchar(700),
     visibility varchar(15) not null,
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key (owner_user_id) references users(id)
 );
@@ -235,7 +235,7 @@ create table if not exists group_memberships (
     user_id int unsigned not null,
     group_id int unsigned not null,
     active_notifications tinyint not null default 1,
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key (user_id) references users(id),
     foreign key (group_id) references user_groups(id)
@@ -256,7 +256,7 @@ create table if not exists group_chats (
     issuing_user_id int unsigned not null,
     message text,
     file_src varchar(700),
-    created_at timestamp,
+    created_at date default curdate(),
     
     foreign key (group_id) references user_groups(id),
     foreign key (issuing_user_id) references users(id)
@@ -271,7 +271,7 @@ create table if not exists notifications (
     message varchar(700) not null,
     notif_type varchar(100) not null,
     element_id int unsigned,
-    created_at timestamp
+    created_at date default curdate()
 );
 
 ############# END Notifications #############
