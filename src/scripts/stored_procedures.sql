@@ -402,3 +402,45 @@ gsn_label:begin
 		0 as exit_code,
         "Done" as message;
 end $$
+delimiter ;
+
+drop procedure if exists group_add_user;
+delimiter $$
+create procedure group_add_user (
+	user_id int unsigned,
+	group_id int unsigned
+)
+gau_label:begin    
+	declare exists_group int unsigned;
+    declare user_already_member int unsigned;
+    
+    select id into exists_group from user_groups
+	where id = group_id
+	limit 1;
+    
+    if exists_group is null then
+		select
+			1 as exit_code,
+            "Group does not exist" as message;
+		leave gau_label;
+	end if;
+    
+    select id into user_already_member from group_memberships as gm
+	where gm.user_id = user_id and gm.group_id = group_id
+	limit 1;
+    
+    if user_already_member is not null then
+		select
+			2 as exit_code,
+            "The user is already a member of the group" as message;
+		leave gau_label;
+	end if;
+    
+    insert into group_memberships(user_id, group_id) 
+	values (user_id, group_id);
+	
+    select
+		0 as exit_code,
+        "Done" as message;
+end $$
+delimiter ;

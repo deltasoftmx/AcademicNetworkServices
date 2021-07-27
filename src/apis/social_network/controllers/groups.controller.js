@@ -128,5 +128,21 @@ module.exports = {
       }
       errorHandlingService.handleImageUploadError(req, res, err)
     }
+  },
+
+  addUserToGroup: async function(req, res) {
+    try {
+      const result = await groupService.addUserToGroup(req.api.userId, req.params.group_id)
+      const status = result.exit_code == 1 ? 404 : 200
+
+      res.status(status).finish({
+        code: result.exit_code,
+        messages: [result.message]
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'addUserToGroup'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }

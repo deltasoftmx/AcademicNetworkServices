@@ -457,5 +457,21 @@ module.exports = {
       err.cloudinary_id = cloudinary_id
       throw err
     }
+  },
+
+  addUserToGroup: async function(userId, group_id) {
+    let query = `call group_add_user(?, ?);`
+    try {
+      let result = await mariadb.query(query, [userId, group_id])
+      result = result[0][0]
+      return {
+        exit_code: result.exit_code,
+        message: result.message
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'addUserToGroup'
+      throw err
+    }
   }
 }
