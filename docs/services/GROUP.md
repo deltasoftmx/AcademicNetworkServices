@@ -11,6 +11,7 @@
   * [createGroup](#createGroup)
   * [switchGroupNotifications](#switchGroupNotifications)
   * [updateGroupImage](#updateGroupImage)
+  * [addUserToGroup](#addUserToGroup)
 
 ## Description
 
@@ -156,3 +157,19 @@ Update the group image. To do that the user requesting must be the group owner.
 * **Exit code**:
   * 1: The group does not exist.
   * 2: Permission denied. You are not the group owner.
+
+### `addUserToGroup`
+
+* **Description**
+
+Add a user to a specific group.
+
+* **Params**
+  * `userId`: int
+  * `group_id`: int
+* **Return data type**: Promise\<Object>
+  * `exit_code`: int
+  * `message`: string
+* **Exit code**:
+  * 1: Group does not exist.
+  * 2: The user is already a member of the group.

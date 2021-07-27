@@ -459,6 +459,14 @@ module.exports = {
     }
   },
 
+  /**
+   * Add a user to a specific group.
+   * @param {int} userId 
+   * @param {int} group_id 
+   * @returns {Object}
+   *  * exit_code: int
+   *  * message: string
+   */
   addUserToGroup: async function(userId, group_id) {
     let query = `call group_add_user(?, ?);`
     try {

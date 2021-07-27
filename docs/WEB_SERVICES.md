@@ -22,6 +22,7 @@
     * [Create a group](#create-a-group)
     * [Switch group notifications](#switch-group-notifications)
     * [Update group image](#update-group-image)
+    * [Add a user to a group](#add-a-user-to-a-group)
   * [Posts](#posts)
     * [Get posts for timeline](#get-posts-for-timeline)
     * [Get data of one publication](#get-data-of-one-publication)
@@ -675,6 +676,39 @@ PUT
 
 1. The group does not exist.
 2. Permission denied. You are not the group owner.
+
+#### Add a user to a group
+
+##### Description
+
+Add a user to a specific group.
+
+##### Endpoint
+
+`/v1/api/social-network/groups/group/:group_id/add-user`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+POST
+
+##### Params
+
+* `group_id`: int.
+
+Id of the group the user wants to be part of.
+
+##### Response data-structure
+
+No particular response data-structure.
+
+##### Codes
+
+1. Group does not exist.
+2. The user is already a member of the group.
 
 ### Posts
 
