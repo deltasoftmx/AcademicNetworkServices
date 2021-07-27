@@ -371,5 +371,57 @@ module.exports = {
       err.func = 'getFavoritePosts'
       throw err
     }
+  },
+
+  getCommentsOfAPost: async function(post_id, offset = 10, page = 0) {
+    const commentsQuery = `
+      select 
+        posts.id as post_id,
+        users.id as user_id,
+        users.firstname,
+        users.lastname,
+        users.profile_img_src,
+        post_comments.content,
+        post_comments.image_src,
+        post_comments.created_at
+      from posts
+      inner join post_comments
+        on posts.id = post_comments.post_id
+      inner join users
+        on post_comments.user_id = users.id
+      where posts.id = ?
+      order by post_comments.created_at desc
+      limit ?, ?;
+    `
+    const countQuery = `
+      select count(*) as total_records
+      from posts
+      inner join post_comments
+        on posts.id = post_comments.post_id
+      inner join users
+        on post_comments.user_id = users.id
+      where posts.id = ?;
+    `
+    try {
+      // Verify if post exists.
+      const postQuery = `select id from posts where id = ? limit 1`
+      const post = await mariadb.query(postQuery, [post_id])
+      if (!post[0]) {
+        return { exists_post: false }
+      }
+
+      const commentsResult = await mariadb.query(commentsQuery, [post_id, page*offset, offset])
+      const countResult = await mariadb.query(countQuery, [post_id])
+
+      return {
+        exists_post: true,
+        comments: commentsResult,
+        total_records: countResult[0].total_records
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'getCommentsOfAPost'
+      throw err
+    }
   }
 }

@@ -125,4 +125,55 @@ module.exports = {
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
   },
+
+  getCommentsOfAPost: async function(req, res) {
+    const userId = req.api.userId
+    const postId = req.params.post_id
+
+    try {
+      const postInPrivateGroup = await postService.postBelongsToPrivateGroup(postId)
+      
+      if (postInPrivateGroup.group_private && userId === undefined) {
+        return res.status(401).finish({
+          code: 1,
+          messages: [messages.error_messages.e401]
+        })
+      }
+      if (postInPrivateGroup.group_private && userId) {
+        const userIsMember = await postService.userBelongsToGroup(userId, postInPrivateGroup.group_id)
+        if (!userIsMember) {
+          return res.status(403).finish({
+            code: 2,
+            messages: [`Forbidden. The requested post belongs to a private group to which the user requesting doesn't belong.`]
+          })
+        }
+      }
+      
+      const resultComments = await postService.getCommentsOfAPost(
+        postId, 
+        req.query.offset, 
+        req.query.page
+      )
+      if (!resultComments.exists_post) {
+        return res.status(404).finish({
+          code: 3,
+          messages: [messages.error_messages.e404]
+        })
+      }
+
+      res.status(200).finish({
+        code: 0,
+        messages: [messages.success_messages.c200],
+        data: {
+          comments: resultComments.comments,
+          total_records: resultComments.total_records
+        }
+      })
+      
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'getCommentsOfAPost'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
+  }
 }
