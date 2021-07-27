@@ -232,12 +232,13 @@ module.exports = {
   },
 
   /**
-   * Checks if the post provided is part of a private group, returns true or false. 
-   * In case the post is not found it returns -1
+   * Verifies if  the post provided is part of a group, if is true
+   * returns its group id and visibilty (public or private).
+   * In case the post is not found it returns -1.
    * @param {number} post_id 
-   * @returns {boolean | number}
+   * @returns {Object | number}
    */
-  postBelongsToPrivateGroup: async function(post_id) {
+  postBelongsToGroup: async function(post_id) {
     const query = `
       select 
         user_groups.id as group_id,
@@ -261,7 +262,7 @@ module.exports = {
       }
     } catch (err) {
       err.file = __filename
-      err.func = 'postBelongsToPrivateGroup'
+      err.func = 'postBelongsToGroup'
       throw err
     }
   },
@@ -369,6 +370,70 @@ module.exports = {
     } catch (err) {
       err.file = __filename
       err.func = 'getFavoritePosts'
+      throw err
+    }
+  },
+
+  /**
+   * Retrieves a list of comments for a specific post.
+   * Comments are sorted in descending order according to the creation date.
+   * @param {number} post_id 
+   * @param {number} offset 
+   * @param {number} page 
+   * @returns {Object}
+   *  * exists_post: boolean
+   *  * comments: comments records | undefined
+   *  * total_records: number | undefined
+   */
+  getCommentsOfAPost: async function(post_id, offset = 10, page = 0) {
+    const commentsQuery = `
+      select 
+        posts.id as post_id,
+        users.id as user_id,
+        users.firstname,
+        users.lastname,
+        users.username,
+        users.profile_img_src,
+        post_comments.content,
+        post_comments.image_src,
+        post_comments.created_at
+      from posts
+      inner join post_comments
+        on posts.id = post_comments.post_id
+      inner join users
+        on post_comments.user_id = users.id
+      where posts.id = ?
+      order by post_comments.created_at desc
+      limit ?, ?;
+    `
+    const countQuery = `
+      select count(*) as total_records
+      from posts
+      inner join post_comments
+        on posts.id = post_comments.post_id
+      inner join users
+        on post_comments.user_id = users.id
+      where posts.id = ?;
+    `
+    try {
+      // Verify if post exists.
+      const postQuery = `select id from posts where id = ? limit 1`
+      const post = await mariadb.query(postQuery, [post_id])
+      if (!post[0]) {
+        return { exists_post: false }
+      }
+
+      const commentsResult = await mariadb.query(commentsQuery, [post_id, page*offset, offset])
+      const countResult = await mariadb.query(countQuery, [post_id])
+
+      return {
+        exists_post: true,
+        comments: commentsResult,
+        total_records: countResult[0].total_records
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'getCommentsOfAPost'
       throw err
     }
   }

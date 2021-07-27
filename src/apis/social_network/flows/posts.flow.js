@@ -22,5 +22,13 @@ module.exports = {
     generalMidd.userAuth,
     postMidd.checkPaginationParams,
     postCtrl.favoritePosts
+  ],
+
+  getCommentsOfAPost: [
+    generalMidd.verifyAPIKey,
+    generalMidd.userAuthIfTokenSent,
+    postMidd.checkPostId,
+    postMidd.checkPaginationParams,
+    postCtrl.getCommentsOfAPost
   ]
 }
