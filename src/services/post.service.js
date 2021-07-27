@@ -232,12 +232,13 @@ module.exports = {
   },
 
   /**
-   * Checks if the post provided is part of a private group, returns true or false. 
-   * In case the post is not found it returns -1
+   * Verifies if  the post provided is part of a group, if is true
+   * returns its group id and visibilty (public or private).
+   * In case the post is not found it returns -1.
    * @param {number} post_id 
-   * @returns {boolean | number}
+   * @returns {Object | number}
    */
-  postBelongsToPrivateGroup: async function(post_id) {
+  postBelongsToGroup: async function(post_id) {
     const query = `
       select 
         user_groups.id as group_id,
@@ -261,7 +262,7 @@ module.exports = {
       }
     } catch (err) {
       err.file = __filename
-      err.func = 'postBelongsToPrivateGroup'
+      err.func = 'postBelongsToGroup'
       throw err
     }
   },

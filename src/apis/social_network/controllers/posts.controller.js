@@ -39,9 +39,9 @@ module.exports = {
     const postId = req.params.post_id
 
     try {
-      const postInPrivateGroup = await postService.postBelongsToPrivateGroup(postId)
+      const groupPost = await postService.postBelongsToGroup(postId)
 
-      if (postInPrivateGroup.group_private) {
+      if (groupPost.group_private) {
         // User not authenticated
         if (userId === undefined) {
           return res.status(401).finish({
@@ -50,7 +50,7 @@ module.exports = {
           })
         }
         // User authenticated
-        const userIsMember = await postService.userBelongsToGroup(userId, postInPrivateGroup.group_id)
+        const userIsMember = await postService.userBelongsToGroup(userId, groupPost.group_id)
 
         if (userIsMember) {
           const post = await postService.getPostData(postId, true, userId)
@@ -131,16 +131,16 @@ module.exports = {
     const postId = req.params.post_id
 
     try {
-      const postInPrivateGroup = await postService.postBelongsToPrivateGroup(postId)
+      const groupPost = await postService.postBelongsToGroup(postId)
       
-      if (postInPrivateGroup.group_private && userId === undefined) {
+      if (groupPost.group_private && userId === undefined) {
         return res.status(401).finish({
           code: 1,
           messages: [messages.error_messages.e401]
         })
       }
-      if (postInPrivateGroup.group_private && userId) {
-        const userIsMember = await postService.userBelongsToGroup(userId, postInPrivateGroup.group_id)
+      if (groupPost.group_private && userId) {
+        const userIsMember = await postService.userBelongsToGroup(userId, groupPost.group_id)
         if (!userIsMember) {
           return res.status(403).finish({
             code: 2,

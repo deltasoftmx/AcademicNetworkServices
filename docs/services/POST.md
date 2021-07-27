@@ -6,7 +6,7 @@
 * [Methods](#methods)
   * [getPostsForTimeline](#getpostsfortimeline)
   * [getPostData](#getpostdata)
-  * [postBelongsToPrivateGroup](#postbelongstoprivategroup)
+  * [postBelongsToGroup](#postbelongstogroup)
   * [userBelongsToGroup](#userbelongstogroup)
   * [getFavoritePosts](#getfavoriteposts)
   * [getCommentsOfAPost](#getcommentsofapost)
@@ -80,18 +80,20 @@ The response can add the following fields:
   * `group_id`: number
   * `referenced_post_id`: number (if withReferencedPostId == true.)
 
-### `postBelongsToPrivateGroup`
+### `postBelongsToGroup`
 
 * **Description**: 
 
-Checks if the post provided is part of a private group, returns true or false. 
-In case the post is not found it returns -1
+Verifies if the post provided is part of a group, if is true
+returns its group id and visibilty (public or private).
+
+In case the post is not found it returns -1.
 
 * **Params**:
 
   * `post_id`: int.
 
-* **Return data type**: Promise\<boolean | number>
+* **Return data type**: Promise\<Object | number>
 
 ### `userBelongsToGroup`
 
