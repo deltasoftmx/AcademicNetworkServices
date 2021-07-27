@@ -392,6 +392,7 @@ module.exports = {
         users.id as user_id,
         users.firstname,
         users.lastname,
+        users.username,
         users.profile_img_src,
         post_comments.content,
         post_comments.image_src,

@@ -163,6 +163,7 @@ Comments are sorted in descending order according to the creation date.
     * `user_id`: int,
     * `firstname`: string,
     * `lastname`: string,
+    * `username`: string,
     * `profile_img_src`: string,
     * `content`: string,
     * `image_src`: string,
