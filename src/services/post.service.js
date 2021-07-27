@@ -373,6 +373,17 @@ module.exports = {
     }
   },
 
+  /**
+   * Retrieves a list of comments for a specific post.
+   * Comments are sorted in descending order according to the creation date.
+   * @param {number} post_id 
+   * @param {number} offset 
+   * @param {number} page 
+   * @returns {Object}
+   *  * exists_post: boolean
+   *  * comments: comments records | undefined
+   *  * total_records: number | undefined
+   */
   getCommentsOfAPost: async function(post_id, offset = 10, page = 0) {
     const commentsQuery = `
       select 

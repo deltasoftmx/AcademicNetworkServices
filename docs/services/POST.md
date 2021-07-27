@@ -9,6 +9,7 @@
   * [postBelongsToPrivateGroup](#postbelongstoprivategroup)
   * [userBelongsToGroup](#userbelongstogroup)
   * [getFavoritePosts](#getfavoriteposts)
+  * [getCommentsOfAPost](#getcommentsofapost)
 
 ## Description
 
@@ -138,4 +139,30 @@ The resulting posts are paginated according to the 'offset' and the 'page' param
     * `group_name`: string (if apply),
     * `group_id`: string (if apply),
     * `referenced_post_id`: int
+  * `total_records`: int.
+
+### `getCommentsOfAPost`
+
+* **Description**: 
+
+Retrieves a list of comments for a specific post.
+Comments are sorted in descending order according to the creation date.
+
+* **Params**:
+
+  * `post_id`: int.
+  * `page`: int.
+  * `offset`: int.
+
+* **Return data type**: Promise\<Object>
+  * `exists_post`: boolean
+  * `comments`: Array\<Object>
+    * `post_id`: int,
+    * `user_id`: int,
+    * `firstname`: string,
+    * `lastname`: string,
+    * `profile_img_src`: string,
+    * `content`: string,
+    * `image_src`: string,
+    * `created_at`: date
   * `total_records`: int.

@@ -26,6 +26,7 @@
     * [Get posts for timeline](#get-posts-for-timeline)
     * [Get data of one publication](#get-data-of-one-publication)
     * [Get favorite posts of user](#get-favorite-posts-of-user)
+    * [Get comments of a post](#get-comments-of-a-post)
 
 ## General information
 
@@ -927,3 +928,80 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
 ##### Codes
 
 No particular codes.
+
+#### Get comments of a post
+
+##### Description
+
+Retrieves a list of comments for a specific post.
+Comments are sorted in descending order according to the creation date.
+Records are served into groups of a certain size called pages. 
+You can select the group size and what group get in a call.
+
+##### Endpoint
+
+`/v1/api/social-network/posts/post/:post_id/comments`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+GET
+
+##### Params
+
+###### URL Parameter
+
+* `post_id`: int.
+
+Publication that the user is requesting.
+
+###### Query Parameter
+
+The following two parameters are optional. It has default values.
+
+* `offset`: int.
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`: int.
+
+The number of the group to retrieve. Pages starts at `0`, what is also the default value.
+
+##### Response data-structure
+
+```json
+{
+  "comments": [
+    {
+      "post_id": 4,
+      "user_id": 1,
+      "firstname": "User 1",
+      "lastname": "User 1",
+      "profile_img_src": "",
+      "content": "Comment of user 1 in post with id 4",
+      "image_src": null,
+      "created_at": "2021-07-26T20:16:09.000Z"
+    },
+    {
+      "post_id": 4,
+      "user_id": 2,
+      "firstname": "User 2",
+      "lastname": "User 2",
+      "profile_img_src": "",
+      "content": "Comment of user 2 in post with id 4",
+      "image_src": null,
+      "created_at": "2021-07-26T20:16:09.000Z"
+    }
+  ],
+  "total_records": 4
+}
+```
+
+##### Codes
+
+* 1: Unauthenticated. User must authenticate to get the requested response.
+* 2: Unauthorized. The requested post belongs to a private group to which the user requesting doesn't belong.
+* 3: Resource not found.
