@@ -481,11 +481,11 @@ module.exports = {
         const message = `@${addUserRes.user_username} ha solicitado unirse a tu grupo ${addUserRes.group_name}.`
         const notifType = 'request_to_join_a_group'
         await notificationService.createNotification(
+          conn,
           addUserRes.group_owner_user_id, 
           message, 
           notifType, 
-          addUserRes.request_to_join_id,
-          conn
+          addUserRes.request_to_join_id
         )
       }
       

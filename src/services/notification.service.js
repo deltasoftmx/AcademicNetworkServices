@@ -1,7 +1,7 @@
 const mariadb = require('./mariadb.service')
 
 module.exports = {
-  createNotification: function(user_target_id, message, notif_type, element_id, conn = null) {
+  createNotification: function(conn = null, user_target_id, message, notif_type, element_id) {
     let connProvided = true
     if (!conn) {
       connProvided = false;
