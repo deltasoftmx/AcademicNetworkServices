@@ -262,16 +262,30 @@ create table if not exists group_chats (
     foreign key (issuing_user_id) references users(id)
 );
 
+# This only applies for private groups.
+create table if not exists requests_to_join_a_group (
+	id int unsigned primary key auto_increment,
+    user_id int unsigned not null,
+    group_id int unsigned not null,
+    created_at date default curdate(),
+    
+    foreign key (user_id) references users(id),
+    foreign key (group_id) references user_groups(id)
+);
+
 ############# ENDGroups #############
 
 ############# Notifications #############
 
 create table if not exists notifications (
 	id int unsigned primary key auto_increment,
+    user_target_id int unsigned not null unique,
     message varchar(700) not null,
     notif_type varchar(100) not null,
     element_id int unsigned,
-    created_at date default curdate()
+    created_at date default curdate(),
+    
+    foreign key(user_target_id) references users(id)
 );
 
 ############# END Notifications #############

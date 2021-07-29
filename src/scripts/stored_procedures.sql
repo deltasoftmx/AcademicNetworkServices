@@ -413,6 +413,10 @@ create procedure group_add_user (
 gau_label:begin    
 	declare exists_group int unsigned;
     declare user_already_member int unsigned;
+    declare group_visibility varchar(15);
+    declare group_owner_user_id int unsigned;
+    declare group_name varchar(100);
+    declare user_username varchar(50);
     
     select id into exists_group from user_groups
 	where id = group_id
@@ -435,6 +439,33 @@ gau_label:begin
             "The user is already a member of the group" as message;
 		leave gau_label;
 	end if;
+    
+    select visibility into group_visibility from user_groups
+    where user_groups.id = group_id;
+    
+    if group_visibility = 'private' then
+		insert into requests_to_join_a_group(user_id, group_id) 
+		values (user_id, group_id);
+        
+        select owner_user_id into group_owner_user_id
+        from user_groups where id = group_id
+        limit 1;
+        select name into group_name
+        from user_groups where id = group_id
+        limit 1;
+        select username into user_username
+        from users where id = user_id
+        limit 1;
+        
+		select 
+			3 as exit_code,
+			"The request was sent to the group owner" as message,
+            group_owner_user_id,
+            group_name,
+            user_username,
+            last_insert_id() as request_to_join_id;
+		leave gau_label;
+    end if;
     
     insert into group_memberships(user_id, group_id) 
 	values (user_id, group_id);
