@@ -140,18 +140,19 @@ module.exports = {
   /**
    * Return an array of available permissions that can be
    * assigned to a group.
-   * @returns Promise<Object[]>
+   * @returns {Promise<Object[]>}
    *  - id
    *  - name
    *  - codename
    */
   getAvailableGroupPermissions: async function() {
     let query = `
-          select
-            gp.id,
-            gp.name,
-            gp.codename
-              from group_permissions as gp;`
+      select
+        gp.id,
+        gp.name,
+        gp.codename
+      from group_permissions as gp;
+    `
     try {
       let availablePermissions = await mariadb.query(query)
       delete availablePermissions.meta

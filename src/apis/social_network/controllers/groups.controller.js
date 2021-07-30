@@ -144,5 +144,23 @@ module.exports = {
       err.func = err.func || 'addUserToGroup'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+
+  getAvailableGroupPermissions: async function(req, res) {
+    try {
+      const availablePermissions = await groupService.getAvailableGroupPermissions()
+
+      res.status(200).finish({
+        code: 0,
+        messages: [messages.success_messages.c200],
+        data: {
+          group_permissions: availablePermissions
+        }
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'getAvailableGroupPermissions'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }
