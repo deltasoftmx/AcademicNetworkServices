@@ -23,6 +23,7 @@
     * [Switch group notifications](#switch-group-notifications)
     * [Update group image](#update-group-image)
     * [Add a user to a group](#add-a-user-to-a-group)
+    * [Get available permissions for groups](#get-available-permissions-for-groups)
   * [Posts](#posts)
     * [Get posts for timeline](#get-posts-for-timeline)
     * [Get data of one publication](#get-data-of-one-publication)
@@ -709,6 +710,51 @@ No particular response data-structure.
 
 1. Group does not exist.
 2. The user is already a member of the group.
+
+#### Get available permissions for groups
+
+##### Description
+
+Return the available permissions that can be assigned to a group.
+
+##### Endpoint
+
+`/v1/api/social-network/groups/available-permissions`
+
+##### Headers
+
+Not more than madatories.
+
+##### Method
+
+GET
+
+##### Params
+
+Void
+
+##### Response data-structure
+
+```json
+{
+  "group_permissions": [
+    {
+      "id": 1,
+      "name": "Permitir publicaciones",
+      "codename": "allow_posts"
+    },
+    {
+      "id": 2,
+      "name": "Permitir comentarios",
+      "codename": "allow_comments"
+    }
+  ]
+}
+```
+
+##### Codes
+
+No particular codes.
 
 ### Posts
 

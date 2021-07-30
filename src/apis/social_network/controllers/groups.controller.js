@@ -153,7 +153,9 @@ module.exports = {
       res.status(200).finish({
         code: 0,
         messages: [messages.success_messages.c200],
-        data: availablePermissions
+        data: {
+          group_permissions: availablePermissions
+        }
       })
     } catch (err) {
       err.file = err.file || __filename
