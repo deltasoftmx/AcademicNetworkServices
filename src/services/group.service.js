@@ -1,6 +1,7 @@
 const cloudinary = require('cloudinary').v2
 const mariadb = require('./mariadb.service')
 const logService = require('./log.service')
+const notificationService = require('./notification.service')
 
 /**
  * Add the permissions in to a certain group, all by id.
@@ -456,6 +457,50 @@ module.exports = {
       err.func = 'updateGroupImage'
       err.cloudinary_id = cloudinary_id
       throw err
+    }
+  },
+
+  /**
+   * Add a user to a specific group.
+   * @param {int} userId 
+   * @param {int} group_id 
+   * @returns {Object}
+   *  * exit_code: int
+   *  * message: string
+   */
+  addUserToGroup: async function(userId, group_id) {
+    let query = `call group_add_user(?, ?);`
+    let conn
+    try {
+      conn = await mariadb.getConnection()
+      conn.beginTransaction()
+      let addUserRes = await conn.query(query, [userId, group_id])
+      addUserRes = addUserRes[0][0]
+
+      if (addUserRes.exit_code == 3) {
+        const message = `@${addUserRes.user_username} ha solicitado unirse a tu grupo ${addUserRes.group_name}.`
+        const notifType = 'request_to_join_a_group'
+        await notificationService.createNotification(
+          conn,
+          addUserRes.group_owner_user_id, 
+          message, 
+          notifType, 
+          addUserRes.request_to_join_id
+        )
+      }
+      
+      conn.commit()
+      return {
+        exit_code: addUserRes.exit_code,
+        message: addUserRes.message
+      }
+    } catch (err) {
+      conn.rollback()
+      err.file = __filename
+      err.func = 'addUserToGroup'
+      throw err
+    } finally {
+      if (conn) conn.release()
     }
   }
 }

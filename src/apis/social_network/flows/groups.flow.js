@@ -42,5 +42,12 @@ module.exports = {
     upload.single('image'),
     groupsMiddleware.checkUpdateGroupImageData,
     groupsController.updateGroupImage
+  ],
+
+  addUserToGroup: [
+    generalMiddleware.verifyAPIKey,
+    generalMiddleware.userAuth,
+    groupsMiddleware.checkGroupId,
+    groupsController.addUserToGroup
   ]
 }

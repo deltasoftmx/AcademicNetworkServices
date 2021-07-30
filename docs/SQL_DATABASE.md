@@ -16,6 +16,7 @@ This system use MariaDB v10.4 as database management system.
   * [Add a permission to a group](#Add-a-permission-to-a-group)
   * [Add a tag to a group](#Add-a-tag-to-a-group)
   * [Switch group notifications](#Switch-group-notifications)
+  * [Add a user to a group](#add-a-user-to-a-group)
 
 ## SQL Schema
 ![SQL Schema](diagrams/db.png)
@@ -280,3 +281,27 @@ Turn on or turn off the group notifications which the user requesting belongs to
 
 * 1: User doesn't exist in the group memberships or the group doesn't exist.
 * 2: Group notifications are already in that state.
+
+### Add a user to a group
+
+#### Type
+
+Write
+
+#### Description
+
+Adds a user to a group.
+
+#### SP name
+
+`group_add_user`
+
+#### Parameters
+
+* `user_id`: int unsigned
+* `group_id`: int unsigned
+
+#### Exit codes
+
+* 1: Group does not exist.
+* 2: The user is already a member of the group.
