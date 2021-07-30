@@ -49,5 +49,10 @@ module.exports = {
     generalMiddleware.userAuth,
     groupsMiddleware.checkGroupId,
     groupsController.addUserToGroup
+  ],
+
+  getAvailableGroupPermissions: [
+    generalMiddleware.verifyAPIKey,
+    groupsController.getAvailableGroupPermissions
   ]
 }
