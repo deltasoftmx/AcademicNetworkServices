@@ -350,7 +350,7 @@ Return an object containing an array of names and ids of the public user types. 
 
 ##### Headers
 
-Not more than madatories.
+Not more than mandatories.
 
 ##### Method
 
@@ -393,7 +393,7 @@ Return an object containing an array of names and ids of avaliable majors. Usefu
 
 ##### Headers
 
-Not more than madatories.
+Not more than mandatories.
 
 ##### Method
 
@@ -438,7 +438,7 @@ Return information about a certain group.
 
 ##### Headers
 
-Not more than madatories.
+Not more than mandatories.
 
 ##### Method
 
@@ -723,7 +723,7 @@ Return the available permissions that can be assigned to a group.
 
 ##### Headers
 
-Not more than madatories.
+Not more than mandatories.
 
 ##### Method
 
