@@ -279,7 +279,7 @@ create table if not exists requests_to_join_a_group (
 
 create table if not exists notifications (
 	id int unsigned primary key auto_increment,
-    user_target_id int unsigned not null unique,
+    user_target_id int unsigned not null,
     message varchar(700) not null,
     notif_type varchar(100) not null,
     element_id int unsigned,
