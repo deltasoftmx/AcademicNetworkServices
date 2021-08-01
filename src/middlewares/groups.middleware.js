@@ -52,7 +52,7 @@ module.exports = {
       obj('group_name').required().isString()
       obj('description').isString()
       obj('visibility').required().isString().isIncludedInArray(['public', 'private'])
-      obj('permissions').required().isArray( item => {
+      obj('permissions').isArray( item => {
         item.required().isNumber().integer().isPositive()
       })
       obj('tags').isArray( item => {

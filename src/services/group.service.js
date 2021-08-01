@@ -21,17 +21,16 @@ async function addPermissionToGroup(conn, groupId, permissions) {
       //Internal error.
       let errmsg = 'Group id was not provided'
       throw new Error(errmsg)
-    } if(!permissions.length) {
-      //Internal error.
-      let errmsg = 'At least one permission is required'
-      throw new Error(errmsg)
     }
-    let res
-    for(let perm of permissions) {
-      res = await conn.query(query, [groupId, perm])
-      res = res[0][0]
-      if(res.exit_code != 0) {
-        break
+    let res = {}
+    res.exit_code = 0
+    if (permissions) {
+      for(let perm of permissions) {
+        res = await conn.query(query, [groupId, perm])
+        res = res[0][0]
+        if(res.exit_code != 0) {
+          break
+        }
       }
     }
     return res
@@ -65,19 +64,18 @@ async function addTagsToGroup(conn, groupId, tags) {
       //Internal error.
       let errmsg = 'Group id was not provided'
       throw new Error(errmsg)
-    } if(!tags.length) {
-      //Internal error.
-      let errmsg = 'At least one tag is required'
-      throw new Error(errmsg)
     }
-    
-    query += '(?, ?)'
-    let args = [groupId, tags[0]]
-    for(let i = 1; i < tags.length; i++) {
-      query += ', (?, ?)'
-      args.push(groupId, tags[i])
+    let res = {}
+    if (tags && tags.length > 0) {
+      query += '(?, ?)'
+      let args = [groupId, tags[0]]
+      for(let i = 1; i < tags.length; i++) {
+        query += ', (?, ?)'
+        args.push(groupId, tags[i])
+      }
+      res = await conn.query(query, args)
     }
-    return await conn.query(query, args)
+    return res
   } catch(err) {
     err.func = 'addTagsToGroup'
     err.file = __filename
