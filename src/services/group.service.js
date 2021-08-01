@@ -21,6 +21,10 @@ async function addPermissionToGroup(conn, groupId, permissions) {
       //Internal error.
       let errmsg = 'Group id was not provided'
       throw new Error(errmsg)
+    } if(!permissions.length) {
+      //Internal error.
+      let errmsg = 'At least one permission is required'
+      throw new Error(errmsg)
     }
     let res = {}
     for(let perm of permissions) {
@@ -60,6 +64,10 @@ async function addTagsToGroup(conn, groupId, tags) {
     } if(!groupId) {
       //Internal error.
       let errmsg = 'Group id was not provided'
+      throw new Error(errmsg)
+    } if(!tags.length) {
+      //Internal error.
+      let errmsg = 'At least one tag is required'
       throw new Error(errmsg)
     }
     query += '(?, ?)'
