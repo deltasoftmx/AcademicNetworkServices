@@ -23,14 +23,11 @@ async function addPermissionToGroup(conn, groupId, permissions) {
       throw new Error(errmsg)
     }
     let res = {}
-    res.exit_code = 0
-    if (permissions) {
-      for(let perm of permissions) {
-        res = await conn.query(query, [groupId, perm])
-        res = res[0][0]
-        if(res.exit_code != 0) {
-          break
-        }
+    for(let perm of permissions) {
+      res = await conn.query(query, [groupId, perm])
+      res = res[0][0]
+      if(res.exit_code != 0) {
+        break
       }
     }
     return res
@@ -65,17 +62,13 @@ async function addTagsToGroup(conn, groupId, tags) {
       let errmsg = 'Group id was not provided'
       throw new Error(errmsg)
     }
-    let res = {}
-    if (tags && tags.length > 0) {
-      query += '(?, ?)'
-      let args = [groupId, tags[0]]
-      for(let i = 1; i < tags.length; i++) {
-        query += ', (?, ?)'
-        args.push(groupId, tags[i])
-      }
-      res = await conn.query(query, args)
+    query += '(?, ?)'
+    let args = [groupId, tags[0]]
+    for(let i = 1; i < tags.length; i++) {
+      query += ', (?, ?)'
+      args.push(groupId, tags[i])
     }
-    return res
+    return await conn.query(query, args)
   } catch(err) {
     err.func = 'addTagsToGroup'
     err.file = __filename
@@ -342,13 +335,17 @@ module.exports = {
         return groupRes
       }
 
-      let addPermRes = await addPermissionToGroup(conn, groupRes.id, group.permissions)
-      if(addPermRes.exit_code == 1) { //exit code 1 -> 3
-        addPermRes.exit_code = 3
-        return addPermRes
+      if (group.permissions && group.permissions.length > 0) {
+        let addPermRes = await addPermissionToGroup(conn, groupRes.id, group.permissions)
+        if(addPermRes.exit_code == 1) { //exit code 1 -> 3
+          addPermRes.exit_code = 3
+          return addPermRes
+        }
       }
 
-      await addTagsToGroup(conn, groupRes.id, group.tags)
+      if (group.tags && group.tags.length > 0) {
+        await addTagsToGroup(conn, groupRes.id, group.tags)
+      }
 
       conn.commit()
       conn.release()
