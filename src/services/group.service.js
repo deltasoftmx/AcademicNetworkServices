@@ -26,7 +26,7 @@ async function addPermissionToGroup(conn, groupId, permissions) {
       let errmsg = 'At least one permission is required'
       throw new Error(errmsg)
     }
-    let res
+    let res = {}
     for(let perm of permissions) {
       res = await conn.query(query, [groupId, perm])
       res = res[0][0]
@@ -70,7 +70,6 @@ async function addTagsToGroup(conn, groupId, tags) {
       let errmsg = 'At least one tag is required'
       throw new Error(errmsg)
     }
-    
     query += '(?, ?)'
     let args = [groupId, tags[0]]
     for(let i = 1; i < tags.length; i++) {
@@ -344,13 +343,17 @@ module.exports = {
         return groupRes
       }
 
-      let addPermRes = await addPermissionToGroup(conn, groupRes.id, group.permissions)
-      if(addPermRes.exit_code == 1) { //exit code 1 -> 3
-        addPermRes.exit_code = 3
-        return addPermRes
+      if (group.permissions && group.permissions.length > 0) {
+        let addPermRes = await addPermissionToGroup(conn, groupRes.id, group.permissions)
+        if(addPermRes.exit_code == 1) { //exit code 1 -> 3
+          addPermRes.exit_code = 3
+          return addPermRes
+        }
       }
 
-      await addTagsToGroup(conn, groupRes.id, group.tags)
+      if (group.tags && group.tags.length > 0) {
+        await addTagsToGroup(conn, groupRes.id, group.tags)
+      }
 
       conn.commit()
       conn.release()
