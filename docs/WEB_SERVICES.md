@@ -12,7 +12,7 @@
     * [Create student](#create-student)
     * [Sign in](#sign-in)
     * [Get public user data](#get-public-user-data)
-    * [Create post](#create-post)
+    * [Create user post](#create-user-post)
     * [Search users](#search-users)
     * [Get public user types](#get-public-user-types)
     * [Get majors data](#get-majors-data)
@@ -24,6 +24,7 @@
     * [Update group image](#update-group-image)
     * [Add a user to a group](#add-a-user-to-a-group)
     * [Get available permissions for groups](#get-available-permissions-for-groups)
+    * [Create group post](#create-group-post)
   * [Posts](#posts)
     * [Get posts for timeline](#get-posts-for-timeline)
     * [Get data of one publication](#get-data-of-one-publication)
@@ -228,7 +229,7 @@ GET
 ##### Codes
 * 1: Username doesn't exists.
 
-#### Create post
+#### Create user post
 
 ##### Description
 
@@ -257,7 +258,7 @@ POST
 ```json
 {
   "content": "Lorem ipsum",
-  "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
+  "img_src": "https://res.cloudinary.com/ajulian-cloud/image/upload/v1627936910/TEST_kofisd.jpg",
 }
 ```
 
@@ -755,6 +756,45 @@ Void
 ##### Codes
 
 No particular codes.
+
+#### Create group post
+
+##### Description
+
+Create a new group post, either only text or text with an image.
+
+##### Endpoint
+
+`/v1/api/social-network/groups/group/:group_id/post`
+
+##### Headers
+
+* `Content-Type`: multipart/form-data
+* `Authorization`
+
+##### Method
+
+POST
+
+##### Params
+
+* `content`: string.
+* `image`: Object.
+
+##### Response data-structure
+
+```json
+{
+  "content": "Lorem ipsum",
+  "img_src": "https://res.cloudinary.com/ajulian-cloud/image/upload/v1627936910/TEST_kofisd.jpg",
+}
+```
+
+##### Codes
+* 1: Group does not exist.
+* 2: Group does not have [codename] permission.
+* 3: No data was sent.
+* 4: User is not member of group.
 
 ### Posts
 

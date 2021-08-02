@@ -87,8 +87,15 @@ module.exports = {
 
   checkNewPostData: function(req, res, next) {
     let validator = new Validator()
-    validator(req.body.content).isString()
-    validator(req.file).isObject()
+    validator(req.body.content).isString().display('content')
+    // Multer will use the 'image' field, if a file is sent in this field multer will 
+    // "send the image" in req.file so req.body.image will have undefined value, but 
+    // if a file is not sent in the field 'image' req.file will be undefined and 
+    // req.body.image will have a value so it is necessary to validate it.
+    validator(req.file).isObject().display('image')
+    if (req.body.image) {
+      validator(req.body.image).isObject().display('image')
+    }
 
     let errors = parseValidatorOutput(validator.run())
     if (errors.length != 0) {

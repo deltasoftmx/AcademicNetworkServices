@@ -71,6 +71,7 @@ module.exports = {
     try {
       let payload = await cryptService.verifyJWT(req.headers.authorization)
       req.api.userId = payload.user_id
+      req.api.username = payload.username
       return next()
     } catch(err) {
       if(err.name) {

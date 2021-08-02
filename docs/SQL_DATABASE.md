@@ -305,3 +305,53 @@ Adds a user to a group.
 
 * 1: Group does not exist.
 * 2: The user is already a member of the group.
+
+### Create a post of type group
+
+#### Type
+
+Write
+
+#### Description
+
+Create a post of type group.
+
+#### SP name
+
+`group_post_create`
+
+#### Parameters
+
+* `user_id`: int unsigned
+* `group_id`: int unsigned
+* `content`: text
+* `img_src`: varchar(700)
+* `cloudinary_id`: varchar(100)
+* `post_type`: varchar(50)
+
+#### Exit codes
+
+* 1: User is not member of group.
+
+### Sets a permission for an endpoint.
+
+#### Type
+
+Write
+
+#### Description
+
+Sets a permission for an endpoint.
+
+#### SP name
+
+`endpoint_permission_create`
+
+#### Parameters
+
+* `endpoint`: varchar(700),
+* `group_permission_id`: int unsigned
+
+#### Exit codes
+
+* 1: The endpoint already has the group permission id.

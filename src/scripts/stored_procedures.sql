@@ -475,3 +475,74 @@ gau_label:begin
         "Done" as message;
 end $$
 delimiter ;
+
+drop procedure if exists group_post_create;
+delimiter $$
+create procedure group_post_create (
+	user_id int unsigned,
+    group_id int unsigned,
+    content text,
+    img_src varchar(700),
+    cloudinary_id varchar(100),
+    post_type varchar(50)
+)
+gpc_label:begin    
+	declare user_member_of_group int unsigned;
+    
+    select id into user_member_of_group 
+    from group_memberships as gm
+    where gm.user_id = user_id and gm.group_id = group_id
+    limit 1;
+    
+    if user_member_of_group is null then
+		select
+			1 as exit_code,
+            "User is not member of group" as message;
+		leave gpc_label;
+	end if;
+    
+    insert into posts(user_id, content, img_src, cloudinary_id, post_type) 
+    values (user_id, content, img_src, cloudinary_id, post_type);
+    
+    insert into group_posts(post_id, group_id)
+	values (last_insert_id(), group_id);
+	
+    select
+		0 as exit_code,
+        "Done" as message;
+end $$
+delimiter ;
+
+drop procedure if exists endpoint_permission_create;
+delimiter $$
+create procedure endpoint_permission_create (
+	endpoint varchar(700),
+    group_permission_id int unsigned
+)
+epc_label:begin
+    declare endpoint_with_group_id_exists int;
+    
+    select id into endpoint_with_group_id_exists 
+    from group_endpoint_permissions as gep
+    where 
+		gep.endpoint = endpoint and
+		gep.group_permission_id = group_permission_id
+    limit 1;
+    
+    if endpoint_with_group_id_exists is not null then
+		select
+			1 as exit_code,
+            "The endpoint already has the group permission id.";
+		leave epc_label;
+	end if;
+    
+    insert into 
+		group_endpoint_permissions(endpoint, group_permission_id)
+    values (endpoint, group_permission_id);
+    
+    select
+		0 as exit_code,
+        "Done" as message,
+        last_insert_id() as id;
+end $$
+delimiter ;
