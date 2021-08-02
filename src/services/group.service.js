@@ -1,4 +1,5 @@
 const cloudinary = require('cloudinary').v2
+const fs = require('fs')
 const mariadb = require('./mariadb.service')
 const logService = require('./log.service')
 const notificationService = require('./notification.service')
@@ -506,5 +507,97 @@ module.exports = {
     } finally {
       if (conn) conn.release()
     }
-  }
+  },
+
+  /**
+   * Creates a new post of type 'group'.
+   * @param {number} userId 
+   * @param {Object} post An object with:
+   * - content: string.
+   * - image: Object. An object with:
+   *   - path: Path of image in the local files.
+   */
+  createPost: async function(userId, groupId, post) {    
+    let postData = {}
+
+    if (post.content) {
+      postData.content = post.content;
+    }
+
+    if (post.image) {
+      try {
+        // The image is uploaded to cloudinary
+        const resultUploadImage = await cloudinary.uploader.upload(post.image.path)
+        postData.img_src = resultUploadImage.secure_url
+        postData.cloudinary_id = resultUploadImage.public_id
+      } catch (err) {
+        err.file = __filename
+        err.func = 'createPost'
+        err.cloudinary_id = postData.cloudinary_id
+        throw err
+      } finally {
+         // The local files are deleted.
+        fs.unlinkSync(post.image.path)
+      }
+    }
+
+    let args = [
+      userId, 
+      groupId,
+      postData.content ?? '', 
+      postData.img_src ?? '', 
+      postData.cloudinary_id ?? '', 
+      'group'
+    ]
+    const query = `call group_post_create(?, ?, ?, ?, ?, ?);`
+    
+    try {
+      let queryPostRes = await mariadb.query(query, args)
+      queryPostRes = queryPostRes[0][0]
+      delete postData.cloudinary_id
+      return {
+        exit_code: queryPostRes.exit_code,
+        message: queryPostRes.message,
+        post_data: queryPostRes.exit_code == 0 ? postData : {}
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'createPost'
+      err.cloudinary_id = postData.cloudinary_id
+      throw err
+    }
+  },
+
+  /**
+   * Return the permissions that every endpoint has.
+   * @param {number} 
+   * @returns {Promise<Array<object>>}
+   *  * id: number
+   *  * endpoint: string,
+   *  * group_permission_id: number
+   *  * name: string
+   *  * codename: string
+   */
+   getEndpointPermissions: async function() {
+    let query = `
+      select 
+        gep.id,
+        gep.endpoint,
+        gep.group_permission_id,
+        gp.name,
+        gp.codename
+      from group_endpoint_permissions as gep
+      inner join group_permissions as gp
+      on gep.group_permission_id = gp.id;
+    `
+    try {
+      let permissions = await mariadb.query(query)
+      delete permissions.meta
+      return permissions
+    } catch(err) {
+      err.file = __filename
+      err.func = 'getEndpointPermissions'
+      throw err
+    }
+  },
 }

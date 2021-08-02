@@ -54,5 +54,15 @@ module.exports = {
   getAvailableGroupPermissions: [
     generalMiddleware.verifyAPIKey,
     groupsController.getAvailableGroupPermissions
+  ],
+
+  post: [
+    generalMiddleware.verifyAPIKey,
+    generalMiddleware.userAuth,
+    groupsMiddleware.checkGroupId,
+    groupsMiddleware.verifyPermissions,
+    upload.single('image'),
+    groupsMiddleware.checkNewPostData,
+    groupsController.createPost
   ]
 }

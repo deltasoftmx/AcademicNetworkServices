@@ -29,8 +29,8 @@ module.exports = {
   post: [
     generalMidd.verifyAPIKey,
     generalMidd.userAuth,
-    userMidd.checkNewPostData,
     upload.single('image'),
+    userMidd.checkNewPostData,
     userCtrl.createPost
   ],
   

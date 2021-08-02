@@ -162,5 +162,47 @@ module.exports = {
       err.func = err.func || 'getAvailableGroupPermissions'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+  
+  createPost: async function(req, res) {
+    const post = {
+      content: req.body.content,
+      image: req.file
+    }
+    if (!post.content && !post.image) {
+      // The code is 3 because in the method verifyPermissions() used as middleware 
+      // already use codes 1 and 2.
+      return res.status(400).finish({
+        code: 3,
+        messages: ['No data was sent']
+      })
+    }
+    try {
+      let resultPost = await groupService.createPost(req.api.userId, req.params.group_id, post)
+
+      // It's necessary add 3 to exit_code because there are 3 codes in use.
+      if (resultPost.exit_code == 1) {
+        resultPost.exit_code = 4
+      }
+
+      res.finish({
+        code: resultPost.exit_code,
+        messages: [resultPost.message],
+        data: resultPost.post_data
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'createPost'
+
+      // If exist some Cloudinary env var not configured.
+      if (err.http_code === 401) {
+        req.api.logger.error(err)
+        res.status(500).finish({
+          code: 1001,
+          messages: [messages.error_messages.e500]
+        })
+      }
+      errorHandlingService.handleImageUploadError(req, res, err)
+    }
   }
 }

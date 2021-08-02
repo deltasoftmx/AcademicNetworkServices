@@ -171,7 +171,7 @@ module.exports = {
   },
 
   /**
-   * Creates a new post in the system.
+   * Creates a new post of type 'user'.
    * @param {int} userId 
    * @param {Object} post An object with:
    * - content: string.

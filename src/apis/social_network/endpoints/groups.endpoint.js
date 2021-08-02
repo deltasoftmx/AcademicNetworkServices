@@ -8,5 +8,6 @@ router.put('/group/:group_id/switch-notifications', groupsFlow.switchGroupNotifi
 router.put('/group/:group_id/update-image', groupsFlow.updateGroupImage)
 router.post('/group/:group_id/add-user', groupsFlow.addUserToGroup)
 router.get('/available-permissions', groupsFlow.getAvailableGroupPermissions)
+router.post('/group/:group_id/post', groupsFlow.post)
 
 module.exports = router
