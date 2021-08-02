@@ -12,6 +12,7 @@
   * [switchGroupNotifications](#switchGroupNotifications)
   * [updateGroupImage](#updateGroupImage)
   * [addUserToGroup](#addUserToGroup)
+  * [createPost](#createPost)
 
 ## Description
 
@@ -173,3 +174,20 @@ Add a user to a specific group.
 * **Exit code**:
   * 1: Group does not exist.
   * 2: The user is already a member of the group.
+
+### `createPost`
+
+* **Description**: Create a new group post, either only text or text with an image.
+* **Params**
+  * `userId`: int.
+  * `groupId`: int.
+  * `post`: Object.
+    * `content`: string.
+    * `image`: Object.
+      * `path`: string. Path of image in the local files.
+* **Return data type**: Promise\<Object>
+  * `exit_code`: int,
+  * `message`: string,
+  * `post_data`: Object
+    * `content`: string.
+    * `img_src`: string.
