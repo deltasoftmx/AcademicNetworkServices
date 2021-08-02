@@ -20,8 +20,10 @@ module.exports = {
       let result = await userService.createStudent(req.body)
       
       if(result.exit_code == 0) {
-        let token = await cryptService.generateJWT( { user_id: result.user_id },
-                                                    conf.session.expires_in)
+        let token = await cryptService.generateJWT({ 
+          user_id: result.user_id,
+          username: req.body.username
+        }, conf.session.expires_in)
         let publicUserData = await userService.getPublicUserData(req.body.email)
 
         return res.finish({
@@ -66,9 +68,11 @@ module.exports = {
           messages: ['Invalid credentials']
         })
       }
-      let token = await cryptService.generateJWT( { user_id: userId }, 
-                                                  conf.session.expires_in)
       let publicUserData = await userService.getPublicUserData(req.body.username)
+      let token = await cryptService.generateJWT({ 
+        user_id: userId,
+        username: publicUserData.username
+      }, conf.session.expires_in)
       publicUserData.session_token = token
       res.finish({
         code: 0, 
