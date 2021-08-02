@@ -141,7 +141,7 @@ module.exports = {
 
     // The request parameter group_id that appears in the path as a number, is changed 
     // by 'group_id', this is how was registered in group_endpoint_permissions table.
-    let urlEndpoint = req.originalUrl.replace(/\/[0-9]+\//, '/group_id/')
+    let urlEndpoint = req.originalUrl.replace(/\/[0-9]+\//, '/:group_id/')
 
     for (const endpointPer of endpointPermissions) {
       if (endpointPer.endpoint === urlEndpoint) {

@@ -180,12 +180,14 @@ module.exports = {
     try {
       let resultPost = await groupService.createPost(req.api.userId, req.params.group_id, post)
 
-      // It's necessary add 3 to exit_code because there are 3 codes in use.
+      let statusHttp = 200
       if (resultPost.exit_code == 1) {
+        // It's necessary add 3 to exit_code because there are 3 codes in use.
         resultPost.exit_code = 4
+        statusHttp = 403
       }
-
-      res.finish({
+      
+      res.status(statusHttp).finish({
         code: resultPost.exit_code,
         messages: [resultPost.message],
         data: resultPost.post_data
