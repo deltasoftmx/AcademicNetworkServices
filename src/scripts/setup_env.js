@@ -510,7 +510,7 @@ function help() {
 
   Options:
 
-  * --db-username
+  * --db-user
 
   User database.
 
