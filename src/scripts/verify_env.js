@@ -31,9 +31,11 @@ function exit() {
   process.exit(1)
 }
 
+let rootDir = path.join(__dirname, '..', '..')
+
 //Loading env vars.
 //dotenv file shuld be in the root directory.
-envResult = dotenv.config()
+envResult = dotenv.config({ path: path.join(rootDir, 'etc', '.env') });
 if(envResult.error) {
   console.log('An error has occurred while loading ENV VARS from .env file.')
   console.log('Using default ENV VARS.')
@@ -60,7 +62,7 @@ console.log('Required env vars found.')
 
 //Testing access to conf.json.
 try {
-  fs.accessSync(path.join(process.cwd(), 'etc', 'conf.json'), fs.constants.R_OK)
+  fs.accessSync(path.join(rootDir, 'etc', 'conf.json'), fs.constants.R_OK)
   console.log('Config file found and accessible.')
 } catch (err) {
   switch(err.code) {
@@ -79,8 +81,8 @@ try {
 
 //Testing access to RSA certificates.
 try {
-  fs.accessSync(path.join(process.cwd(), 'certs', 'academy_network'), fs.constants.R_OK)
-  fs.accessSync(path.join(process.cwd(), 'certs', 'academy_network.pem'), fs.constants.R_OK)
+  fs.accessSync(path.join(rootDir, 'certs', 'academy_network'), fs.constants.R_OK)
+  fs.accessSync(path.join(rootDir, 'certs', 'academy_network.pem'), fs.constants.R_OK)
   console.log('RSA certificates found and accessible.')
 } catch(err) {
   switch(err.code) {

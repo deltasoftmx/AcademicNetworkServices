@@ -8,7 +8,7 @@ class PathTracker extends Logger{
   }
 
   computeLog() {
-    let log = `--- Process [${moment().format()}] [${this.method}]: ${this.process}.\n`
+    let log = `--- Process [${moment().format('YYYY-MM-DD HH:mm:ss')}] [${this.method}]: ${this.process}.\n`
     for (let m of this.queue) {
       log += `-> ${m}\n`
     }

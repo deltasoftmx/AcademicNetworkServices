@@ -1,12 +1,14 @@
 const Logger = require('../lib/logger')
 const path = require('path')
 
+let rootDir = process.env.ACADEMIC_NETWORK_BACKEND_ROOTDIR
+
 module.exports = {
   crashReport: function(err, toStdout = true) {
     logger = new Logger({
       method: err.method,
       process: err.process,
-      logpath: path.join(process.cwd(), 'logs', 'crash_reports.log'),
+      logpath: path.join(rootDir, 'logs', 'crash_reports.log'),
       writeToFile: true,
       writeToStdout: toStdout
     })
