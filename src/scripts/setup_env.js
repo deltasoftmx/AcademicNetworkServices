@@ -81,7 +81,7 @@ function loadEnvVars() {
 
   //Loading env vars.
   //dotenv file shuld be in the root directory.
-  let envResult = dotenv.config({ path: path.join(rootDir, '.env') })
+  let envResult = dotenv.config({ path: path.join(rootDir, 'etc', '.env') })
   let envVarsLoaded = false
   if(!envResult.error) {
     envVarsLoaded = true
@@ -510,7 +510,7 @@ function help() {
 
   Options:
 
-  * --db-username
+  * --db-user
 
   User database.
 
