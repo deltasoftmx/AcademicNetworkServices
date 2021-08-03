@@ -34,7 +34,7 @@ function exit() {
 let rootDir = path.join(__dirname, '..', '..')
 
 //Loading env vars.
-//dotenv file shuld be in the root directory.
+//dotenv file should be in the /etc directory.
 envResult = dotenv.config({ path: path.join(rootDir, 'etc', '.env') });
 if(envResult.error) {
   console.log('An error has occurred while loading ENV VARS from .env file.')
