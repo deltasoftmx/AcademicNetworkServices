@@ -21,15 +21,17 @@ module.exports = {
 
   handleImageUploadError: function(req, res, err) {
     // If the image uploaded still exists in local files then it will delete.
-    if (fs.existsSync(req.file.path)) {
+    if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path)
     }
-
+    
     // If the image created in cloudinary services still exists then it will delete.
-    cloudinary.api.resource(err.cloudinary_id)
+    if (err.cloudinary_id) {
+      cloudinary.api.resource(err.cloudinary_id)
       .then(() => cloudinary.uploader.destroy(err.cloudinary_id))
       .then(() => err.cloudinary_id = undefined)
-
+    }
+    
     this.handleErrorInRequest(req, res, err)
  }
 }

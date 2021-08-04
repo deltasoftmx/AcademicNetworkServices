@@ -510,21 +510,24 @@ module.exports = {
   },
 
   /**
-   * Creates a new post of type 'group'.
+   * Creates a new post of type 'group' or 'shared' in case that the
+   * user shares a group post.
    * @param {number} userId 
+   * @param {number} groupId
    * @param {Object} post An object with:
    * - content: string.
    * - image: Object. An object with:
    *   - path: Path of image in the local files.
+   * @param {number} referencedPostId
    */
-  createPost: async function(userId, groupId, post) {    
+  createPost: async function(userId, groupId, post, referencedPostId = null) {
     let postData = {}
 
     if (post.content) {
       postData.content = post.content;
     }
 
-    if (post.image) {
+    if (post.image && !referencedPostId) {
       try {
         // The image is uploaded to cloudinary
         const resultUploadImage = await cloudinary.uploader.upload(post.image.path)
@@ -546,10 +549,11 @@ module.exports = {
       groupId,
       postData.content ?? '', 
       postData.img_src ?? '', 
-      postData.cloudinary_id ?? '', 
-      'group'
+      postData.cloudinary_id ?? '',
+      referencedPostId ?? 0,
+      (referencedPostId) ? 'shared' : 'group'
     ]
-    const query = `call group_post_create(?, ?, ?, ?, ?, ?);`
+    const query = `call group_post_create(?, ?, ?, ?, ?, ?, ?);`
     
     try {
       let queryPostRes = await mariadb.query(query, args)

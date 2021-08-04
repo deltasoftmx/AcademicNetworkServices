@@ -1,4 +1,8 @@
-const { Validator, parseValidatorOutput, parseNumberFromGroupIfApplic } = require('../services/validator.service')
+const { 
+  Validator, 
+  parseValidatorOutput, 
+  parseNumberFromGroupIfApplic,
+  parseNumberIfApplicable } = require('../services/validator.service')
 const groupService = require('../services/group.service')
 
 
@@ -103,8 +107,14 @@ module.exports = {
   },
 
   checkNewPostData: function(req, res, next) {
+    req.body.referenced_post_id = parseNumberIfApplicable(req.body.referenced_post_id)
+    
     let validator = new Validator()
-    validator(req.body.content).isString().display('content')
+    validator(req.body).required().isObject( obj => {
+      obj('content').isString(),
+      obj('referenced_post_id').isNumber().integer().isPositive()
+    })
+
     // Multer will use the 'image' field, if a file is sent in this field multer will 
     // "send the image" in req.file so req.body.image will have undefined value, but 
     // if a file is not sent in the field 'image' req.file will be undefined and 

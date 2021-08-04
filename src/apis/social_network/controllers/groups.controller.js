@@ -169,7 +169,8 @@ module.exports = {
       content: req.body.content,
       image: req.file
     }
-    if (!post.content && !post.image) {
+    const referencedPostId = req.body.referenced_post_id
+    if (!referencedPostId && !post.content && !post.image) {
       // The code is 3 because in the method verifyPermissions() used as middleware 
       // already use codes 1 and 2.
       return res.status(400).finish({
@@ -178,8 +179,13 @@ module.exports = {
       })
     }
     try {
-      let resultPost = await groupService.createPost(req.api.userId, req.params.group_id, post)
-
+      let resultPost = await groupService.createPost(
+        req.api.userId, 
+        req.params.group_id, 
+        post,
+        referencedPostId
+      )
+        
       let statusHttp = 200
       if (resultPost.exit_code == 1) {
         // It's necessary add 3 to exit_code because there are 3 codes in use.

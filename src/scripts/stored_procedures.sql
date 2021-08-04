@@ -484,6 +484,7 @@ create procedure group_post_create (
     content text,
     img_src varchar(700),
     cloudinary_id varchar(100),
+    referenced_post_id int,
     post_type varchar(50)
 )
 gpc_label:begin    
@@ -501,12 +502,19 @@ gpc_label:begin
 		leave gpc_label;
 	end if;
     
-    insert into posts(user_id, content, img_src, cloudinary_id, post_type) 
-    values (user_id, content, img_src, cloudinary_id, post_type);
+    if post_type = 'group' then
+		insert into posts(user_id, content, img_src, cloudinary_id, post_type) 
+		values (user_id, content, img_src, cloudinary_id, post_type);
     
-    insert into group_posts(post_id, group_id)
-	values (last_insert_id(), group_id);
-	
+		insert into group_posts(post_id, group_id)
+		values (last_insert_id(), group_id);
+    end if;
+    
+    if post_type = 'shared' then
+		insert into posts(user_id, content, referenced_post_id, post_type) 
+		values (user_id, content, referenced_post_id, post_type);
+    end if;
+    
     select
 		0 as exit_code,
         "Done" as message;
