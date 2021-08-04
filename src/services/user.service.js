@@ -207,6 +207,21 @@ module.exports = {
     let args = []
     let query = ''
     if (referencedPostId) {
+      try {
+        // Verify is the referenced post id is a shared post, if is true, it is 
+        // necessary extract the id of the original post.
+        const q = `select post_type, referenced_post_id from posts where id = ?;`
+        let referencedPost = await mariadb.query(q, [referencedPostId])
+        referencedPost = referencedPost[0]
+        if (referencedPost.post_type === 'shared') {
+          referencedPostId = referencedPost.referenced_post_id
+        }
+      } catch (err) {
+        err.file = __filename
+        err.func = 'createPost'
+        err.cloudinary_id = postData.cloudinary_id
+        throw err
+      }
       args = [userId, postData.content ?? '', referencedPostId, 'shared']
       query = `insert into posts(user_id, content, referenced_post_id, post_type) 
         values(?, ?, ?, ?);
