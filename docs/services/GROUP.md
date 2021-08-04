@@ -177,7 +177,12 @@ Add a user to a specific group.
 
 ### `createPost`
 
-* **Description**: Create a new group post, either only text or text with an image.
+* **Description**: 
+
+Create a new group post, with a content and/or image.
+
+Or create a shared post of a group post, with an optional content.
+
 * **Params**
   * `userId`: int.
   * `groupId`: int.
@@ -185,6 +190,7 @@ Add a user to a specific group.
     * `content`: string.
     * `image`: Object.
       * `path`: string. Path of image in the local files.
+  * `referenced_post_id`: int.
 * **Return data type**: Promise\<Object>
   * `exit_code`: int,
   * `message`: string,

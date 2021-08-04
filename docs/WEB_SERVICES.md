@@ -12,7 +12,7 @@
     * [Create student](#create-student)
     * [Sign in](#sign-in)
     * [Get public user data](#get-public-user-data)
-    * [Create user post](#create-user-post)
+    * [Create user/shared post](#create-usershared-post)
     * [Search users](#search-users)
     * [Get public user types](#get-public-user-types)
     * [Get majors data](#get-majors-data)
@@ -24,7 +24,7 @@
     * [Update group image](#update-group-image)
     * [Add a user to a group](#add-a-user-to-a-group)
     * [Get available permissions for groups](#get-available-permissions-for-groups)
-    * [Create group post](#create-group-post)
+    * [Create group/shared post](#create-groupshared-post)
   * [Posts](#posts)
     * [Get posts for timeline](#get-posts-for-timeline)
     * [Get data of one publication](#get-data-of-one-publication)
@@ -229,11 +229,16 @@ GET
 ##### Codes
 * 1: Username doesn't exists.
 
-#### Create user post
+#### Create user/shared post
 
 ##### Description
 
-Create a new user post, either only text or text with an image.
+Create a new user post, with a content and/or image.
+
+Or create a shared post of a user/shared post, with an optional content. 
+
+If the shared post is a post of type 'shared', the referenced post id that is going to be saved
+will be the id of the root post.
 
 ##### Endpoint
 
@@ -252,6 +257,7 @@ POST
 
 * `content`: string.
 * `image`: Object.
+* `referenced_post_id`: int.
 
 ##### Response data-structure
 
@@ -757,11 +763,13 @@ Void
 
 No particular codes.
 
-#### Create group post
+#### Create group/shared post
 
 ##### Description
 
-Create a new group post, either only text or text with an image.
+Create a new group post, with a content and/or image.
+
+Or create a shared post of a group post, with an optional content.
 
 ##### Endpoint
 
@@ -778,8 +786,10 @@ POST
 
 ##### Params
 
+* `group_id`: int. Path parameter.
 * `content`: string.
 * `image`: Object.
+* `referenced_post_id`: int.
 
 ##### Response data-structure
 

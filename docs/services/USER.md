@@ -86,13 +86,22 @@ read and write user data.
 
 ### `createPost`
 
-* **Description**: Create a new user post, either only text or text with an image.
+* **Description**: 
+
+Create a new user post, with a content and/or image.
+
+Or create a shared post of a user/shared post, with an optional content. 
+
+If the shared post is a post of type 'shared', the referenced post id that is going to be saved
+will be the id of the root post.
+
 * **Params**
   * `userId`: int.
   * `post`: Object.
     * `content`: string.
     * `image`: Object.
       * `path`: string. Path of image in the local files.
+  * `referenced_post_id`: int.
 * **Return data type**: Promise\<Object>
   * `content`: string.
   * `img_src`: string.
