@@ -17,6 +17,8 @@ This system use MariaDB v10.4 as database management system.
   * [Add a tag to a group](#Add-a-tag-to-a-group)
   * [Switch group notifications](#Switch-group-notifications)
   * [Add a user to a group](#add-a-user-to-a-group)
+  * [Create a post of type group](#create-a-post-of-type-group)
+  * [Create a post of type user](#create-a-post-of-type-user)
 
 ## SQL Schema
 ![SQL Schema](diagrams/db.png)
@@ -314,7 +316,12 @@ Write
 
 #### Description
 
-Create a post of type group.
+Create a new group post, with a content and/or image.
+
+Or shares a user post or public group post as group post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new group post that is going to be saved will be the id 
+of the root post.
 
 #### SP name
 
@@ -327,11 +334,45 @@ Create a post of type group.
 * `content`: text
 * `img_src`: varchar(700)
 * `cloudinary_id`: varchar(100)
+* `referenced_post_id`: int. Id of user post or public group post to share.
 * `post_type`: varchar(50)
 
 #### Exit codes
 
 * 1: User is not member of group.
+* 2: The post cannot be shared, it belongs to a private group.
+
+### Create a post of type user
+
+#### Type
+
+Write
+
+#### Description
+
+Create a new user post, with a content and/or image.
+
+Or shares a user post or public group post as user post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new user post that is going to be saved will be the id 
+of the root post.
+
+#### SP name
+
+`user_post_create`
+
+#### Parameters
+
+* `user_id`: int unsigned
+* `content`: text
+* `img_src`: varchar(700)
+* `cloudinary_id`: varchar(100)
+* `referenced_post_id`: int. Id of user post or public group post to share.
+* `post_type`: varchar(50)
+
+#### Exit codes
+
+* 1: The post cannot be shared, it belongs to a private group.
 
 ### Sets a permission for an endpoint.
 

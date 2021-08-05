@@ -1,11 +1,11 @@
 use academy_network;
 
 -- Validate the new user's data based on certain rules and if pass, create them.
-#Rules:
-#email not repeated.
-#username not repeated.
-#user type available.
-#email domain name allowed.
+-- Rules:
+-- email not repeated.
+-- username not repeated.
+-- user type available.
+-- email domain name allowed.
 
 drop procedure if exists sp_user_create;
 delimiter $$
@@ -79,7 +79,7 @@ sp_user_create_label:begin
         "Done" as message;
 end $$
 delimiter ;
-#Create a new student.
+-- Create a new student.
 drop procedure if exists sp_create_student;
 delimiter $$
 create procedure sp_create_student (
@@ -143,7 +143,7 @@ sp_create_student_label:begin
 end $$
 delimiter ;
 
-#Create a new user type if not repeated.
+-- Create a new user type if not repeated.
 drop procedure if exists sp_user_type_create;
 delimiter $$
 create procedure sp_user_type_create (
@@ -172,7 +172,7 @@ sp_user_type_create_label:begin
 end $$
 delimiter ;
 
-#Create a new allowed domain if isn't repeated.
+-- Create a new allowed domain if isn't repeated.
 drop procedure if exists sp_domain_create;
 delimiter $$
 create procedure sp_domain_create (
@@ -484,10 +484,14 @@ create procedure group_post_create (
     content text,
     img_src varchar(700),
     cloudinary_id varchar(100),
+    referenced_post_id int,
     post_type varchar(50)
 )
 gpc_label:begin    
 	declare user_member_of_group int unsigned;
+    declare ref_post_id_of_shared_post int unsigned; --  ref == referenced
+    declare ref_post_visibility varchar(15);
+    declare new_post_id int unsigned;
     
     select id into user_member_of_group 
     from group_memberships as gm
@@ -501,14 +505,108 @@ gpc_label:begin
 		leave gpc_label;
 	end if;
     
-    insert into posts(user_id, content, img_src, cloudinary_id, post_type) 
-    values (user_id, content, img_src, cloudinary_id, post_type);
+    --  Creates a new group post.
+    if referenced_post_id = 0 then
+		insert into posts(user_id, content, img_src, cloudinary_id, post_type) 
+		values (user_id, content, img_src, cloudinary_id, post_type);
+    end if;
+    --  Shares a user post or public group post as group post.
+    if referenced_post_id > 0 then
+		--  Verify that referenced post do not belongs to a private group.
+		select user_groups.visibility into ref_post_visibility
+		from posts 
+        inner join group_posts on posts.id = group_posts.post_id
+		inner join user_groups on group_posts.group_id = user_groups.id
+		where posts.id = referenced_post_id limit 1;
+        
+        if ref_post_visibility is not null and ref_post_visibility = 'private' then
+			select
+				2 as exit_code,
+				"The post cannot be shared, it belongs to a private group." as message;
+			leave gpc_label;
+        end if;
+    
+		--  Verify is the referenced post id is a shared post, if is true,  
+        --  it is necessary extract the id of the original post.
+		select posts.referenced_post_id into ref_post_id_of_shared_post 
+        from posts where id = referenced_post_id
+		limit 1;
+        
+        if ref_post_id_of_shared_post is not null then
+			set referenced_post_id = ref_post_id_of_shared_post;
+        end if;
+        
+        insert into posts(user_id, content, referenced_post_id, post_type) 
+		values (user_id, content, referenced_post_id, post_type);
+    end if;
+
+    select last_insert_id() into new_post_id;
     
     insert into group_posts(post_id, group_id)
-	values (last_insert_id(), group_id);
-	
+		values (new_post_id, group_id);
+    
     select
 		0 as exit_code,
+        new_post_id as post_id,
+        "Done" as message;
+end $$
+delimiter ;
+
+drop procedure if exists user_post_create;
+delimiter $$
+create procedure user_post_create (
+	user_id int unsigned,
+    content text,
+    img_src varchar(700),
+    cloudinary_id varchar(100),
+    referenced_post_id int,
+    post_type varchar(50)
+)
+upc_label:begin    
+    declare ref_post_id_of_shared_post int unsigned; --  ref == referenced
+    declare ref_post_visibility varchar(15);
+    declare new_post_id int unsigned;
+
+    --  Creates a new user post.
+    if referenced_post_id = 0 then
+		insert into posts(user_id, content, img_src, cloudinary_id, post_type) 
+		values (user_id, content, img_src, cloudinary_id, post_type);
+    end if;
+    --  Shares a user post or public group post as user post.
+    if referenced_post_id > 0 then
+		--  Verify that referenced post do not belongs to a private group.
+		select user_groups.visibility into ref_post_visibility
+		from posts 
+        inner join group_posts on posts.id = group_posts.post_id
+		inner join user_groups on group_posts.group_id = user_groups.id
+		where posts.id = referenced_post_id limit 1;
+        
+        if ref_post_visibility is not null and ref_post_visibility = 'private' then
+			select
+				1 as exit_code,
+				"The post cannot be shared, it belongs to a private group." as message;
+			leave upc_label;
+        end if;
+    
+		--  Verify is the referenced post id is a shared post, if is true,  
+        --  it is necessary extract the id of the original post.
+		select posts.referenced_post_id into ref_post_id_of_shared_post 
+        from posts where id = referenced_post_id
+		limit 1;
+        
+        if ref_post_id_of_shared_post is not null then
+			set referenced_post_id = ref_post_id_of_shared_post;
+        end if;
+        
+        insert into posts(user_id, content, referenced_post_id, post_type) 
+		values (user_id, content, referenced_post_id, post_type);
+    end if;
+
+    select last_insert_id() into new_post_id;
+    
+    select
+		0 as exit_code,
+        new_post_id as post_id,
         "Done" as message;
 end $$
 delimiter ;

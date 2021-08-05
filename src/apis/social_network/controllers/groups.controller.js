@@ -2,6 +2,7 @@ const fs = require('fs')
 const groupService = require('../../../services/group.service')
 const errorHandlingService = require('../../../services/error_handling.service')
 const messages = require('../../../../etc/messages.json')
+const postService = require('../../../services/post.service')
 
 module.exports = {
   getGroupInformation: async function(req, res) {
@@ -169,7 +170,8 @@ module.exports = {
       content: req.body.content,
       image: req.file
     }
-    if (!post.content && !post.image) {
+    const referencedPostId = req.body.referenced_post_id
+    if (!referencedPostId && !post.content && !post.image) {
       // The code is 3 because in the method verifyPermissions() used as middleware 
       // already use codes 1 and 2.
       return res.status(400).finish({
@@ -178,19 +180,43 @@ module.exports = {
       })
     }
     try {
-      let resultPost = await groupService.createPost(req.api.userId, req.params.group_id, post)
-
+      let resultPost = await groupService.createPost(
+        req.api.userId, 
+        req.params.group_id, 
+        post,
+        referencedPostId
+      )
+        
       let statusHttp = 200
-      if (resultPost.exit_code == 1) {
+      if (resultPost.exit_code == 1 || resultPost.exit_code == 2) {
         // It's necessary add 3 to exit_code because there are 3 codes in use.
-        resultPost.exit_code = 4
+        resultPost.exit_code += 3
         statusHttp = 403
       }
+
+      //Retrieve post data.
+      let newPostData = {}
+
+      if(resultPost.exit_code == 0) {
+        newPostData = await postService.getPostData(
+          resultPost.post_data.post_id,
+          true,
+          req.api.userId)
+      }
+      
+      if(newPostData.referenced_post_id) {
+        let referencedPost = await postService.getPostData(
+          newPostData.referenced_post_id,
+          false,
+          req.api.userId)
+        newPostData.referenced_post = referencedPost
+      }
+      //END Retrieve post data.
       
       res.status(statusHttp).finish({
         code: resultPost.exit_code,
         messages: [resultPost.message],
-        data: resultPost.post_data
+        data: newPostData
       })
     } catch (err) {
       err.file = err.file || __filename

@@ -233,7 +233,12 @@ GET
 
 ##### Description
 
-Create a new user post, either only text or text with an image.
+Create a new user post, with a content and/or image.
+
+Or shares a user post or public group post as user post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new user post that is going to be saved will be the id 
+of the root post.
 
 ##### Endpoint
 
@@ -251,19 +256,48 @@ POST
 ##### Params
 
 * `content`: string.
-* `image`: Object.
+* `image`: blob.
+* `referenced_post_id`: int. Id of user post or public group post to share.
 
 ##### Response data-structure
 
 ```json
 {
-  "content": "Lorem ipsum",
-  "img_src": "https://res.cloudinary.com/ajulian-cloud/image/upload/v1627936910/TEST_kofisd.jpg",
+  "id": 128,
+  "username": "akali",
+  "firstname": "Akali",
+  "lastname": "",
+  "profile_img_src": "",
+  "content": "Hello, world!",
+  "img_src": null,
+  "post_type": "user",
+  "like_counter": 1,
+  "created_at": "2021-08-05T05:00:00.000Z",
+  "liked_by_user": 0,
+  "group_name": null,
+  "group_id": null,
+  "referenced_post_id": 9,
+  "referenced_post": {
+    "id": 9,
+    "username": "ahri",
+    "firstname": "Ahri",
+    "lastname": "",
+    "profile_img_src": "",
+    "content": "Prueba",
+    "img_src": null,
+    "post_type": "group",
+    "like_counter": 1,
+    "created_at": "2021-07-18T05:00:00.000Z",
+    "liked_by_user": 0,
+    "group_name": "Grupo 1 del usuario 1",
+    "group_id": 1
+  }
 }
 ```
 
 ##### Codes
 * 1: No data was sent.
+* 2: The post cannot be shared, it belongs to a private group.
 
 #### Search users
 
@@ -761,7 +795,12 @@ No particular codes.
 
 ##### Description
 
-Create a new group post, either only text or text with an image.
+Create a new group post, with a content and/or image.
+
+Or shares a user post or public group post as group post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new group post that is going to be saved will be the id 
+of the root post.
 
 ##### Endpoint
 
@@ -778,15 +817,44 @@ POST
 
 ##### Params
 
+* `group_id`: int. Path parameter.
 * `content`: string.
-* `image`: Object.
+* `image`: blob.
+* `referenced_post_id`: int. Id of user post or public group post to share.
 
 ##### Response data-structure
 
 ```json
 {
-  "content": "Lorem ipsum",
-  "img_src": "https://res.cloudinary.com/ajulian-cloud/image/upload/v1627936910/TEST_kofisd.jpg",
+  "id": 132,
+  "username": "akshan",
+  "firstname": "Akshan",
+  "lastname": "",
+  "profile_img_src": "",
+  "content": "hello",
+  "img_src": null,
+  "post_type": "group",
+  "like_counter": 1,
+  "created_at": "2021-08-05T05:00:00.000Z",
+  "liked_by_user": 0,
+  "group_name": "Grupo 1 del usuario 1",
+  "group_id": 1,
+  "referenced_post_id": 105,
+  "referenced_post": {
+    "id": 105,
+    "username": "irelia",
+    "firstname": "Irelia",
+    "lastname": "",
+    "profile_img_src": "",
+    "content": "Post de Irelia con imagen",
+    "img_src": "https://res.cloudinary.com/someone-cloud/image/upload/v1628174979/bx43wiaiw7fij4udkbqv.jpg",
+    "post_type": "user",
+    "like_counter": 1,
+    "created_at": "2021-08-05T05:00:00.000Z",
+    "liked_by_user": 0,
+    "group_name": null,
+    "group_id": null
+  }
 }
 ```
 
@@ -795,6 +863,7 @@ POST
 * 2: Group does not have [codename] permission.
 * 3: No data was sent.
 * 4: User is not member of group.
+* 5: The post cannot be shared, it belongs to a private group.
 
 ### Posts
 
@@ -844,7 +913,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
       "profile_img_src": "",
       "content": "Post of user one. This is a shared post",
       "img_src": "",
-      "post_type": "shared",
+      "post_type": "user",
       "like_counter": 1,
       "created_at": "2021-07-18T05:00:00.000Z",
       "liked_by_user": 0,
@@ -930,7 +999,7 @@ Publication that the user is requesting.
   "profile_img_src": "",
   "content": "Shared post",
   "img_src": "",
-  "post_type": "shared",
+  "post_type": "user",
   "like_counter": 1,
   "created_at": "2021-07-18T05:00:00.000Z",
   "liked_by_user": 0,
@@ -1005,7 +1074,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
       "profile_img_src": "",
       "content": "Post of user one. This is a shared post",
       "img_src": "",
-      "post_type": "shared",
+      "post_type": "user",
       "like_counter": 2,
       "created_at": "2021-07-18T05:00:00.000Z",
       "group_name": null,

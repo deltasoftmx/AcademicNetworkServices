@@ -5,6 +5,7 @@ const authService = require('../../../services/auth.service')
 const conf = require('../../../../etc/conf.json')
 const messages = require('../../../../etc/messages.json')
 const errorHandlingService = require('../../../services/error_handling.service')
+const postService = require('../../../services/post.service');
 
 module.exports = {
   createStudent: async function(req, res) {
@@ -121,24 +122,50 @@ module.exports = {
   },
 
   createPost: async function(req, res) {
+    const post = {
+      content: req.body.content,
+      image: req.file
+    }
+    const referencedPostId = req.body.referenced_post_id
+    if (!referencedPostId && !post.content && !post.image) {
+      return res.status(400).finish({
+        code: 1,
+        messages: ['No data was sent']
+      })
+    }
     try {
-      const post = {
-        content: req.body.content,
-        image: req.file
-      }
-      let resultPost = await userService.createPost(req.api.userId, post)
+      let resultPost = await userService.createPost(req.api.userId, post, referencedPostId)
 
-      if (!resultPost) {
-        return res.status(404).finish({
-          code: 1,
-          messages: ['No data was sent.']
-        })
+      let statusHttp = 200
+      if (resultPost.exit_code == 1) {
+        // It's necessary add 1 to exit_code because the code 1 is already in use.
+        resultPost.exit_code = 2
+        statusHttp = 403
       }
 
-      res.finish({
-        code: 0,
-        messages: ['Done'],
-        data: resultPost
+      //Retrieve post data.
+      let newPostData = {}
+
+      if(resultPost.exit_code == 0) {
+        newPostData = await postService.getPostData(
+          resultPost.post_data.post_id,
+          true,
+          req.api.userId)
+      }
+      
+      if(newPostData.referenced_post_id) {
+        let referencedPost = await postService.getPostData(
+          newPostData.referenced_post_id,
+          false,
+          req.api.userId)
+        newPostData.referenced_post = referencedPost
+      }
+      //END Retrieve post data.
+
+      res.status(statusHttp).finish({
+        code: resultPost.exit_code,
+        messages: [resultPost.message],
+        data: newPostData
       })
     } catch (err) {
       err.file = err.file || __filename

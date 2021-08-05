@@ -171,35 +171,32 @@ module.exports = {
   },
 
   /**
-   * Creates a new post of type 'user'.
+   * Creates a new post of type 'user'. The post can be a shared post of a 
+   * public group post or user post.
    * @param {int} userId 
    * @param {Object} post An object with:
    * - content: string.
    * - image: Object. An object with:
    *   - path: Path of image in the local files.
+   * @param {number} referencedPostId
    */
-  createPost: async function(userId, post) {    
-    // If the user doesn't send any data.
-    if (!post.content && !post.image) {
-      return null
-    }
-
-    let result = {}
+  createPost: async function(userId, post, referencedPostId = null) {
+    let postData = {}
 
     if (post.content) {
-      result.content = post.content;
+      postData.content = post.content;
     }
 
-    if (post.image) {
+    if (post.image && !referencedPostId) {
       try {
         // The image is uploaded to cloudinary
         const resultUploadImage = await cloudinary.uploader.upload(post.image.path)
-        result.img_src = resultUploadImage.secure_url
-        result.cloudinary_id = resultUploadImage.public_id
+        postData.img_src = resultUploadImage.secure_url
+        postData.cloudinary_id = resultUploadImage.public_id
       } catch (err) {
         err.file = __filename
         err.func = 'createPost'
-        err.cloudinary_id = result.cloudinary_id
+        err.cloudinary_id = postData.cloudinary_id
         throw err
       } finally {
          // The local files are deleted.
@@ -207,17 +204,30 @@ module.exports = {
       }
     }
 
-    let args = [userId, result.content || '', result.img_src || '', result.cloudinary_id || '', 'user']
-    const query = `INSERT INTO posts (user_id, content, img_src, cloudinary_id, post_type) VALUES (?, ?, ?, ?, ?);`
+    const args = [
+      userId, 
+      postData.content ?? '', 
+      postData.img_src ?? '', 
+      postData.cloudinary_id ?? '',
+      referencedPostId ?? 0,
+      'user'
+    ]
+    const query = 'call user_post_create(?, ?, ?, ?, ?, ?);'
     
     try {
-      await mariadb.query(query, args)
-      result.cloudinary_id = undefined
-      return result;
+      let queryPostRes = await mariadb.query(query, args)
+      queryPostRes = queryPostRes[0][0]
+      postData.post_id = queryPostRes.post_id
+      delete postData.cloudinary_id
+      return {
+        exit_code: queryPostRes.exit_code,
+        message: queryPostRes.message,
+        post_data: queryPostRes.exit_code == 0 ? postData : {}
+      }
     } catch (err) {
       err.file = __filename
       err.func = 'createPost'
-      err.cloudinary_id = result.cloudinary_id
+      err.cloudinary_id = postData.cloudinary_id
       throw err
     }
   },
