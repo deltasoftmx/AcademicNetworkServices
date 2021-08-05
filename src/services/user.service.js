@@ -217,6 +217,7 @@ module.exports = {
     try {
       let queryPostRes = await mariadb.query(query, args)
       queryPostRes = queryPostRes[0][0]
+      postData.post_id = queryPostRes.post_id
       delete postData.cloudinary_id
       return {
         exit_code: queryPostRes.exit_code,

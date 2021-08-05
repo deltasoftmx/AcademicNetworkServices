@@ -5,6 +5,7 @@ const authService = require('../../../services/auth.service')
 const conf = require('../../../../etc/conf.json')
 const messages = require('../../../../etc/messages.json')
 const errorHandlingService = require('../../../services/error_handling.service')
+const postService = require('../../../services/post.service');
 
 module.exports = {
   createStudent: async function(req, res) {
@@ -142,10 +143,29 @@ module.exports = {
         statusHttp = 403
       }
 
+      //Retrieve post data.
+      let newPostData = {}
+
+      if(resultPost.exit_code == 0) {
+        newPostData = await postService.getPostData(
+          resultPost.post_data.post_id,
+          true,
+          req.api.userId)
+      }
+      
+      if(newPostData.referenced_post_id) {
+        let referencedPost = await postService.getPostData(
+          newPostData.referenced_post_id,
+          false,
+          req.api.userId)
+        newPostData.referenced_post = referencedPost
+      }
+      //END Retrieve post data.
+
       res.status(statusHttp).finish({
         code: resultPost.exit_code,
         messages: [resultPost.message],
-        data: resultPost.post_data
+        data: newPostData
       })
     } catch (err) {
       err.file = err.file || __filename

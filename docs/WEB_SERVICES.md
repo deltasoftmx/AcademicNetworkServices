@@ -263,8 +263,35 @@ POST
 
 ```json
 {
-  "content": "Lorem ipsum",
-  "img_src": "https://res.cloudinary.com/ajulian-cloud/image/upload/v1627936910/TEST_kofisd.jpg",
+  "id": 128,
+  "username": "akali",
+  "firstname": "Akali",
+  "lastname": "",
+  "profile_img_src": "",
+  "content": "Hello, world!",
+  "img_src": null,
+  "post_type": "user",
+  "like_counter": 1,
+  "created_at": "2021-08-05T05:00:00.000Z",
+  "liked_by_user": 0,
+  "group_name": null,
+  "group_id": null,
+  "referenced_post_id": 9,
+  "referenced_post": {
+    "id": 9,
+    "username": "ahri",
+    "firstname": "Ahri",
+    "lastname": "",
+    "profile_img_src": "",
+    "content": "Prueba",
+    "img_src": null,
+    "post_type": "group",
+    "like_counter": 1,
+    "created_at": "2021-07-18T05:00:00.000Z",
+    "liked_by_user": 0,
+    "group_name": "Grupo 1 del usuario 1",
+    "group_id": 1
+  }
 }
 ```
 
@@ -799,8 +826,35 @@ POST
 
 ```json
 {
-  "content": "Lorem ipsum",
-  "img_src": "https://res.cloudinary.com/ajulian-cloud/image/upload/v1627936910/TEST_kofisd.jpg",
+  "id": 132,
+  "username": "akshan",
+  "firstname": "Akshan",
+  "lastname": "",
+  "profile_img_src": "",
+  "content": "hello",
+  "img_src": null,
+  "post_type": "group",
+  "like_counter": 1,
+  "created_at": "2021-08-05T05:00:00.000Z",
+  "liked_by_user": 0,
+  "group_name": "Grupo 1 del usuario 1",
+  "group_id": 1,
+  "referenced_post_id": 105,
+  "referenced_post": {
+    "id": 105,
+    "username": "irelia",
+    "firstname": "Irelia",
+    "lastname": "",
+    "profile_img_src": "",
+    "content": "Post de Irelia con imagen",
+    "img_src": "https://res.cloudinary.com/someone-cloud/image/upload/v1628174979/bx43wiaiw7fij4udkbqv.jpg",
+    "post_type": "user",
+    "like_counter": 1,
+    "created_at": "2021-08-05T05:00:00.000Z",
+    "liked_by_user": 0,
+    "group_name": null,
+    "group_id": null
+  }
 }
 ```
 

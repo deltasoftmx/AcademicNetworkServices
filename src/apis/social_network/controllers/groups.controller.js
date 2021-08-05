@@ -2,6 +2,7 @@ const fs = require('fs')
 const groupService = require('../../../services/group.service')
 const errorHandlingService = require('../../../services/error_handling.service')
 const messages = require('../../../../etc/messages.json')
+const postService = require('../../../services/post.service')
 
 module.exports = {
   getGroupInformation: async function(req, res) {
@@ -192,11 +193,30 @@ module.exports = {
         resultPost.exit_code += 3
         statusHttp = 403
       }
+
+      //Retrieve post data.
+      let newPostData = {}
+
+      if(resultPost.exit_code == 0) {
+        newPostData = await postService.getPostData(
+          resultPost.post_data.post_id,
+          true,
+          req.api.userId)
+      }
+      
+      if(newPostData.referenced_post_id) {
+        let referencedPost = await postService.getPostData(
+          newPostData.referenced_post_id,
+          false,
+          req.api.userId)
+        newPostData.referenced_post = referencedPost
+      }
+      //END Retrieve post data.
       
       res.status(statusHttp).finish({
         code: resultPost.exit_code,
         messages: [resultPost.message],
-        data: resultPost.post_data
+        data: newPostData
       })
     } catch (err) {
       err.file = err.file || __filename
