@@ -12,7 +12,7 @@
     * [Create student](#create-student)
     * [Sign in](#sign-in)
     * [Get public user data](#get-public-user-data)
-    * [Create user/shared post](#create-usershared-post)
+    * [Create user post](#create-user-post)
     * [Search users](#search-users)
     * [Get public user types](#get-public-user-types)
     * [Get majors data](#get-majors-data)
@@ -24,7 +24,7 @@
     * [Update group image](#update-group-image)
     * [Add a user to a group](#add-a-user-to-a-group)
     * [Get available permissions for groups](#get-available-permissions-for-groups)
-    * [Create group/shared post](#create-groupshared-post)
+    * [Create group post](#create-group-post)
   * [Posts](#posts)
     * [Get posts for timeline](#get-posts-for-timeline)
     * [Get data of one publication](#get-data-of-one-publication)
@@ -229,16 +229,16 @@ GET
 ##### Codes
 * 1: Username doesn't exists.
 
-#### Create user/shared post
+#### Create user post
 
 ##### Description
 
 Create a new user post, with a content and/or image.
 
-Or create a shared post of a user/shared post, with an optional content. 
-
-If the shared post is a post of type 'shared', the referenced post id that is going to be saved
-will be the id of the root post.
+Or shares a user post or public group post as user post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new user post that is going to be saved will be the id 
+of the root post.
 
 ##### Endpoint
 
@@ -256,8 +256,8 @@ POST
 ##### Params
 
 * `content`: string.
-* `image`: Object.
-* `referenced_post_id`: int.
+* `image`: blob.
+* `referenced_post_id`: int. Id of user post or public group post to share.
 
 ##### Response data-structure
 
@@ -270,6 +270,7 @@ POST
 
 ##### Codes
 * 1: No data was sent.
+* 2: The post cannot be shared, it belongs to a private group.
 
 #### Search users
 
@@ -763,13 +764,16 @@ Void
 
 No particular codes.
 
-#### Create group/shared post
+#### Create group post
 
 ##### Description
 
 Create a new group post, with a content and/or image.
 
-Or create a shared post of a group post, with an optional content.
+Or shares a user post or public group post as group post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new group post that is going to be saved will be the id 
+of the root post.
 
 ##### Endpoint
 
@@ -788,8 +792,8 @@ POST
 
 * `group_id`: int. Path parameter.
 * `content`: string.
-* `image`: Object.
-* `referenced_post_id`: int.
+* `image`: blob.
+* `referenced_post_id`: int. Id of user post or public group post to share.
 
 ##### Response data-structure
 
@@ -805,6 +809,7 @@ POST
 * 2: Group does not have [codename] permission.
 * 3: No data was sent.
 * 4: User is not member of group.
+* 5: The post cannot be shared, it belongs to a private group.
 
 ### Posts
 
@@ -854,7 +859,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
       "profile_img_src": "",
       "content": "Post of user one. This is a shared post",
       "img_src": "",
-      "post_type": "shared",
+      "post_type": "user",
       "like_counter": 1,
       "created_at": "2021-07-18T05:00:00.000Z",
       "liked_by_user": 0,
@@ -940,7 +945,7 @@ Publication that the user is requesting.
   "profile_img_src": "",
   "content": "Shared post",
   "img_src": "",
-  "post_type": "shared",
+  "post_type": "user",
   "like_counter": 1,
   "created_at": "2021-07-18T05:00:00.000Z",
   "liked_by_user": 0,
@@ -1015,7 +1020,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
       "profile_img_src": "",
       "content": "Post of user one. This is a shared post",
       "img_src": "",
-      "post_type": "shared",
+      "post_type": "user",
       "like_counter": 2,
       "created_at": "2021-07-18T05:00:00.000Z",
       "group_name": null,

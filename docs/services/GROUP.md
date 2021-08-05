@@ -181,7 +181,10 @@ Add a user to a specific group.
 
 Create a new group post, with a content and/or image.
 
-Or create a shared post of a group post, with an optional content.
+Or shares a user post or public group post as group post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new group post that is going to be saved will be the id 
+of the root post.
 
 * **Params**
   * `userId`: int.
@@ -190,10 +193,13 @@ Or create a shared post of a group post, with an optional content.
     * `content`: string.
     * `image`: Object.
       * `path`: string. Path of image in the local files.
-  * `referenced_post_id`: int.
+  * `referenced_post_id`: int. Id of user post or public group post to share.
 * **Return data type**: Promise\<Object>
   * `exit_code`: int,
   * `message`: string,
   * `post_data`: Object
     * `content`: string.
     * `img_src`: string.
+* **Exit code**:
+  * 1: User is not member of group.
+  * 2: The post cannot be shared, it belongs to a private group.

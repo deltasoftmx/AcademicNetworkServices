@@ -90,10 +90,10 @@ read and write user data.
 
 Create a new user post, with a content and/or image.
 
-Or create a shared post of a user/shared post, with an optional content. 
-
-If the shared post is a post of type 'shared', the referenced post id that is going to be saved
-will be the id of the root post.
+Or shares a user post or public group post as user post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new user post that is going to be saved will be the id 
+of the root post.
 
 * **Params**
   * `userId`: int.
@@ -101,10 +101,15 @@ will be the id of the root post.
     * `content`: string.
     * `image`: Object.
       * `path`: string. Path of image in the local files.
-  * `referenced_post_id`: int.
+  * `referenced_post_id`: int. Id of user post or public group post to share.
 * **Return data type**: Promise\<Object>
-  * `content`: string.
-  * `img_src`: string.
+  * `exit_code`: int,
+  * `message`: string,
+  * `post_data`: Object
+    * `content`: string.
+    * `img_src`: string.
+* **Exit code**:
+  * 1: The post cannot be shared, it belongs to a private group.
 
 ### `searchUsers`
 
