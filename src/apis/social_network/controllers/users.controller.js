@@ -135,10 +135,17 @@ module.exports = {
     try {
       let resultPost = await userService.createPost(req.api.userId, post, referencedPostId)
 
-      res.finish({
-        code: 0,
-        messages: ['Done'],
-        data: resultPost
+      let statusHttp = 200
+      if (resultPost.exit_code == 1) {
+        // It's necessary add 1 to exit_code because the code 1 is already in use.
+        resultPost.exit_code = 2
+        statusHttp = 403
+      }
+
+      res.status(statusHttp).finish({
+        code: resultPost.exit_code,
+        messages: [resultPost.message],
+        data: resultPost.post_data
       })
     } catch (err) {
       err.file = err.file || __filename

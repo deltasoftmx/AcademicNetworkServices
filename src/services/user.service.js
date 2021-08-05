@@ -171,8 +171,8 @@ module.exports = {
   },
 
   /**
-   * Creates a new post of type 'user' or 'shared' in case that the
-   * user shares another user post.
+   * Creates a new post of type 'user'. The post can be a shared post of a 
+   * public group post or user post.
    * @param {int} userId 
    * @param {Object} post An object with:
    * - content: string.
@@ -204,45 +204,25 @@ module.exports = {
       }
     }
 
-    let args = []
-    let query = ''
-    if (referencedPostId) {
-      try {
-        // Verify is the referenced post id is a shared post, if is true, it is 
-        // necessary extract the id of the original post.
-        const q = `select post_type, referenced_post_id from posts where id = ?;`
-        let referencedPost = await mariadb.query(q, [referencedPostId])
-        referencedPost = referencedPost[0]
-        if (referencedPost.post_type === 'shared') {
-          referencedPostId = referencedPost.referenced_post_id
-        }
-      } catch (err) {
-        err.file = __filename
-        err.func = 'createPost'
-        err.cloudinary_id = postData.cloudinary_id
-        throw err
-      }
-      args = [userId, postData.content ?? '', referencedPostId, 'shared']
-      query = `insert into posts(user_id, content, referenced_post_id, post_type) 
-        values(?, ?, ?, ?);
-      `
-    } else {
-      args = [
-        userId, 
-        postData.content ?? '',
-        postData.img_src ?? '', 
-        postData.cloudinary_id ?? '',
-        'user'
-      ]
-      query = `insert into posts(user_id, content, img_src, cloudinary_id, post_type) 
-        values(?, ?, ?, ?, ?);
-      `
-    }
+    const args = [
+      userId, 
+      postData.content ?? '', 
+      postData.img_src ?? '', 
+      postData.cloudinary_id ?? '',
+      referencedPostId ?? 0,
+      'user'
+    ]
+    const query = 'call user_post_create(?, ?, ?, ?, ?, ?);'
     
     try {
-      await mariadb.query(query, args)
+      let queryPostRes = await mariadb.query(query, args)
+      queryPostRes = queryPostRes[0][0]
       delete postData.cloudinary_id
-      return postData
+      return {
+        exit_code: queryPostRes.exit_code,
+        message: queryPostRes.message,
+        post_data: queryPostRes.exit_code == 0 ? postData : {}
+      }
     } catch (err) {
       err.file = __filename
       err.func = 'createPost'

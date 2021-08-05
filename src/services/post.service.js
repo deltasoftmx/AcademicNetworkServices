@@ -59,8 +59,7 @@ module.exports = {
           on posts.user_id = users.id
         where 
           followers.follower_user_id = ? and 
-          (posts.post_type = 'user' or
-          posts.post_type = 'shared')
+          posts.post_type = 'user'
       ) 
       union 
       (

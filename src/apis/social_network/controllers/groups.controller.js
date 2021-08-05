@@ -187,9 +187,9 @@ module.exports = {
       )
         
       let statusHttp = 200
-      if (resultPost.exit_code == 1) {
+      if (resultPost.exit_code == 1 || resultPost.exit_code == 2) {
         // It's necessary add 3 to exit_code because there are 3 codes in use.
-        resultPost.exit_code = 4
+        resultPost.exit_code += 3
         statusHttp = 403
       }
       

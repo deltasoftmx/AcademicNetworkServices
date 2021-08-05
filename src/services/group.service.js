@@ -510,8 +510,8 @@ module.exports = {
   },
 
   /**
-   * Creates a new post of type 'group' or 'shared' in case that the
-   * user shares a group post.
+   * Creates a new post of type 'group'. The post can be a shared post of a 
+   * public group post or user post.
    * @param {number} userId 
    * @param {number} groupId
    * @param {Object} post An object with:
@@ -544,14 +544,14 @@ module.exports = {
       }
     }
 
-    let args = [
+    const args = [
       userId, 
       groupId,
       postData.content ?? '', 
       postData.img_src ?? '', 
       postData.cloudinary_id ?? '',
       referencedPostId ?? 0,
-      (referencedPostId) ? 'shared' : 'group'
+      'group'
     ]
     const query = `call group_post_create(?, ?, ?, ?, ?, ?, ?);`
     
