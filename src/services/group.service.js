@@ -652,9 +652,9 @@ module.exports = {
         return {
           exit_code: 0,
           membershipInfo: {
-            is_member: membershipInfoRes.is_member ? true : false,
-            is_owner: membershipInfoRes.is_owner ? true : false,
-            active_notifications: membershipInfoRes.active_notifications ? true : false,
+            is_member: !!membershipInfoRes.is_member,
+            is_owner: !!membershipInfoRes.is_owner,
+            active_notifications: !!membershipInfoRes.active_notifications,
             created_at: membershipInfoRes.created_at
           }
         }
