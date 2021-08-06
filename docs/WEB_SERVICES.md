@@ -894,9 +894,9 @@ The id of the group to request. Replace this label by the id in the url.
 
 ```json
 {
-  "is_member": 1,
-  "is_owner": 0,
-  "active_notifications": 0,
+  "is_member": true,
+  "is_owner": false,
+  "active_notifications": false,
   "created_at": "2021-08-06T05:00:00.000Z"
 }
 ```
