@@ -64,5 +64,12 @@ module.exports = {
     upload.single('image'),
     groupsMiddleware.checkNewPostData,
     groupsController.createPost
+  ],
+
+  getMembershipInfo: [
+    generalMiddleware.verifyAPIKey,
+    generalMiddleware.userAuth,
+    groupsMiddleware.checkGroupId,
+    groupsController.getMembershipInfo
   ]
 }

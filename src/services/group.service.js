@@ -605,4 +605,57 @@ module.exports = {
       throw err
     }
   },
+
+  getMembershipInfo: async function(userId, groupId) {
+    const query = `
+      select
+        true as is_member,
+        case 
+          when gm.user_id = ug.owner_user_id then true
+          else false
+        end as is_owner,
+        gm.active_notifications,
+        gm.created_at
+      from group_memberships as gm
+      inner join user_groups as ug
+        on gm.group_id = ug.id
+      where gm.user_id = ? and gm.group_id = ?
+      limit 1;
+    `
+    try {
+      // Verify if group exists.
+      const q = `select id from user_groups where id = ?;`
+      let groupExists = await mariadb.query(q, [groupId])
+      groupExists = groupExists[0]
+      if (groupExists === undefined) {
+        return {
+          exit_code: 1  // Group does not exist.
+        }
+      }
+
+      let membershipInfoRes = await mariadb.query(query, [userId, groupId])
+      membershipInfoRes = membershipInfoRes[0]
+
+      if (membershipInfoRes) {
+        return {
+          exit_code: 0,
+          membershipInfo: membershipInfoRes
+        }
+      }
+
+      return {
+        exit_code: 0,
+        membershipInfo: {
+          is_member: false,
+          is_owner: null,
+          active_notifications: null,
+          created_at: null
+        }
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'getMembershipInfo'
+      throw err
+    }
+  }
 }
