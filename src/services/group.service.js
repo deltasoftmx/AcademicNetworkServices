@@ -606,6 +606,18 @@ module.exports = {
     }
   },
 
+  /**
+   * Returns information about the membership of a user related to a certain group.
+   * @param {number} userId 
+   * @param {number} groupId 
+   * @returns {Promise<object>}
+   *  * exit_code: number
+   *  * membershipInfo: Object | undefined,
+   *    * is_member: boolean,
+   *    * is_owner: boolean | null,
+   *    * active_notifications: boolean | null,
+   *    * created_at: string | null
+   */
   getMembershipInfo: async function(userId, groupId) {
     const query = `
       select

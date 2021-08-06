@@ -25,6 +25,7 @@
     * [Add a user to a group](#add-a-user-to-a-group)
     * [Get available permissions for groups](#get-available-permissions-for-groups)
     * [Create group post](#create-group-post)
+    * [Get membership information](#get-membership-information)
   * [Posts](#posts)
     * [Get posts for timeline](#get-posts-for-timeline)
     * [Get data of one publication](#get-data-of-one-publication)
@@ -864,6 +865,45 @@ POST
 * 3: No data was sent.
 * 4: User is not member of group.
 * 5: The post cannot be shared, it belongs to a private group.
+
+#### Get membership information
+
+##### Description
+
+Returns information about the membership of a user related to a certain group.
+
+##### Endpoint
+
+`/v1/api/social-network/groups/group/:group_id/membership-info`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+GET
+
+##### Params
+
+* `group_id`: int.
+
+The id of the group to request. Replace this label by the id in the url.
+
+##### Response data-structure
+
+```json
+{
+  "is_member": 1,
+  "is_owner": 0,
+  "active_notifications": 0,
+  "created_at": "2021-08-06T05:00:00.000Z"
+}
+```
+
+##### Codes
+
+1. Group does not exist.
 
 ### Posts
 
