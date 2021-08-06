@@ -232,5 +232,23 @@ module.exports = {
       }
       errorHandlingService.handleImageUploadError(req, res, err)
     }
+  },
+
+  getMembershipInfo: async function(req, res) {
+    try {
+      const resultInfo = await groupService.getMembershipInfo(req.api.userId, req.params.group_id)
+      const code = resultInfo.exit_code
+      const statusHttp = code == 0 ? 200 : 400
+
+      res.status(statusHttp).finish({
+        code,
+        messages: code == 0 ? ['Done'] : ['Group does not exist'],
+        data: resultInfo.membershipInfo
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'getMembershipInfo'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
   }
 }

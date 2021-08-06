@@ -13,6 +13,7 @@
   * [updateGroupImage](#updateGroupImage)
   * [addUserToGroup](#addUserToGroup)
   * [createPost](#createPost)
+  * [getMembershipInfo](#getmembershipinfo)
 
 ## Description
 
@@ -203,3 +204,22 @@ of the root post.
 * **Exit code**:
   * 1: User is not member of group.
   * 2: The post cannot be shared, it belongs to a private group.
+
+### `getMembershipInfo`
+
+* **Description**
+
+Returns information about the membership of a user related to a certain group.
+
+* **Params**:
+  * `userId`: int
+  * `groupId`: int
+* **Return data type**: Promise\<Object>
+  * `exit_code`: number
+  * `membershipInfo`: Object | undefined
+    * `is_member`: boolean,
+    * `is_owner`: boolean,
+    * `active_notifications`: boolean,
+    * `created_at:` string | null
+* **Exit code**:
+  * 1: Group does not exist.
