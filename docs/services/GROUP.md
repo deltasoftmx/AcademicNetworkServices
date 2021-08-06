@@ -216,10 +216,10 @@ Returns information about the membership of a user related to a certain group.
   * `groupId`: int
 * **Return data type**: Promise\<Object>
   * `exit_code`: number
-  * `membershipInfo`: Object
+  * `membershipInfo`: Object | undefined
     * `is_member`: boolean,
-    * `is_owner`: boolean | null,
-    * `active_notifications`: boolean | null,
+    * `is_owner`: boolean,
+    * `active_notifications`: boolean,
     * `created_at:` string | null
 * **Exit code**:
   * 1: Group does not exist.

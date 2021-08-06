@@ -614,8 +614,8 @@ module.exports = {
    *  * exit_code: number
    *  * membershipInfo: Object | undefined,
    *    * is_member: boolean,
-   *    * is_owner: boolean | null,
-   *    * active_notifications: boolean | null,
+   *    * is_owner: boolean,
+   *    * active_notifications: boolean,
    *    * created_at: string | null
    */
   getMembershipInfo: async function(userId, groupId) {
@@ -651,7 +651,12 @@ module.exports = {
       if (membershipInfoRes) {
         return {
           exit_code: 0,
-          membershipInfo: membershipInfoRes
+          membershipInfo: {
+            is_member: membershipInfoRes.is_member ? true : false,
+            is_owner: membershipInfoRes.is_owner ? true : false,
+            active_notifications: membershipInfoRes.active_notifications ? true : false,
+            created_at: membershipInfoRes.created_at
+          }
         }
       }
 
@@ -659,8 +664,8 @@ module.exports = {
         exit_code: 0,
         membershipInfo: {
           is_member: false,
-          is_owner: null,
-          active_notifications: null,
+          is_owner: false,
+          active_notifications: false,
           created_at: null
         }
       }
