@@ -1,5 +1,6 @@
 const generalMidd = require('../../../middlewares/general.middleware')
 const postMidd = require('../../../middlewares/posts.middleware')
+const groupMidd = require('../../../middlewares/groups.middleware')
 const postCtrl = require('../controllers/posts.controller')
 
 module.exports = {
@@ -30,5 +31,13 @@ module.exports = {
     postMidd.checkPostId,
     postMidd.checkPaginationParams,
     postCtrl.getCommentsOfAPost
+  ],
+
+  getPostsOfAGroup: [
+    generalMidd.verifyAPIKey,
+    generalMidd.userAuth,
+    groupMidd.checkGroupId,
+    postMidd.checkPaginationParams,
+    postCtrl.getPostsOfAGroup
   ]
 }

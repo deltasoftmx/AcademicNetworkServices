@@ -1,4 +1,5 @@
 const postService = require('../../../services/post.service')
+const groupService = require('../../../services/group.service')
 const errorHandlingService = require('../../../services/error_handling.service')
 const messages = require('../../../../etc/messages.json')
 
@@ -173,6 +174,55 @@ module.exports = {
     } catch (err) {
       err.file = err.file || __filename
       err.func = err.func || 'getCommentsOfAPost'
+      errorHandlingService.handleErrorInRequest(req, res, err)
+    }
+  },
+
+  getPostsOfAGroup: async function(req, res) {
+    try {
+      const postsRes = await postService.getPostsOfAGroup(
+        req.api.userId, 
+        req.params.group_id, 
+        req.query.offset, 
+        req.query.page
+      )
+
+      if (postsRes.exit_code == 1) {
+        return res.status(404).finish({
+          code: 1,
+          messages: ['Group does not exist.']
+        })
+      }
+
+      const groupRes = await groupService.groupVisibility(req.params.group_id, req.api.userId)
+      if (groupRes.visibility == 'private' && !groupRes.user_is_member) {
+        return res.status(403).finish({
+          code: 2,
+          messages: ['Forbidden. User is not member of the private group.']
+        })
+      }
+
+      let posts = postsRes.group_posts
+      
+      for (let i = 0; i < posts.length; i++) {
+        let post = posts[i]
+        post.referenced_post = (post.referenced_post_id != null) ? 
+          await postService.getPostData(post.referenced_post_id, false, req.api.userId) : null
+        delete post.referenced_post_id
+        post.liked_by_user = !!post.liked_by_user
+      }
+
+      res.finish({
+        code: 0,
+        messages: ['Done'],
+        data: {
+          group_posts: posts,
+          total_records: postsRes.total_records
+        }
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'getPostsOfAGroup'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
   }
