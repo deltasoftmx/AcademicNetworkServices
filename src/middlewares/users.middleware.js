@@ -99,11 +99,15 @@ module.exports = {
       obj('referenced_post_id').isNumber().integer().isPositive()
     })
 
-    // Multer will use the 'image' field, if a file is sent in this field multer will 
-    // "send the image" in req.file so req.body.image will have undefined value, but 
-    // if a file is not sent in the field 'image' req.file will be undefined and 
+    // FileUploader will use the 'image'-named field, if a file is sent in this field FileUploader
+    // will "send the image" in req.files.image so req.body.image will have undefined value, but 
+    // if a file is not sent in the field 'image' req.files.image will be undefined and 
     // req.body.image will have a value so it is necessary to validate it.
-    validator(req.file).isObject().display('image')
+    //If no file is sent, req.files will be undefined as well.
+    if(!req.files) {
+      req.files = {}
+    }
+    validator(req.files.image).isObject().display('image')
     if (req.body.image) {
       validator(req.body.image).isObject().display('image')
     }

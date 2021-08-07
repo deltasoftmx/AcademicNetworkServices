@@ -124,7 +124,11 @@ module.exports = {
   createPost: async function(req, res) {
     const post = {
       content: req.body.content,
-      image: req.file
+    }
+    if(req.files && req.files.image) {
+      post.image = {
+        path: req.files.image.tempFilePath
+      }
     }
     const referencedPostId = req.body.referenced_post_id
     if (!referencedPostId && !post.content && !post.image) {
