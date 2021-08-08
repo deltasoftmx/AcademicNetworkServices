@@ -676,11 +676,20 @@ module.exports = {
     }
   },
 
+  /**
+   * 
+   * @param {number} groupId 
+   * @param {number} userId
+   * @returns {Promise<object>}
+   *  * visibility: string
+   *  * user_is_member: boolean | null
+   */
   groupVisibility: async function(groupId, userId = null) {
     let query = `
       select 
         ug.visibility
-    `    
+    `
+    let args = [groupId]
     if (userId) {
       query += `,
         case
@@ -693,18 +702,19 @@ module.exports = {
           else false
         end as user_is_member
       `
+      args.unshift(userId, groupId)
     }
     query += `
       from user_groups as ug
       where ug.id = ?;
     `
     try {
-      let result = await mariadb.query(query, [userId, groupId, groupId])
+      let result = await mariadb.query(query, args)
       result = result[0]
 
       return {
         visibility: result.visibility,
-        user_is_member: !!result.user_is_member
+        user_is_member: userId ? !!result.user_is_member : null
       }
     } catch (err) {
       err.file = __filename

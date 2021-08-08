@@ -437,6 +437,17 @@ module.exports = {
     }
   },
 
+  /**
+   * Given a group id, return the most recent publications made in the requested group. 
+   * @param {number} userId 
+   * @param {number} groupId 
+   * @param {number} offset 
+   * @param {number} page 
+   * @returns {Promise<object>}
+   *  * exit_code: number
+   *  * group_posts: posts records | undefined
+   *  * total_records: number | undefined
+   */
   getPostsOfAGroup: async function(userId, groupId, offset = 10, page = 0) {
     const query = `
       select

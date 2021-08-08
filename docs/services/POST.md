@@ -10,6 +10,7 @@
   * [userBelongsToGroup](#userbelongstogroup)
   * [getFavoritePosts](#getfavoriteposts)
   * [getCommentsOfAPost](#getcommentsofapost)
+  * [getPostsOfAGroup](#getpostsofagroup)
 
 ## Description
 
@@ -169,3 +170,38 @@ Comments are sorted in descending order according to the creation date.
     * `image_src`: string,
     * `created_at`: date
   * `total_records`: int.
+
+### `getPostsOfAGroup`
+
+* **Description**: 
+
+Given a group id, return the most recent publications made in the requested group. 
+
+The result has pagination, with 10 post by page and the first group of posts by 
+default.
+
+* **Params**:
+
+  * `userId`: int.
+  * `groupId`: int.
+  * `offset`: int. Default 10
+  * `page`: int. Default 0
+
+* **Return data type**: Promise\<Object>
+  * `exit_code`: int
+  * `group_posts`: Array\<Object> | undefined
+    * `id`: int,
+    * `username`: string,
+    * `firstname`: string,
+    * `lastname`: string,
+    * `profile_img_src`: string,
+    * `content`: string,
+    * `img_src`: string,
+    * `post_type`: string,
+    * `created_at`: string,
+    * `like_counter`: int,
+    * `liked_by_user`: boolean,
+    * `group_name`: string,
+    * `group_id`: string,
+    * `referenced_post_id`: int
+  * `total_records`: int. | undefined

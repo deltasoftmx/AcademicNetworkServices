@@ -14,6 +14,7 @@
   * [addUserToGroup](#addUserToGroup)
   * [createPost](#createPost)
   * [getMembershipInfo](#getmembershipinfo)
+  * [groupVisibility](#groupVisibility)
 
 ## Description
 
@@ -223,3 +224,19 @@ Returns information about the membership of a user related to a certain group.
     * `created_at:` string | null
 * **Exit code**:
   * 1: Group does not exist.
+
+### `groupVisibility`
+
+* **Description**
+
+Returns the visibility of the requested group. If also the user id is sent, includes 
+in the response if the user is member of the group or not.
+
+It is assumed that the group exists.
+
+* **Params**:
+  * `groupId`: int
+  * `userId`: int | null
+* **Return data type**: Promise\<Object>
+  * `visibility`: string
+  * `user_is_member`: boolean | null
