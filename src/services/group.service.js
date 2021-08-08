@@ -674,5 +674,52 @@ module.exports = {
       err.func = 'getMembershipInfo'
       throw err
     }
+  },
+
+  /**
+   * 
+   * @param {number} groupId 
+   * @param {number} userId
+   * @returns {Promise<object>}
+   *  * visibility: string
+   *  * user_is_member: boolean | null
+   */
+  groupVisibility: async function(groupId, userId = null) {
+    let query = `
+      select 
+        ug.visibility
+    `
+    let args = [groupId]
+    if (userId) {
+      query += `,
+        case
+        when (
+            select id
+            from group_memberships as gm
+            where gm.user_id = ? and gm.group_id = ?
+            limit 1
+          ) is not null then true
+          else false
+        end as user_is_member
+      `
+      args.unshift(userId, groupId)
+    }
+    query += `
+      from user_groups as ug
+      where ug.id = ?;
+    `
+    try {
+      let result = await mariadb.query(query, args)
+      result = result[0]
+
+      return {
+        visibility: result.visibility,
+        user_is_member: userId ? !!result.user_is_member : null
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'groupVisibility'
+      throw err
+    }
   }
 }

@@ -435,5 +435,89 @@ module.exports = {
       err.func = 'getCommentsOfAPost'
       throw err
     }
+  },
+
+  /**
+   * Given a group id, return the most recent publications made in the requested group. 
+   * @param {number} userId 
+   * @param {number} groupId 
+   * @param {number} offset 
+   * @param {number} page 
+   * @returns {Promise<object>}
+   *  * exit_code: number
+   *  * group_posts: posts records | undefined
+   *  * total_records: number | undefined
+   */
+  getPostsOfAGroup: async function(userId, groupId, offset = 10, page = 0) {
+    const query = `
+      select
+        posts.id,
+        users.username,
+        users.firstname,
+        users.lastname,
+        users.profile_img_src,
+        posts.content,
+        posts.img_src,
+        posts.post_type,
+        posts.created_at,
+        posts.like_counter,
+        case 
+          when (
+            select id from favorite_posts 
+            where post_id = posts.id and user_id = ?
+            limit 1
+          ) is not null then true
+          else false
+        end as liked_by_user,
+        user_groups.name as group_name,
+        user_groups.id as group_id,
+        posts.referenced_post_id
+      from group_posts
+      inner join user_groups
+        on group_posts.group_id = user_groups.id
+      inner join posts
+        on group_posts.post_id = posts.id
+      inner join users
+        on posts.user_id = users.id
+      where user_groups.id = ?
+      order by posts.created_at desc, posts.id desc
+      limit ?, ?;
+    `
+    const args = [userId, groupId, page*offset, offset]
+
+    // Prepare query to counts how much records there are.
+    let countQuery = query.split('\n')
+    // Remove selected fields and select the amount of records.
+    countQuery.splice(2, 21, 'count(*) as total_records')
+    // Remove limit to select all the records.
+    countQuery.pop(); countQuery.pop()
+    countQuery = countQuery.join('\n')
+    
+    try {
+      // Verify if group exists.
+      const q = `select id from user_groups where id = ?;`
+      let groupExists = await mariadb.query(q, [groupId])
+      groupExists = groupExists[0]
+      if (groupExists === undefined) {
+        return {
+          exit_code: 1  // Group does not exist.
+        }
+      }
+
+      let groupPosts = await mariadb.query(query, args)
+      delete groupPosts.meta
+      let countResult = await mariadb.query(countQuery, [groupId])
+      countResult = countResult[0]
+  
+      return {
+        exit_code: 0,
+        group_posts: groupPosts,
+        total_records: countResult.total_records
+      }
+    } catch (err) {
+      err.file = __filename
+      err.func = 'getPostsOfAGroup'
+      throw err
+    }
   }
 }

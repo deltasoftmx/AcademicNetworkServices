@@ -31,6 +31,7 @@
     * [Get data of one publication](#get-data-of-one-publication)
     * [Get favorite posts of user](#get-favorite-posts-of-user)
     * [Get comments of a post](#get-comments-of-a-post)
+    * [Get publications of a certain group](#get-publications-of-a-certain-group)
 
 ## General information
 
@@ -1236,3 +1237,135 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
 * 1: Unauthenticated. User must authenticate to get the requested response.
 * 2: Unauthorized. The requested post belongs to a private group to which the user requesting doesn't belong.
 * 3: Resource not found.
+
+#### Get publications of a certain group
+
+##### Description
+
+Given a group id, return the most recent publications made in the requested group. 
+
+The result has pagination, with 10 post by page and the first group of posts by 
+default, these 2 parameters can be modified.
+
+##### Endpoint
+
+`/v1/api/social-network/posts/group/:group_id`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+GET
+
+##### Params
+
+###### URL Parameter
+
+* `group_id`: int.
+
+Group that the user is requesting.
+
+###### Query Parameter
+
+The following two parameters are optional. It has default values.
+
+* `offset`: int.
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`: int.
+
+The number of the group to retrieve. Pages starts at `0`, what is also the default value.
+
+##### Response data-structure
+
+```json
+{
+  "group_posts": [
+    {
+      "id": 142,
+      "username": "user2",
+      "firstname": "User 2 name",
+      "lastname": "User 2 lastname",
+      "profile_img_src": "",
+      "content": "User 2 shares post of user 1 with id 141 in group 2",
+      "img_src": null,
+      "post_type": "group",
+      "created_at": "2021-08-07T05:00:00.000Z",
+      "like_counter": 1,
+      "liked_by_user": false,
+      "group_name": "Group 2 of user 1",
+      "group_id": 2,
+      "referenced_post": {
+        "id": 141,
+        "username": "user 1",
+        "firstname": "User 1 name",
+        "lastname": "User 1 lastname",
+        "profile_img_src": "",
+        "content": "Post of user 1. User post",
+        "img_src": "https://res.cloudinary.com/someone-cloud/image/upload/v1628376661/mkqghrm6ihpv4dt2jd0y.jpg",
+        "post_type": "user",
+        "like_counter": 1,
+        "created_at": "2021-08-07T05:00:00.000Z",
+        "liked_by_user": 0,
+        "group_name": null,
+        "group_id": null
+      }
+    },
+    {
+      "id": 144,
+      "username": "user 31",
+      "firstname": "User 31 name",
+      "lastname": "User 31 lastname",
+      "profile_img_src": "",
+      "content": "Post of user 31 in group 2",
+      "img_src": "",
+      "post_type": "group",
+      "created_at": "2021-08-07T05:00:00.000Z",
+      "like_counter": 2,
+      "liked_by_user": true,
+      "group_name": "Group 2 of user 1",
+      "group_id": 2,
+      "referenced_post": null
+    },
+    {
+      "id": 146,
+      "username": "user31",
+      "firstname": "User 31 name",
+      "lastname": "User 31 lastname",
+      "profile_img_src": "",
+      "content": "User 30 shares post of user 2 (in group 1, with id 145) in group 2",
+      "img_src": null,
+      "post_type": "group",
+      "created_at": "2021-08-08T05:00:00.000Z",
+      "like_counter": 1,
+      "liked_by_user": false,
+      "group_name": "Group 2 of user 1",
+      "group_id": 2,
+      "referenced_post": {
+        "id": 145,
+        "username": "user2",
+        "firstname": "User 2 name",
+        "lastname": "User 2 lastname",
+        "profile_img_src": "",
+        "content": "Post of user 2 in group 1",
+        "img_src": "https://res.cloudinary.com/someone-cloud/image/upload/v1628436840/awjdp1chroaofshxjyvj.jpg",
+        "post_type": "group",
+        "like_counter": 1,
+        "created_at": "2021-08-08T05:00:00.000Z",
+        "liked_by_user": 0,
+        "group_name": "Group 1 of user 1",
+        "group_id": 1
+      }
+    }
+  ],
+  "total_records": 14
+}
+```
+
+##### Codes
+
+* 1: Group does not exist.
+* 2: Forbidden. User is not member of the private group.
