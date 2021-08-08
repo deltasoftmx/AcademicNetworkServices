@@ -1,10 +1,15 @@
-const multer = require('multer')
+const fileUpload = require('express-fileupload')
 const generalMidd = require('../../../middlewares/general.middleware')
 const userMidd = require('../../../middlewares/users.middleware')
 const userCtrl = require('../controllers/users.controller')
 
-// Multer settings.
-const upload = multer({dest: 'uploads/'})
+const rootDir = process.env.ACADEMIC_NETWORK_BACKEND_ROOTDIR
+// FileUpload settings.
+const fileUploadMidd = fileUpload({
+  useTempFiles : true,
+  tempFileDir : `${rootDir}/uploads/`,
+  safeFileNames: true
+})
 
 module.exports = {
   signup: [
@@ -29,7 +34,7 @@ module.exports = {
   post: [
     generalMidd.verifyAPIKey,
     generalMidd.userAuth,
-    upload.single('image'),
+    fileUploadMidd,
     userMidd.checkNewPostData,
     userCtrl.createPost
   ],
