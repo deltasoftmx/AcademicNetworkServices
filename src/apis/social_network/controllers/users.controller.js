@@ -123,9 +123,9 @@ module.exports = {
 
   createPost: async function(req, res) {
     const post = {
-      content: req.body.content,
+      content: req.body.content
     }
-    if(req.files && req.files.image) {
+    if (req.files && req.files.image) {
       post.image = {
         path: req.files.image.tempFilePath
       }

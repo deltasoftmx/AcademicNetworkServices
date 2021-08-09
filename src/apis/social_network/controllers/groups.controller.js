@@ -84,9 +84,12 @@ module.exports = {
 
   updateGroupImage: async function(req, res) {
     try {
-      let result = await groupService.updateGroupImage(req.params.group_id, req.file, req.api.userId)
+      const image = {
+        path: req.files.image.tempFilePath
+      }
+      let result = await groupService.updateGroupImage(req.params.group_id, image, req.api.userId)
       // The image stored in local files is deleted.
-      fs.unlinkSync(req.file.path)
+      fs.unlinkSync(image.path)
 
       let httpStatusCode = undefined
       let message = undefined
@@ -167,8 +170,12 @@ module.exports = {
   
   createPost: async function(req, res) {
     const post = {
-      content: req.body.content,
-      image: req.file
+      content: req.body.content
+    }
+    if (req.files && req.files.image) {
+      post.image = {
+        path: req.files.image.tempFilePath
+      }
     }
     const referencedPostId = req.body.referenced_post_id
     if (!referencedPostId && !post.content && !post.image) {

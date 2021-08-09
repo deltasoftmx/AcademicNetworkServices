@@ -104,7 +104,7 @@ module.exports = {
     // if a file is not sent in the field 'image' req.files.image will be undefined and 
     // req.body.image will have a value so it is necessary to validate it.
     //If no file is sent, req.files will be undefined as well.
-    if(!req.files) {
+    if (!req.files) {
       req.files = {}
     }
     validator(req.files.image).isObject().display('image')

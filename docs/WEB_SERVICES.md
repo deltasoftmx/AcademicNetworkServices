@@ -700,7 +700,7 @@ PUT
 ##### Params
 
 * `group_id`: int. The id of the group to request. Replace this label by the id in the url.
-* `image`: Object. The new image for the group.
+* `image`: blob. The new image for the group.
 
 ##### Response data-structure
 
