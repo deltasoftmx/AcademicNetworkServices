@@ -315,6 +315,7 @@ module.exports = {
         posts.post_type,
         posts.like_counter,
         posts.created_at,
+        true as liked_by_user,
         case 
           when posts.post_type = 'group' then (
             select user_groups.name
@@ -344,13 +345,13 @@ module.exports = {
       inner join favorite_posts
         on posts.id = favorite_posts.post_id
       where favorite_posts.user_id = ?
-      order by posts.created_at desc
+      order by posts.created_at desc, posts.id desc
       limit ?, ?;
     `
     // Prepare query to counts how much records there are.
     let countQuery = query.split('\n')
     // Remove selected fields and select the amount of records.
-    countQuery.splice(2, 33, 'count(*) as total_records')
+    countQuery.splice(2, 34, 'count(*) as total_records')
     // Remove limit to select all the records.
     countQuery.pop(); countQuery.pop()
     countQuery = countQuery.join('\n')

@@ -15,9 +15,14 @@ module.exports = {
       
       for (let i = 0; i < posts.length; i++) {
         let post = posts[i]
-        post.referenced_post = (post.referenced_post_id != null) ? 
-          await postService.getPostData(post.referenced_post_id, false, req.api.userId) : null
-        post.referenced_post_id = undefined
+        if (post.referenced_post_id != null) {
+          post.referenced_post = await postService.getPostData(post.referenced_post_id, false, req.api.userId)
+          post.referenced_post.liked_by_user = !!post.referenced_post.liked_by_user
+        } else {
+          post.referenced_post = null
+        }
+        delete post.referenced_post_id
+        post.liked_by_user = !!post.liked_by_user
       }
 
       res.finish({
@@ -57,8 +62,12 @@ module.exports = {
           const post = await postService.getPostData(postId, true, userId)
           if (post.referenced_post_id != null) {
             post.referenced_post = await postService.getPostData(post.referenced_post_id, false, userId)
+            post.referenced_post.liked_by_user = !!post.referenced_post.liked_by_user
+          } else {
+            post.referenced_post = null
           }
-          post.referenced_post_id = undefined
+          delete post.referenced_post_id
+          post.liked_by_user = !!post.liked_by_user
           return res.finish({
             code: 0,
             messages: [messages.success_messages.c200],
@@ -81,8 +90,12 @@ module.exports = {
       }
       if (post.referenced_post_id != null) {
         post.referenced_post = await postService.getPostData(post.referenced_post_id, false, userId)
+        post.referenced_post.liked_by_user = !!post.referenced_post.liked_by_user
+      } else {
+        post.referenced_post = null
       }
-      post.referenced_post_id = undefined
+      delete post.referenced_post_id
+      post.liked_by_user = !!post.liked_by_user
       return res.finish({
         code: 0,
         messages: [messages.success_messages.c200],
@@ -107,9 +120,18 @@ module.exports = {
       
       for (let i = 0; i < posts.length; i++) {
         let post = posts[i]
-        post.referenced_post = (post.referenced_post_id != null) ? 
-          await postService.getPostData(post.referenced_post_id, false) : null
-        post.referenced_post_id = undefined
+        if (post.referenced_post_id != null) {
+          post.referenced_post = await postService.getPostData(
+            post.referenced_post_id, 
+            false, 
+            req.api.userId
+          )
+          post.referenced_post.liked_by_user = !!post.referenced_post.liked_by_user
+        } else {
+          post.referenced_post = null
+        }
+        delete post.referenced_post_id
+        post.liked_by_user = !!post.liked_by_user
       }
 
       res.finish({
@@ -206,8 +228,13 @@ module.exports = {
       
       for (let i = 0; i < posts.length; i++) {
         let post = posts[i]
-        post.referenced_post = (post.referenced_post_id != null) ? 
-          await postService.getPostData(post.referenced_post_id, false, req.api.userId) : null
+        if (post.referenced_post_id != null) {
+          post.referenced_post = await postService.getPostData(post.referenced_post_id, false, req.api.userId)
+          post.referenced_post.liked_by_user = !!post.referenced_post.liked_by_user
+          
+        } else {
+          post.referenced_post = null
+        }
         delete post.referenced_post_id
         post.liked_by_user = !!post.liked_by_user
       }
