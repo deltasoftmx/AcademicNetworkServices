@@ -393,7 +393,8 @@ module.exports = {
   /**
    * Update the group image. To do that the user requesting must be the group owner.
    * @param {int} group_id 
-   * @param {Object} image 
+   * @param {Object} image An object with:
+   *  - path: Path of image in the local files.
    * @param {int} userId 
    * @returns {Object}
    *  * exit_code: int
