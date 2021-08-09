@@ -120,7 +120,7 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
   if(force_reconf) {
     //Reconfiguring.
     console.log('Reconfiguring.')
-    fs.writeFileSync(path.join(rootDir, '.env'), envConf)
+    fs.writeFileSync(path.join(rootDir, 'etc', '.env'), envConf)
 
     // Checks if some Cloudinary env var it was not provided.
     let cloudinaryErrorMsg = `No value was provided for ENV_VAR env var. '*' will be set as the default value and you must configure it, otherwise some endpoints using Cloudinary services it won't work'`
