@@ -32,7 +32,7 @@ function parseArgs(args) {
   }
 
   let parsedArgs = {}
-  
+
   //args start at index 2.
   if(args.length >= 3) {
     for(let i = 2; i < args.length; i++) {
@@ -147,7 +147,8 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
       console.log('Adding missing vars.')
       let cloudinaryErrorMsg = `Env var ENV_VAR doesn't exist and it wasn't provided a value to create it. '*' will be set as the default value and you must configure it, otherwise some endpoints using Cloudinary services it won't work`
 
-      fs.appendFileSync(path.join(rootDir, '.env'), '\n')
+      let dotEnvPath = path.join(rootDir, 'etc', '.env')
+      fs.appendFileSync(dotEnvPath, '\n')
       for(let evar of envResult.missing_env_vars) {
         let conf = ''
         switch(evar) {
@@ -194,7 +195,7 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
             conf = `CLOUDINARY_API_SECRET=${cdApiSecret || '*'}`
             break
         }
-        fs.appendFileSync(path.join(rootDir, '.env'), conf + '\n')
+        fs.appendFileSync(dotEnvPath, conf + '\n')
       }
     } else {
       console.log('No missing env vars.')
@@ -401,7 +402,7 @@ function getConfigFile() {
 }
 
 function setupConfigFile(force_reconf) {
-  let configFile = 
+  let configFile =
 `{
   "path_tracking": {
     "write_to_file": true,
@@ -416,12 +417,12 @@ function setupConfigFile(force_reconf) {
   "moment": {
     "language": "es"
   }
-}  
+}
 `
 
   let confPath = path.join(rootDir, 'etc')
   let conf = getConfigFile()
-  
+
   if(!conf.success || force_reconf) {
     console.log('Configuring conf.json')
     if(!fs.existsSync(confPath)) {
