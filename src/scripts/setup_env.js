@@ -116,11 +116,12 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
     `CLOUDINARY_API_KEY=${cdApiKey || '*'}`,
     `CLOUDINARY_API_SECRET=${cdApiSecret || '*'}`
   ].join('\n') + '\n'
+  let dotEnvPath = path.join(rootDir, 'etc', '.env')
 
   if(force_reconf) {
     //Reconfiguring.
     console.log('Reconfiguring.')
-    fs.writeFileSync(path.join(rootDir, 'etc', '.env'), envConf)
+    fs.writeFileSync(dotEnvPath, envConf)
 
     // Checks if some Cloudinary env var it was not provided.
     let cloudinaryErrorMsg = `No value was provided for ENV_VAR env var. '*' will be set as the default value and you must configure it, otherwise some endpoints using Cloudinary services it won't work'`
@@ -147,7 +148,6 @@ function setupEnv(user, passwd, dbPort, cdCloudName, cdApiKey, cdApiSecret, forc
       console.log('Adding missing vars.')
       let cloudinaryErrorMsg = `Env var ENV_VAR doesn't exist and it wasn't provided a value to create it. '*' will be set as the default value and you must configure it, otherwise some endpoints using Cloudinary services it won't work`
 
-      let dotEnvPath = path.join(rootDir, 'etc', '.env')
       fs.appendFileSync(dotEnvPath, '\n')
       for(let evar of envResult.missing_env_vars) {
         let conf = ''
