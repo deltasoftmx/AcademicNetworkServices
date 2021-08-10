@@ -275,7 +275,7 @@ POST
   "post_type": "user",
   "like_counter": 1,
   "created_at": "2021-08-05T05:00:00.000Z",
-  "liked_by_user": 0,
+  "liked_by_user": false,
   "group_name": null,
   "group_id": null,
   "referenced_post_id": 9,
@@ -290,7 +290,7 @@ POST
     "post_type": "group",
     "like_counter": 1,
     "created_at": "2021-07-18T05:00:00.000Z",
-    "liked_by_user": 0,
+    "liked_by_user": false,
     "group_name": "Grupo 1 del usuario 1",
     "group_id": 1
   }
@@ -844,7 +844,7 @@ POST
   "post_type": "group",
   "like_counter": 1,
   "created_at": "2021-08-05T05:00:00.000Z",
-  "liked_by_user": 0,
+  "liked_by_user": false,
   "group_name": "Grupo 1 del usuario 1",
   "group_id": 1,
   "referenced_post_id": 105,
@@ -859,7 +859,7 @@ POST
     "post_type": "user",
     "like_counter": 1,
     "created_at": "2021-08-05T05:00:00.000Z",
-    "liked_by_user": 0,
+    "liked_by_user": false,
     "group_name": null,
     "group_id": null
   }
@@ -963,7 +963,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
       "post_type": "user",
       "like_counter": 1,
       "created_at": "2021-07-18T05:00:00.000Z",
-      "liked_by_user": 0,
+      "liked_by_user": false,
       "group_name": null,
       "group_id": null,
       "referenced_post": {
@@ -977,7 +977,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
         "post_type": "user",
         "like_counter": 1,
         "created_at": "2021-07-18T05:00:00.000Z",
-        "liked_by_user": 1,
+        "liked_by_user": true,
         "group_name": null,
         "group_id": null
       }
@@ -993,7 +993,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
       "post_type": "group",
       "like_counter": 1,
       "created_at": "2021-07-12T05:00:00.000Z",
-      "liked_by_user": 1,
+      "liked_by_user": true,
       "group_name": "Random group",
       "group_id": 1,
       "referenced_post": null
@@ -1049,7 +1049,7 @@ Publication that the user is requesting.
   "post_type": "user",
   "like_counter": 1,
   "created_at": "2021-07-18T05:00:00.000Z",
-  "liked_by_user": 0,
+  "liked_by_user": false,
   "group_name": null,
   "group_id": null,
   "referenced_post": {
@@ -1063,7 +1063,7 @@ Publication that the user is requesting.
     "post_type": "user",
     "like_counter": 1,
     "created_at": "2021-07-18T05:00:00.000Z",
-    "liked_by_user": 1,
+    "liked_by_user": true,
     "group_name": null,
     "group_id": null
 }
@@ -1315,7 +1315,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
         "post_type": "user",
         "like_counter": 1,
         "created_at": "2021-08-07T05:00:00.000Z",
-        "liked_by_user": 0,
+        "liked_by_user": false,
         "group_name": null,
         "group_id": null
       }
@@ -1361,7 +1361,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
         "post_type": "group",
         "like_counter": 1,
         "created_at": "2021-08-08T05:00:00.000Z",
-        "liked_by_user": 0,
+        "liked_by_user": false,
         "group_name": "Group 1 of user 1",
         "group_id": 1
       }
