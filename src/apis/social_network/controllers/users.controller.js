@@ -150,19 +150,25 @@ module.exports = {
       //Retrieve post data.
       let newPostData = {}
 
-      if(resultPost.exit_code == 0) {
+      if (resultPost.exit_code == 0) {
         newPostData = await postService.getPostData(
-          resultPost.post_data.post_id,
+          resultPost.post_data.post_id, 
           true,
-          req.api.userId)
-      }
-      
-      if(newPostData.referenced_post_id) {
-        let referencedPost = await postService.getPostData(
-          newPostData.referenced_post_id,
-          false,
-          req.api.userId)
-        newPostData.referenced_post = referencedPost
+          req.api.userId
+        )
+        if (newPostData.referenced_post_id) {
+          let referencedPost = await postService.getPostData(
+            newPostData.referenced_post_id,
+            false,
+            req.api.userId
+          )
+          newPostData.referenced_post = referencedPost
+          newPostData.referenced_post.liked_by_user = !!newPostData.referenced_post.liked_by_user
+        } else {
+          newPostData.referenced_post = null
+        }
+        delete newPostData.referenced_post_id
+        newPostData.liked_by_user = !!newPostData.liked_by_user
       }
       //END Retrieve post data.
 

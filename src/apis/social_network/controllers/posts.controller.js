@@ -3,6 +3,39 @@ const groupService = require('../../../services/group.service')
 const errorHandlingService = require('../../../services/error_handling.service')
 const messages = require('../../../../etc/messages.json')
 
+/**
+ * Prepares the array of posts that will be send in some API response.
+ * Does the following changes for every post in the array:
+ * If the post has a referenced post then:
+ *  - Gets the post data of the referenced post and insert the data in 
+ *  the referenced_post property.
+ *  - liked_by_user property is changed to a boolean value.
+ * If the post does not have a referenced post then the referenced_post property
+ * will be null.
+ * For every post, the referenced_post_id property is deleted from the response
+ * and the liked_by_user property is changed to a boolean value.
+ * @param {Array<Object>} posts 
+ * @param {number} userId 
+ */
+async function preparePosts(posts, userId) {
+  const lengthPosts = posts.length
+  for (let i = 0; i < lengthPosts; i++) {
+    let post = posts[i]
+    if (post.referenced_post_id != null) {
+      post.referenced_post = await postService.getPostData(
+        post.referenced_post_id, 
+        false, 
+        userId
+      )
+      post.referenced_post.liked_by_user = !!post.referenced_post.liked_by_user
+    } else {
+      post.referenced_post = null
+    }
+    delete post.referenced_post_id
+    post.liked_by_user = !!post.liked_by_user
+  }
+}
+
 module.exports = {
   getPostsForTimeline: async function(req, res) {
     try {
@@ -12,13 +45,7 @@ module.exports = {
         req.query.page
       )
       let posts = result.posts
-      
-      for (let i = 0; i < posts.length; i++) {
-        let post = posts[i]
-        post.referenced_post = (post.referenced_post_id != null) ? 
-          await postService.getPostData(post.referenced_post_id, false, req.api.userId) : null
-        post.referenced_post_id = undefined
-      }
+      await preparePosts(posts, req.api.userId)
 
       res.finish({
         code: 0,
@@ -57,8 +84,12 @@ module.exports = {
           const post = await postService.getPostData(postId, true, userId)
           if (post.referenced_post_id != null) {
             post.referenced_post = await postService.getPostData(post.referenced_post_id, false, userId)
+            post.referenced_post.liked_by_user = !!post.referenced_post.liked_by_user
+          } else {
+            post.referenced_post = null
           }
-          post.referenced_post_id = undefined
+          delete post.referenced_post_id
+          post.liked_by_user = !!post.liked_by_user
           return res.finish({
             code: 0,
             messages: [messages.success_messages.c200],
@@ -81,8 +112,12 @@ module.exports = {
       }
       if (post.referenced_post_id != null) {
         post.referenced_post = await postService.getPostData(post.referenced_post_id, false, userId)
+        post.referenced_post.liked_by_user = !!post.referenced_post.liked_by_user
+      } else {
+        post.referenced_post = null
       }
-      post.referenced_post_id = undefined
+      delete post.referenced_post_id
+      post.liked_by_user = !!post.liked_by_user
       return res.finish({
         code: 0,
         messages: [messages.success_messages.c200],
@@ -104,13 +139,7 @@ module.exports = {
         req.query.page
       )
       let posts = result.posts
-      
-      for (let i = 0; i < posts.length; i++) {
-        let post = posts[i]
-        post.referenced_post = (post.referenced_post_id != null) ? 
-          await postService.getPostData(post.referenced_post_id, false) : null
-        post.referenced_post_id = undefined
-      }
+      await preparePosts(posts, req.api.userId)
 
       res.finish({
         code: 0,
@@ -203,14 +232,7 @@ module.exports = {
       }
 
       let posts = postsRes.group_posts
-      
-      for (let i = 0; i < posts.length; i++) {
-        let post = posts[i]
-        post.referenced_post = (post.referenced_post_id != null) ? 
-          await postService.getPostData(post.referenced_post_id, false, req.api.userId) : null
-        delete post.referenced_post_id
-        post.liked_by_user = !!post.liked_by_user
-      }
+      await preparePosts(posts, req.api.userId)
 
       res.finish({
         code: 0,

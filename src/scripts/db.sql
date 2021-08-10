@@ -123,7 +123,7 @@ create table if not exists posts (
     cloudinary_id varchar(100),
     referenced_post_id int unsigned,
     post_type varchar(50) not null,
-    like_counter int unsigned not null default 1,
+    like_counter int unsigned not null default 0,
     created_at date default curdate(),
     
     foreign key(user_id) references users(id)
