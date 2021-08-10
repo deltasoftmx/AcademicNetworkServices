@@ -83,7 +83,7 @@ Return information of a group such as who is its owner, name, image, permissions
 
 * **Description**
 
-Return all the public groups or only the groups (public and private) that user belongs to.
+Return all groups or only the groups (public and private) that user belongs to.
 
 * **Params**:
   * `groupRelativeType`: string.

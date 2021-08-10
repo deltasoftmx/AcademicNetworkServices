@@ -26,14 +26,22 @@ module.exports = {
   },
   
   searchGroups: async function(req, res) {
+    const groupRelativeType = req.query.group_relative_type
+    const userId = req.api.userId
+    if (groupRelativeType == 'user' && !userId) {
+      return res.status(401).finish({
+        code: 1,
+        messages: ['User unauthenticated']
+      })
+    }
     try {
       let result = await groupService.searchGroups(
-        req.query.group_relative_type,
+        groupRelativeType,
         req.query.search,
         req.query.offset,
         req.query.page,
         req.query.asc,
-        req.api.userId
+        userId
       )
 
       res.finish({

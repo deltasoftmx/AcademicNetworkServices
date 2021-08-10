@@ -232,8 +232,10 @@ module.exports = {
     }
   },
 
-  /** Perform a search in the database retrieving all the user records that match with 'search' parameter.
-   * It gets all users, followers or users followed by a target user. This can be set in 'userRelativeType' using: all|followers|followed
+  /** 
+   * Perform a search in the database retrieving all the user records that match with 'search' parameter.
+   * It gets all users, followers or users followed by a target user. This can be set in 'userRelativeType' using: all|followers|followed.
+   * The 'all' user relative type does not need user authentication.
    * It can selects chunks of records of 'offset' size. The chunk number is defined by 'page'.
    * It supports ascending and descending order by regiter date.
    * @param {string} userRelativeType 
@@ -257,8 +259,8 @@ module.exports = {
         users.profile_img_src
       from users
         inner join user_types
-          on users.user_type_id = user_types.id `
-    
+          on users.user_type_id = user_types.id
+    `
     if(userRelativeType != 'all') {
       query += `inner join followers `
       if(userRelativeType == 'followers') {
@@ -282,8 +284,8 @@ module.exports = {
       users.email regexp ? or
       user_types.name regexp ? ) 
       order by users.id ${asc ? 'asc' : 'desc'}
-      limit ?, ?;`
-    
+      limit ?, ?;
+    `
     let args = [ userTarget, search, search, search, search, search, page*offset, offset ]
     if(userRelativeType == 'all') {
       args.shift()
