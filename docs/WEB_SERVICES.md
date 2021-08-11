@@ -275,7 +275,7 @@ POST
   "post_type": "user",
   "like_counter": 1,
   "created_at": "2021-08-05T05:00:00.000Z",
-  "liked_by_user": 0,
+  "liked_by_user": false,
   "group_name": null,
   "group_id": null,
   "referenced_post_id": 9,
@@ -290,7 +290,7 @@ POST
     "post_type": "group",
     "like_counter": 1,
     "created_at": "2021-07-18T05:00:00.000Z",
-    "liked_by_user": 0,
+    "liked_by_user": false,
     "group_name": "Grupo 1 del usuario 1",
     "group_id": 1
   }
@@ -306,9 +306,10 @@ POST
 ##### Description
 
 Performs a search of a certain relative kind of user, based on the user that ask for the search. It can retrieve 
-all of users, followers or users followed by the requesting user that match with a search criteria. If the search 
-field is empty, the records are not discriminated. Records are served into groups of a certain size called pages. 
-You can select the group size and what group get in a call.
+all of users, followers or users followed by the requesting user that match with a search criteria. The 'all' user 
+relative type does not need user authentication. If the search field is empty, the records are not discriminated. 
+Records are served into groups of a certain size called pages. You can select the group size and what group get in 
+a call.
 
 This endpoint also return how much records were found with the search criteria.
 
@@ -319,6 +320,8 @@ This endpoint also return how much records were found with the search criteria.
 ##### Headers
 
 * `Authorization`
+
+It is optional when `user_relative_type` parameter is equals to 'all'.
 
 ##### Method
 
@@ -530,10 +533,11 @@ GET
 
 ##### Description
 
-Performs a search of certain relative kind of group, based on the user that ask for the search. It can retrieve all the public 
-groups or only the groups (public and private) that user belongs to, that match with a search criteria. If the search field is 
-empty the records are not discriminated. Records are served in groups of a certain size (determined by offset) called pages. You 
-can select the offset size and what page get in a call.
+Performs a search of certain relative kind of group, based on the user that ask for the search. It can retrieve all groups 
+or only the groups (public and private) that user belongs to, that match with a search criteria. The 'all' group relative 
+type does not need user authentication. If the search field is empty the records are not discriminated. Records are served 
+in groups of a certain size (determined by offset) called pages. You can select the offset size and what page get in a call.
+
 This endpoint also return how much records were found with the search criteria.
 
 ##### Endpoint
@@ -543,6 +547,8 @@ This endpoint also return how much records were found with the search criteria.
 ##### Headers
 
 * `Authorization`
+
+It is optional when `group_relative_type` parameter is equals to 'all'.
 
 ##### Method
 
@@ -838,7 +844,7 @@ POST
   "post_type": "group",
   "like_counter": 1,
   "created_at": "2021-08-05T05:00:00.000Z",
-  "liked_by_user": 0,
+  "liked_by_user": false,
   "group_name": "Grupo 1 del usuario 1",
   "group_id": 1,
   "referenced_post_id": 105,
@@ -853,7 +859,7 @@ POST
     "post_type": "user",
     "like_counter": 1,
     "created_at": "2021-08-05T05:00:00.000Z",
-    "liked_by_user": 0,
+    "liked_by_user": false,
     "group_name": null,
     "group_id": null
   }
@@ -957,7 +963,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
       "post_type": "user",
       "like_counter": 1,
       "created_at": "2021-07-18T05:00:00.000Z",
-      "liked_by_user": 0,
+      "liked_by_user": false,
       "group_name": null,
       "group_id": null,
       "referenced_post": {
@@ -971,7 +977,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
         "post_type": "user",
         "like_counter": 1,
         "created_at": "2021-07-18T05:00:00.000Z",
-        "liked_by_user": 1,
+        "liked_by_user": true,
         "group_name": null,
         "group_id": null
       }
@@ -987,7 +993,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
       "post_type": "group",
       "like_counter": 1,
       "created_at": "2021-07-12T05:00:00.000Z",
-      "liked_by_user": 1,
+      "liked_by_user": true,
       "group_name": "Random group",
       "group_id": 1,
       "referenced_post": null
@@ -1043,7 +1049,7 @@ Publication that the user is requesting.
   "post_type": "user",
   "like_counter": 1,
   "created_at": "2021-07-18T05:00:00.000Z",
-  "liked_by_user": 0,
+  "liked_by_user": false,
   "group_name": null,
   "group_id": null,
   "referenced_post": {
@@ -1057,7 +1063,7 @@ Publication that the user is requesting.
     "post_type": "user",
     "like_counter": 1,
     "created_at": "2021-07-18T05:00:00.000Z",
-    "liked_by_user": 1,
+    "liked_by_user": true,
     "group_name": null,
     "group_id": null
 }
@@ -1309,7 +1315,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
         "post_type": "user",
         "like_counter": 1,
         "created_at": "2021-08-07T05:00:00.000Z",
-        "liked_by_user": 0,
+        "liked_by_user": false,
         "group_name": null,
         "group_id": null
       }
@@ -1355,7 +1361,7 @@ The number of the group to retrieve. Pages starts at `0`, what is also the defau
         "post_type": "group",
         "like_counter": 1,
         "created_at": "2021-08-08T05:00:00.000Z",
-        "liked_by_user": 0,
+        "liked_by_user": false,
         "group_name": "Group 1 of user 1",
         "group_id": 1
       }

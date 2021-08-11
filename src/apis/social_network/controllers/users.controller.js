@@ -194,14 +194,23 @@ module.exports = {
   },
   
   searchUsers: async function(req, res) {
+    const userRelativeType = req.query.user_relative_type
+    const userId = req.api.userId
+    if ((userRelativeType == 'followers' || userRelativeType == 'followed') && !userId) {
+      return res.status(401).finish({
+        code: 1,
+        messages: ['User unauthenticated.']
+      })
+    }
     try {
       let result = await userService.searchUsers(
-        req.query.user_relative_type, 
+        userRelativeType, 
         req.query.page, 
         req.query.offset, 
         req.query.search, 
         req.query.asc,
-        req.api.userId)
+        userId
+      )
 
       res.finish({
         code: 0,

@@ -20,7 +20,7 @@ module.exports = {
 
   searchGroups: [
     generalMiddleware.verifyAPIKey,
-    generalMiddleware.userAuth,
+    generalMiddleware.userAuthIfTokenSent,
     groupsMiddleware.checkSearchGroupsParams,
     groupsController.searchGroups
   ],

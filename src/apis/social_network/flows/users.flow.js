@@ -41,7 +41,7 @@ module.exports = {
   
   searchUsers: [
     generalMidd.verifyAPIKey,
-    generalMidd.userAuth,
+    generalMidd.userAuthIfTokenSent,
     userMidd.checkSearchUserParams,
     userCtrl.searchUsers
   ],

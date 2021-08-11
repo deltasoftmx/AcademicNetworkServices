@@ -236,7 +236,8 @@ module.exports = {
 
   /**
    * Perform a search in the database retrieving all the group records that match with 'search' parameter.
-   * It gets all public groups or only the groups (public and private) that user belongs to.
+   * It gets all groups or only the groups (public and private) that user belongs to.
+   * The 'all' group relative type does not need user authentication.
    * It can selects chunks of records of 'offset' size. The chunk number is defined by 'page'.
    * It supports ascending and descending order by the group id.
    * @param {string} groupRelativeType 
@@ -252,55 +253,50 @@ module.exports = {
    */
   searchGroups: async function(groupRelativeType = 'all', search = '', offset = 10, page = 0, asc = 1, userId) {
     let query = `
-      SELECT 
+      select 
         user_groups.id,
         user_groups.name,
         user_groups.image_src,
         user_groups.description
-      FROM
-        user_groups
-          RIGHT JOIN
-        group_tags ON user_groups.id = group_tags.group_id
+      from user_groups
+      right join group_tags 
+        on user_groups.id = group_tags.group_id
     `
     // groupRelativeType = all | user
-    if (groupRelativeType == 'all') {
+    if (groupRelativeType == 'user') {
       query += `
-      WHERE
-        user_groups.visibility = 'public'
+        inner join group_memberships
+          on user_groups.id = group_memberships.group_id
+        where
+          group_memberships.user_id = ${userId} AND
       `
-    } else if (groupRelativeType == 'user') {
-      query += `
-          INNER JOIN
-        group_memberships ON user_groups.id = group_memberships.group_id
-      WHERE
-        group_memberships.user_id = ${userId}
-      `
+    } else {
+      query += `where`
     }
-    
     query += `
-        AND (user_groups.name REGEXP ?
-        OR user_groups.description REGEXP ?
-        OR group_tags.tag REGEXP ?)
-      GROUP BY user_groups.id
-      ORDER BY user_groups.id ${asc ? 'ASC' : 'DESC'}
-      LIMIT ${offset * page}, ${offset};
+        (user_groups.name regexp ?
+        OR user_groups.description regexp ?
+        OR group_tags.tag regexp ?)
+      group by user_groups.id
+      order by user_groups.id ${asc ? 'asc' : 'desc'}
+      limit ?, ?;
     `
 
     search = search.split(' ').join('|')
-    regexpArgs = [search, search, search]
+    let args = [search, search, search, offset*page, offset]
 
     // Counts how much records there are.
     let countQuery = query.split('\n')
     // Remove selected fields and select the amount of records.
-    countQuery.splice(2, 4, 'DISTINCT COUNT(*) OVER () AS total_records')
+    countQuery.splice(2, 4, 'distinct count(*) over() as total_records')
     // Remove limit to select all the records.
     countQuery.pop(); countQuery.pop()
     countQuery = countQuery.join('\n')
-    countQuery += ';'
 
     try {
-      let groupsResult = await mariadb.query(query, regexpArgs)
-      let countResult = await mariadb.query(countQuery, regexpArgs)
+      let groupsResult = await mariadb.query(query, args)
+      args.pop(); args.pop()
+      let countResult = await mariadb.query(countQuery, args)
       countResult = countResult[0]
 
       return {
