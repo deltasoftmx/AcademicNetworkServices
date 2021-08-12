@@ -5,25 +5,53 @@ const authService = require('../../../services/auth.service')
 const conf = require('../../../../etc/conf.json')
 const messages = require('../../../../etc/messages.json')
 const errorHandlingService = require('../../../services/error_handling.service')
+const postService = require('../../../services/post.service');
 
 module.exports = {
   createStudent: async function(req, res) {
     let at_index = req.body.email.indexOf('@')
-    req.body.student_id = req.body.email.substring(0, at_index)
+    if (!req.body.username) {
+      req.body.username = req.body.email.substring(0, at_index)
+    }
+    if (!req.body.student_id) {
+      req.body.student_id = req.body.email.substring(0, at_index)
+    }
     req.body.passwd = cryptService.hash(req.body.passwd)
     try {
       let result = await userService.createStudent(req.body)
-      let data
+      
       if(result.exit_code == 0) {
-        let token = await cryptService.generateJWT( { user_id: result.user_id },
-                                                    conf.session.expires_in)
-        data = { session_token: token }
+        let token = await cryptService.generateJWT({ 
+          user_id: result.user_id,
+          username: req.body.username
+        }, conf.session.expires_in)
+        let publicUserData = await userService.getPublicUserData(req.body.email)
+
+        return res.finish({
+          code: result.exit_code,
+          messages: [result.message],
+          data: {
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            username: req.body.username,
+            description: req.body.description || '',
+            profile_img_src: publicUserData.profile_img_src,
+            user_type_id: req.body.user_type_id,
+            user_type_name: publicUserData.type_user,
+            major_id: req.body.major_id,
+            major_name: publicUserData.major,
+            student_id: req.body.student_id,
+            created_at: publicUserData.created_at,
+            session_token: token
+          }
+        })
       }
+
       res.finish({
         code: result.exit_code,
-        messages: [result.message],
-        data
+        messages: [result.message]
       })
+
     } catch(err) {
       err.file = err.file || __filename
       err.func = err.func || 'createStudent'
@@ -41,13 +69,15 @@ module.exports = {
           messages: ['Invalid credentials']
         })
       }
-      let token = await cryptService.generateJWT( { user_id: userId }, 
-                                                  conf.session.expires_in)
+      let publicUserData = await userService.getPublicUserData(req.body.username)
+      let token = await cryptService.generateJWT({ 
+        user_id: userId,
+        username: publicUserData.username
+      }, conf.session.expires_in)
+      publicUserData.session_token = token
       res.finish({
         code: 0, 
-        data: {
-          session_token: token
-        },
+        data: publicUserData,
         message: ['Done']
       })
     } catch(err) {
@@ -72,7 +102,7 @@ module.exports = {
       if (!resultUserData) {
         res.status(404).finish({
           code: 1,
-          messages: [`Username doesn't exists.`]
+          messages: [`Username or email doesn't exists.`]
         })
       } else {
         resultUserData.created_at = moment(resultUserData.created_at).format("LL")
@@ -92,24 +122,60 @@ module.exports = {
   },
 
   createPost: async function(req, res) {
+    const post = {
+      content: req.body.content
+    }
+    if (req.files && req.files.image) {
+      post.image = {
+        path: req.files.image.tempFilePath
+      }
+    }
+    const referencedPostId = req.body.referenced_post_id
+    if (!referencedPostId && !post.content && !post.image) {
+      return res.status(400).finish({
+        code: 1,
+        messages: ['No data was sent']
+      })
+    }
     try {
-      const post = {
-        content: req.body.content,
-        image: req.file
-      }
-      let resultPost = await userService.createPost(req.api.userId, post)
+      let resultPost = await userService.createPost(req.api.userId, post, referencedPostId)
 
-      if (!resultPost) {
-        return res.status(404).finish({
-          code: 1,
-          messages: ['No data was sent.']
-        })
+      let statusHttp = 200
+      if (resultPost.exit_code == 1) {
+        // It's necessary add 1 to exit_code because the code 1 is already in use.
+        resultPost.exit_code = 2
+        statusHttp = 403
       }
 
-      res.finish({
-        code: 0,
-        messages: ['Done'],
-        data: resultPost
+      //Retrieve post data.
+      let newPostData = {}
+
+      if (resultPost.exit_code == 0) {
+        newPostData = await postService.getPostData(
+          resultPost.post_data.post_id, 
+          true,
+          req.api.userId
+        )
+        if (newPostData.referenced_post_id) {
+          let referencedPost = await postService.getPostData(
+            newPostData.referenced_post_id,
+            false,
+            req.api.userId
+          )
+          newPostData.referenced_post = referencedPost
+          newPostData.referenced_post.liked_by_user = !!newPostData.referenced_post.liked_by_user
+        } else {
+          newPostData.referenced_post = null
+        }
+        delete newPostData.referenced_post_id
+        newPostData.liked_by_user = !!newPostData.liked_by_user
+      }
+      //END Retrieve post data.
+
+      res.status(statusHttp).finish({
+        code: resultPost.exit_code,
+        messages: [resultPost.message],
+        data: newPostData
       })
     } catch (err) {
       err.file = err.file || __filename
@@ -128,14 +194,23 @@ module.exports = {
   },
   
   searchUsers: async function(req, res) {
+    const userRelativeType = req.query.user_relative_type
+    const userId = req.api.userId
+    if ((userRelativeType == 'followers' || userRelativeType == 'followed') && !userId) {
+      return res.status(401).finish({
+        code: 1,
+        messages: ['User unauthenticated.']
+      })
+    }
     try {
       let result = await userService.searchUsers(
-        req.query.user_relative_type, 
+        userRelativeType, 
         req.query.page, 
         req.query.offset, 
         req.query.search, 
         req.query.asc,
-        req.api.userId)
+        userId
+      )
 
       res.finish({
         code: 0,

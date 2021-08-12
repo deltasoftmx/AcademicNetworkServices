@@ -16,6 +16,9 @@ This system use MariaDB v10.4 as database management system.
   * [Add a permission to a group](#Add-a-permission-to-a-group)
   * [Add a tag to a group](#Add-a-tag-to-a-group)
   * [Switch group notifications](#Switch-group-notifications)
+  * [Add a user to a group](#add-a-user-to-a-group)
+  * [Create a post of type group](#create-a-post-of-type-group)
+  * [Create a post of type user](#create-a-post-of-type-user)
 
 ## SQL Schema
 ![SQL Schema](diagrams/db.png)
@@ -190,7 +193,7 @@ Write
 
 #### Description
 
-Creates a new group.
+Creates a new group and register the membership of the owner user id with the new group id.
 
 #### SP name
 
@@ -280,3 +283,116 @@ Turn on or turn off the group notifications which the user requesting belongs to
 
 * 1: User doesn't exist in the group memberships or the group doesn't exist.
 * 2: Group notifications are already in that state.
+
+### Add a user to a group
+
+#### Type
+
+Write
+
+#### Description
+
+Adds a user to a group.
+
+#### SP name
+
+`group_add_user`
+
+#### Parameters
+
+* `user_id`: int unsigned
+* `group_id`: int unsigned
+
+#### Exit codes
+
+* 1: Group does not exist.
+* 2: The user is already a member of the group.
+
+### Create a post of type group
+
+#### Type
+
+Write
+
+#### Description
+
+Create a new group post, with a content and/or image.
+
+Or shares a user post or public group post as group post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new group post that is going to be saved will be the id 
+of the root post.
+
+#### SP name
+
+`group_post_create`
+
+#### Parameters
+
+* `user_id`: int unsigned
+* `group_id`: int unsigned
+* `content`: text
+* `img_src`: varchar(700)
+* `cloudinary_id`: varchar(100)
+* `referenced_post_id`: int. Id of user post or public group post to share.
+* `post_type`: varchar(50)
+
+#### Exit codes
+
+* 1: User is not member of group.
+* 2: The post cannot be shared, it belongs to a private group.
+
+### Create a post of type user
+
+#### Type
+
+Write
+
+#### Description
+
+Create a new user post, with a content and/or image.
+
+Or shares a user post or public group post as user post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new user post that is going to be saved will be the id 
+of the root post.
+
+#### SP name
+
+`user_post_create`
+
+#### Parameters
+
+* `user_id`: int unsigned
+* `content`: text
+* `img_src`: varchar(700)
+* `cloudinary_id`: varchar(100)
+* `referenced_post_id`: int. Id of user post or public group post to share.
+* `post_type`: varchar(50)
+
+#### Exit codes
+
+* 1: The post cannot be shared, it belongs to a private group.
+
+### Sets a permission for an endpoint.
+
+#### Type
+
+Write
+
+#### Description
+
+Sets a permission for an endpoint.
+
+#### SP name
+
+`endpoint_permission_create`
+
+#### Parameters
+
+* `endpoint`: varchar(700),
+* `group_permission_id`: int unsigned
+
+#### Exit codes
+
+* 1: The endpoint already has the group permission id.

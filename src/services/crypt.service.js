@@ -5,11 +5,12 @@ const path = require('path')
 
 let publicKey = ''
 let privateKey = ''
+let rootDir = process.env.ACADEMIC_NETWORK_BACKEND_ROOTDIR
 
 function getPublicKey() {
   try {
     if(publicKey == '' || !publicKey) {
-      publicKey = fs.readFileSync(path.join(process.cwd(), 'certs', 'academy_network.pem'), { encoding: 'utf8' })
+      publicKey = fs.readFileSync(path.join(rootDir, 'certs', 'academy_network.pem'), { encoding: 'utf8' })
     }
     return publicKey
   } catch(err) {
@@ -22,7 +23,7 @@ function getPublicKey() {
 function getPrivateKey() {
   try {
     if(privateKey == '' || !privateKey) {
-      privateKey = fs.readFileSync(path.join(process.cwd(), 'certs', 'academy_network'), { encoding: 'utf8' })
+      privateKey = fs.readFileSync(path.join(rootDir, 'certs', 'academy_network'), { encoding: 'utf8' })
     }
     return privateKey
   } catch(err) {

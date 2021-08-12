@@ -1,4 +1,9 @@
-const { Validator, parseValidatorOutput, parseNumberFromGroupIfApplic } = require('../services/validator.service')
+const { 
+  Validator, 
+  parseValidatorOutput, 
+  parseNumberFromGroupIfApplic,
+  parseNumberIfApplicable } = require('../services/validator.service')
+const groupService = require('../services/group.service')
 
 
 module.exports = {
@@ -52,7 +57,7 @@ module.exports = {
       obj('group_name').required().isString()
       obj('description').isString()
       obj('visibility').required().isString().isIncludedInArray(['public', 'private'])
-      obj('permissions').required().isArray( item => {
+      obj('permissions').isArray( item => {
         item.required().isNumber().integer().isPositive()
       })
       obj('tags').isArray( item => {
@@ -88,7 +93,14 @@ module.exports = {
 
   checkUpdateGroupImageData: function(req, res, next) {
     let validator = new Validator()
-    validator(req.file).display('image').required()
+
+    // FileUploader will use the 'image' named field, if a file is sent in this field FileUploader
+    // will "send the image" in req.files.image as an object.
+    // But if no file is sent, req.files.image will be undefined and req.files will be undefined as well.
+    if (!req.files) {
+      req.files = {}
+    }
+    validator(req.files.image).required().isObject().display('image')
     
     let errors = parseValidatorOutput(validator.run())
     if (errors.length) {
@@ -96,6 +108,73 @@ module.exports = {
         code: -1,
         messages: errors
       })
+    }
+
+    next()
+  },
+
+  checkNewPostData: function(req, res, next) {
+    req.body.referenced_post_id = parseNumberIfApplicable(req.body.referenced_post_id)
+    
+    let validator = new Validator()
+    validator(req.body).required().isObject( obj => {
+      obj('content').isString(),
+      obj('referenced_post_id').isNumber().integer().isPositive()
+    })
+
+    // FileUploader will use the 'image'-named field, if a file is sent in this field FileUploader
+    // will "send the image" in req.files.image so req.body.image will have undefined value, but 
+    // if a file is not sent in the field 'image' req.files.image will be undefined and 
+    // req.body.image will have a value so it is necessary to validate it.
+    // If no file is sent, req.files will be undefined as well.
+    if (!req.files) {
+      req.files = {}
+    }
+    validator(req.files.image).isObject().display('image')
+    if (req.body.image) {
+      validator(req.body.image).isObject().display('image')
+    }
+
+    let errors = parseValidatorOutput(validator.run())
+    if (errors.length != 0) {
+      return res.status(400).finish({
+        code: -1,
+        messages: errors
+      })
+    }
+    return next()
+  },
+
+  verifyPermissions: async function(req, res, next) {
+    const groupInformation = await groupService.getGroupInformation(req.params.group_id)
+    if (groupInformation.exit_code == 1) {
+      return res.status(404).finish({
+        code: 1,
+        messages: ['Group does not exist']
+      })
+    }
+    if (groupInformation.groupData.owner_username === req.api.username) {
+      return next()
+    }
+    let groupPermissions = groupInformation.permissions
+    delete groupPermissions.meta
+    const endpointPermissions = await groupService.getEndpointPermissions()
+
+    // The request parameter group_id that appears in the path as a number, is changed 
+    // by 'group_id', this is how was registered in group_endpoint_permissions table.
+    let urlEndpoint = req.originalUrl.replace(/\/[0-9]+\//, '/:group_id/')
+
+    for (const endpointPer of endpointPermissions) {
+      if (endpointPer.endpoint === urlEndpoint) {
+        for (const groupPer of groupPermissions) {
+          if (endpointPer.group_permission_id == groupPer.id && groupPer.granted == 0) {
+            return res.status(403).finish({
+              code: 2,
+              messages: [`Group does not have ${groupPer.codename} permission.`]
+            })
+          }
+        }
+      }      
     }
 
     next()

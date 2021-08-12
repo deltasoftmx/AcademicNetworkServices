@@ -10,7 +10,7 @@ function parseValidatorOutput(result) {
 }
 
 function parseNumberIfApplicable(val) {
-  if(!isNaN(val)) {
+  if(!isNaN(val) && val != '') {
     return parseFloat(val)
   }
   return val

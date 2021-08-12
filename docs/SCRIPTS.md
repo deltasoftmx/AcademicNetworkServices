@@ -23,7 +23,7 @@ must be separated by a comma.
 Default values of the environment variable are:
 
 * MARIADB_HOST=localhost
-* MARIADB_USER=[provided by `--db-username`]
+* MARIADB_USER=[provided by `--db-user`]
 * MARIADB_PASS=[provided by `--db-passwd`]
 * MARIADB_DATABASE=academy_network
 * IANA_TIMEZONE=America/Cancun
@@ -37,7 +37,7 @@ Some endpoints needs to send images, this images are uploaded to Cloudinary serv
 
 **Options**
 
-* `--db-username`
+* `--db-user`
 
 User database.
 

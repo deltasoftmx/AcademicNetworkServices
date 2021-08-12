@@ -1,13 +1,16 @@
 /**
  * This is the bootstrap file. Load the required modules to make work the application.
  */
+const path = require('path')
 
+process.env.ACADEMIC_NETWORK_BACKEND_ROOTDIR = path.join(__dirname, '..')
+let rootDir = process.env.ACADEMIC_NETWORK_BACKEND_ROOTDIR
+console.log(process.env.ACADEMIC_NETWORK_BACKEND_ROOTDIR)
  //Test the environment.
 require('./scripts/verify_env')
 
 //Including dependencies.
 const express = require('express')
-const path = require('path')
 const moment = require('moment')
 const cloudinary = require('cloudinary').v2
 const generalMidd = require('./middlewares/general.middleware')
@@ -36,7 +39,7 @@ const socialNetworkAPI = require('./apis/social_network/interfaces')
 
 //Setting middlewares for this API.
 app.use('/v1/api/social-network', generalMidd.setLogger({
-  logpath: path.join(process.cwd(), 'logs', 'social_network_api.log'),
+  logpath: path.join(rootDir, 'logs', 'social_network_api.log'),
   writeToFile: conf.path_tracking.write_to_file,
   writeToStdout: conf.path_tracking.write_to_stdout
 }))

@@ -12,16 +12,26 @@
     * [Create student](#create-student)
     * [Sign in](#sign-in)
     * [Get public user data](#get-public-user-data)
-    * [Create post](#create-post)
+    * [Create user post](#create-user-post)
     * [Search users](#search-users)
     * [Get public user types](#get-public-user-types)
     * [Get majors data](#get-majors-data)
   * [Groups](#groups)
-    * [Get permission of a group](#get-permission-of-a-group)
+    * [Get information of a group](#get-information-of-a-group)
     * [Search groups](#search-groups)
     * [Create a group](#create-a-group)
     * [Switch group notifications](#switch-group-notifications)
     * [Update group image](#update-group-image)
+    * [Add a user to a group](#add-a-user-to-a-group)
+    * [Get available permissions for groups](#get-available-permissions-for-groups)
+    * [Create group post](#create-group-post)
+    * [Get membership information](#get-membership-information)
+  * [Posts](#posts)
+    * [Get posts for timeline](#get-posts-for-timeline)
+    * [Get data of one publication](#get-data-of-one-publication)
+    * [Get favorite posts of user](#get-favorite-posts-of-user)
+    * [Get comments of a post](#get-comments-of-a-post)
+    * [Get publications of a certain group](#get-publications-of-a-certain-group)
 
 ## General information
 
@@ -114,6 +124,17 @@ POST
 
 ```json
 {
+  "username": "jonhdoe",
+  "firstname": "John",
+  "lastname": "Doe",
+  "description": "Hi I'm John Doe",
+  "profile_img_src": "",
+  "user_type_id": 1,
+  "user_type_name": "Estudiante",
+  "major_id": 2,
+  "major_name": "Data Engineering",
+  "student_id": "-_john06",
+  "created_at": "2020-07-20T16:31:31.000Z",
   "session_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJpYXQiOjE1OTY3NjYzOTcsImV4cCI6MTU5NzM3MTE5N30.AAuRetvF60kCqMYjUatkvhVKu75WHBGiYAv3K-yw5LOk-WIAWVlwmaXEzC5VVVYlHs3VfteCT52LFpkJSdQPsaCalEmngOx2tqshfwtK7PolRQN7j_Qcvqh-ckhwyPW_oVux5OjBqbbq9XYg3y5uhHpkNur9ouOFbMdPYx95YWp_gR0KfI5n8j7xjOyNLvNEg7X4wxHh7k-APWY8kt9rPTHaOxjUBsBKS-Uf3G4qoWQ1mqqRawH9YkpmNzmqjfj_hnV-Plvl-pAzc5fznkAYWiSFFQtyAPS5r7hAK2uzNxPT38q-Eo_YghukfLhqbPZyCutIf5HDy3VJnAJ2CSLLonAr9_uXqtTizyg4ijv61sFz30HfnbxZ5lsllJm2rggTNQm7XafQNjG1L1uukjLKtO39a-BA1RPZQuv0vnXCihArFdY1NNMCyL4eUehNxlDWj56VyLIq_DqIFtdXHKiuoqEFq7Mr4gkYQI4Qu3hshbjxrD1y_ELJnE44D4qbdVdK"
 }
 ```
@@ -124,6 +145,7 @@ POST
 * 3: Username already exists.
 * 4: User type doesn't exists.
 * 5: Major doesn't exists.
+* 6: Student id already exists.
 
 #### Sign in
 
@@ -152,6 +174,14 @@ POST
 
 ```json
 {
+  "username": "jonhdoe",
+  "firstname": "John",
+  "lastname": "Doe",
+  "type_user": "Estudiante",
+  "description": "Hi I'm John Doe",
+  "profile_img_src": "",
+  "created_at": "2020-07-20T16:31:31.000Z",
+  "major": "Data Engineering",
   "session_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjp7ImlkIjoyMH0sImlhdCI6MTU5NTA1MzM5NSwiZXhwIjoxNTk1NjU4MTk1fQ.n39rxTNk6z64hIAh4BmJLucIjawBN0UGuU_IyVgCBa2vkzqsRhntU8YHQXMkmpZyzZTDWlowFSMfaNWOXthcK0O2U5gxKtXB-suRoEOijZu03c7B3BnIBZt4lid7KBhi3WME_JUJIV3xVQQiy-XIW0qMSsG3dJyHDB-jLAv1YL9vrGZdIobsAD0cipUyBrRfez4N824-EtlLjxyHHjsnmGeMMqhebIL3Lkgb-OaHDzqVgEcULRqqXozuGXHYw4a5Qs41eIF2q7zrq1DQueXGuNG-NKnB8gP8Hx_0Z_zT0syI6tfCyfFtF11-BAL7fEOOIBjsRW7grifqbZ3x8OXRiVdRewydvLHDqUqY5B4EdJEAK-q3WvxiolXZ-obYGY48enMuM4kLvrSL19Uu-NYbRk5Q3INoSecIsr2s_Kp2Ac8d-4gYjzCLyad8cmhXRZP8kzLVfdx6wpWvcG5vJB1YVa1rqms-ldsecZNhsTE5eqcv7TDxrSMJPR11RTqDx-DK"
 }
 ```
@@ -190,10 +220,10 @@ GET
   "username": "jonhdoe",
   "firstname": "John",
   "lastname": "Doe",
+  "type_user": "Estudiante",
   "description": "Hi I'm John Doe",
   "profile_img_src": "",
   "created_at": "2020-07-20T16:31:31.000Z",
-  "user_type": "Estudiante",
   "major": "Data Engineering"
 }
 ```
@@ -201,11 +231,16 @@ GET
 ##### Codes
 * 1: Username doesn't exists.
 
-#### Create post
+#### Create user post
 
 ##### Description
 
-Create a new user post, either only text or text with an image.
+Create a new user post, with a content and/or image.
+
+Or shares a user post or public group post as user post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new user post that is going to be saved will be the id 
+of the root post.
 
 ##### Endpoint
 
@@ -223,28 +258,58 @@ POST
 ##### Params
 
 * `content`: string.
-* `image`: Object.
+* `image`: blob.
+* `referenced_post_id`: int. Id of user post or public group post to share.
 
 ##### Response data-structure
 
 ```json
 {
-  "content": "Lorem ipsum",
-  "img_src": "https://res.cloudinary.com/user-cloud/image/upload/v123123123/adfadfa2sf3hr4sth4w.jpg",
+  "id": 128,
+  "username": "akali",
+  "firstname": "Akali",
+  "lastname": "",
+  "profile_img_src": "",
+  "content": "Hello, world!",
+  "img_src": null,
+  "post_type": "user",
+  "like_counter": 1,
+  "created_at": "2021-08-05T05:00:00.000Z",
+  "liked_by_user": false,
+  "group_name": null,
+  "group_id": null,
+  "referenced_post_id": 9,
+  "referenced_post": {
+    "id": 9,
+    "username": "ahri",
+    "firstname": "Ahri",
+    "lastname": "",
+    "profile_img_src": "",
+    "content": "Prueba",
+    "img_src": null,
+    "post_type": "group",
+    "like_counter": 1,
+    "created_at": "2021-07-18T05:00:00.000Z",
+    "liked_by_user": false,
+    "group_name": "Grupo 1 del usuario 1",
+    "group_id": 1
+  }
 }
 ```
 
 ##### Codes
 * 1: No data was sent.
+* 2: The post cannot be shared, it belongs to a private group.
 
 #### Search users
 
 ##### Description
 
 Performs a search of a certain relative kind of user, based on the user that ask for the search. It can retrieve 
-all of users, followers or users followed by the requesting user that match with a search criteria. If the search 
-field is empty, the records are not discriminated. Records are served into groups of a certain size called pages. 
-You can select the group size and what group get in a call.
+all of users, followers or users followed by the requesting user that match with a search criteria. The 'all' user 
+relative type does not need user authentication. If the search field is empty, the records are not discriminated. 
+Records are served into groups of a certain size called pages. You can select the group size and what group get in 
+a call.
 
 This endpoint also return how much records were found with the search criteria.
 
@@ -255,6 +320,8 @@ This endpoint also return how much records were found with the search criteria.
 ##### Headers
 
 * `Authorization`
+
+It is optional when `user_relative_type` parameter is equals to 'all'.
 
 ##### Method
 
@@ -323,7 +390,7 @@ Return an object containing an array of names and ids of the public user types. 
 
 ##### Headers
 
-Not more than madatories.
+Not more than mandatories.
 
 ##### Method
 
@@ -366,7 +433,7 @@ Return an object containing an array of names and ids of avaliable majors. Usefu
 
 ##### Headers
 
-Not more than madatories.
+Not more than mandatories.
 
 ##### Method
 
@@ -399,19 +466,19 @@ No particular codes.
 
 ### Groups
 
-#### Get permission of a group
+#### Get information of a group
 
 ##### Description
 
-Return the permissions that a group has.
+Return information about a certain group.
 
 ##### Endpoint
 
-`/v1/api/social-network/groups/group/:group_id/permissions`
+`/v1/api/social-network/groups/group/:group_id/information`
 
 ##### Headers
 
-Not more than madatories.
+Not more than mandatories.
 
 ##### Method
 
@@ -425,10 +492,34 @@ GET
 
 ```json
 {
+  "group_data": {
+    "owner_firstname": "Jhon",
+    "owner_lastname": "Doe",
+    "owner_username": "jhondoe",
+    "owner_profile_img_src": "",
+    "group_name": "Engineering",
+    "group_image_src": "",
+    "group_description": "Python where we can, C++ where we must.",
+    "group_visibility": "public",
+    "group_created_at": "2021-07-04T22:37:15.000Z"
+  },
   "permissions": [
     {
-      "name": "Allow publications",
-      "codename": "allow_posts"
+      "id": 1,
+      "name": "Permitir publicaciones",
+      "codename": "allow_posts",
+      "granted": 1
+    },
+    {
+      "id": 2,
+      "name": "Permitir comentarios",
+      "codename": "allow_comments",
+      "granted": 0
+    }
+  ],
+  "tags": [
+    {
+      "tag": "Ciencia"
     }
   ]
 }
@@ -442,10 +533,11 @@ GET
 
 ##### Description
 
-Performs a search of certain relative kind of group, based on the user that ask for the search. It can retrieve all the public 
-groups or only the groups (public and private) that user belongs to, that match with a search criteria. If the search field is 
-empty the records are not discriminated. Records are served in groups of a certain size (determined by offset) called pages. You 
-can select the offset size and what page get in a call.
+Performs a search of certain relative kind of group, based on the user that ask for the search. It can retrieve all groups 
+or only the groups (public and private) that user belongs to, that match with a search criteria. The 'all' group relative 
+type does not need user authentication. If the search field is empty the records are not discriminated. Records are served 
+in groups of a certain size (determined by offset) called pages. You can select the offset size and what page get in a call.
+
 This endpoint also return how much records were found with the search criteria.
 
 ##### Endpoint
@@ -455,6 +547,8 @@ This endpoint also return how much records were found with the search criteria.
 ##### Headers
 
 * `Authorization`
+
+It is optional when `group_relative_type` parameter is equals to 'all'.
 
 ##### Method
 
@@ -612,7 +706,7 @@ PUT
 ##### Params
 
 * `group_id`: int. The id of the group to request. Replace this label by the id in the url.
-* `image`: Object. The new image for the group.
+* `image`: blob. The new image for the group.
 
 ##### Response data-structure
 
@@ -626,3 +720,658 @@ PUT
 
 1. The group does not exist.
 2. Permission denied. You are not the group owner.
+
+#### Add a user to a group
+
+##### Description
+
+Add a user to a specific group.
+
+##### Endpoint
+
+`/v1/api/social-network/groups/group/:group_id/add-user`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+POST
+
+##### Params
+
+* `group_id`: int.
+
+Id of the group the user wants to be part of.
+
+##### Response data-structure
+
+No particular response data-structure.
+
+##### Codes
+
+1. Group does not exist.
+2. The user is already a member of the group.
+
+#### Get available permissions for groups
+
+##### Description
+
+Return the available permissions that can be assigned to a group.
+
+##### Endpoint
+
+`/v1/api/social-network/groups/available-permissions`
+
+##### Headers
+
+Not more than mandatories.
+
+##### Method
+
+GET
+
+##### Params
+
+Void
+
+##### Response data-structure
+
+```json
+{
+  "group_permissions": [
+    {
+      "id": 1,
+      "name": "Permitir publicaciones",
+      "codename": "allow_posts"
+    },
+    {
+      "id": 2,
+      "name": "Permitir comentarios",
+      "codename": "allow_comments"
+    }
+  ]
+}
+```
+
+##### Codes
+
+No particular codes.
+
+#### Create group post
+
+##### Description
+
+Create a new group post, with a content and/or image.
+
+Or shares a user post or public group post as group post, with an optional content. 
+If the referenced post id of the shared post has an integer positive number, the 
+referenced post id of the new group post that is going to be saved will be the id 
+of the root post.
+
+##### Endpoint
+
+`/v1/api/social-network/groups/group/:group_id/post`
+
+##### Headers
+
+* `Content-Type`: multipart/form-data
+* `Authorization`
+
+##### Method
+
+POST
+
+##### Params
+
+* `group_id`: int. Path parameter.
+* `content`: string.
+* `image`: blob.
+* `referenced_post_id`: int. Id of user post or public group post to share.
+
+##### Response data-structure
+
+```json
+{
+  "id": 132,
+  "username": "akshan",
+  "firstname": "Akshan",
+  "lastname": "",
+  "profile_img_src": "",
+  "content": "hello",
+  "img_src": null,
+  "post_type": "group",
+  "like_counter": 1,
+  "created_at": "2021-08-05T05:00:00.000Z",
+  "liked_by_user": false,
+  "group_name": "Grupo 1 del usuario 1",
+  "group_id": 1,
+  "referenced_post_id": 105,
+  "referenced_post": {
+    "id": 105,
+    "username": "irelia",
+    "firstname": "Irelia",
+    "lastname": "",
+    "profile_img_src": "",
+    "content": "Post de Irelia con imagen",
+    "img_src": "https://res.cloudinary.com/someone-cloud/image/upload/v1628174979/bx43wiaiw7fij4udkbqv.jpg",
+    "post_type": "user",
+    "like_counter": 1,
+    "created_at": "2021-08-05T05:00:00.000Z",
+    "liked_by_user": false,
+    "group_name": null,
+    "group_id": null
+  }
+}
+```
+
+##### Codes
+* 1: Group does not exist.
+* 2: Group does not have [codename] permission.
+* 3: No data was sent.
+* 4: User is not member of group.
+* 5: The post cannot be shared, it belongs to a private group.
+
+#### Get membership information
+
+##### Description
+
+Returns information about the membership of a user related to a certain group.
+
+##### Endpoint
+
+`/v1/api/social-network/groups/group/:group_id/membership-info`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+GET
+
+##### Params
+
+* `group_id`: int.
+
+The id of the group to request. Replace this label by the id in the url.
+
+##### Response data-structure
+
+```json
+{
+  "is_member": true,
+  "is_owner": false,
+  "active_notifications": false,
+  "created_at": "2021-08-06T05:00:00.000Z"
+}
+```
+
+##### Codes
+
+1. Group does not exist.
+
+### Posts
+
+#### Get posts for timeline
+
+##### Description
+
+Retrieves a list of publications made by users that the requesting user is following and publications 
+that are associated to groups that the requesting user is part of. The publications are sorted in 
+descending order according to their creation date. Records are served into groups of a certain size called pages. 
+You can select the group size and what group get in a call.
+
+##### Endpoint
+
+`/v1/api/social-network/posts/timeline`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+GET
+
+##### Params
+
+The following two parameters are optional. It has default values.
+
+* `offset`: int.
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`: int.
+
+The number of the group to retrieve. Pages starts at `0`, what is also the default value.
+
+##### Response data-structure
+
+```json
+{
+  "posts": [
+    {
+      "id": 16,
+      "username": "user one",
+      "firstname": "user one",
+      "lastname": "user one",
+      "profile_img_src": "",
+      "content": "Post of user one. This is a shared post",
+      "img_src": "",
+      "post_type": "user",
+      "like_counter": 1,
+      "created_at": "2021-07-18T05:00:00.000Z",
+      "liked_by_user": false,
+      "group_name": null,
+      "group_id": null,
+      "referenced_post": {
+        "id": 5,
+        "username": "user two",
+        "firstname": "user two",
+        "lastname": "user two",
+        "profile_img_src": "",
+        "content": "Post of user two. Marked favorite by the user requesting.",
+        "img_src": "https://res.cloudinary.com/ajulian-cloud/image/upload/v1626619985/programming-meme_jni2ji.jpg",
+        "post_type": "user",
+        "like_counter": 1,
+        "created_at": "2021-07-18T05:00:00.000Z",
+        "liked_by_user": true,
+        "group_name": null,
+        "group_id": null
+      }
+    },
+    {
+      "id": 9,
+      "username": "user two",
+      "firstname": "user two",
+      "lastname": "user two",
+      "profile_img_src": "",
+      "content": "Second Post of user two. Marked favorite by the user requesting.",
+      "img_src": null,
+      "post_type": "group",
+      "like_counter": 1,
+      "created_at": "2021-07-12T05:00:00.000Z",
+      "liked_by_user": true,
+      "group_name": "Random group",
+      "group_id": 1,
+      "referenced_post": null
+    }
+  ],
+  "total_records": 7
+}
+```
+
+##### Codes
+
+No particular codes.
+
+#### Get data of one publication
+
+##### Description
+
+Retrieves the data of one publication. If the publication belongs to a private group, the user must be 
+authenticated and authorized to see the content (be member of the group), in other cases the 
+authentication is optional, the response add a field indicating if the user requesting likes the post 
+only if the user is authenticated.
+
+##### Endpoint
+
+`/v1/api/social-network/posts/post/:post_id`
+
+##### Headers
+
+
+* `Authorization`. This header is optional, except if the post belongs to a private group then is mandatory.
+
+##### Method
+
+GET
+
+##### Params
+
+* `post_id`: int.
+
+Publication that the user is requesting.
+
+##### Response data-structure
+
+```json
+{
+  "id": 16,
+  "username": "anton",
+  "firstname": "anton",
+  "lastname": "anton",
+  "profile_img_src": "",
+  "content": "Shared post",
+  "img_src": "",
+  "post_type": "user",
+  "like_counter": 1,
+  "created_at": "2021-07-18T05:00:00.000Z",
+  "liked_by_user": false,
+  "group_name": null,
+  "group_id": null,
+  "referenced_post": {
+    "id": 5,
+    "username": "tars",
+    "firstname": "tars",
+    "lastname": "tars",
+    "profile_img_src": "",
+    "content": "Post of tars. Marked as favorite by the user requesting.",
+    "img_src": null,
+    "post_type": "user",
+    "like_counter": 1,
+    "created_at": "2021-07-18T05:00:00.000Z",
+    "liked_by_user": true,
+    "group_name": null,
+    "group_id": null
+}
+```
+
+##### Codes
+
+* 1: Unauthenticated. User must authenticate to get the requested response.
+* 2: Unauthorized. The requested post belongs to a private group to which the user requesting doesn't belong.
+* 3: Resource not found.
+
+#### Get favorite posts of user
+
+##### Description
+
+Retrieves a list of favorite publications of a user.
+The publications are sorted in descending order according to their creation date. 
+Records are served into groups of a certain size called pages. 
+You can select the group size and what group get in a call.
+
+##### Endpoint
+
+`/v1/api/social-network/posts/favorite`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+GET
+
+##### Params
+
+The following two parameters are optional. It has default values.
+
+* `offset`: int.
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`: int.
+
+The number of the group to retrieve. Pages starts at `0`, what is also the default value.
+
+##### Response data-structure
+
+```json
+{
+  "favorite_posts": [
+    {
+      "id": 16,
+      "username": "user one",
+      "firstname": "user one",
+      "lastname": "user one",
+      "profile_img_src": "",
+      "content": "Post of user one. This is a shared post",
+      "img_src": "",
+      "post_type": "user",
+      "like_counter": 2,
+      "created_at": "2021-07-18T05:00:00.000Z",
+      "group_name": null,
+      "group_id": null,
+      "referenced_post": {
+        "id": 5,
+        "username": "user two",
+        "firstname": "user two",
+        "lastname": "user two",
+        "profile_img_src": "",
+        "content": "Post of user two. Marked favorite by the user requesting.",
+        "img_src": "https://res.cloudinary.com/ajulian-cloud/image/upload/v1626619985/programming-meme_jni2ji.jpg",
+        "post_type": "user",
+        "like_counter": 1,
+        "created_at": "2021-07-18T05:00:00.000Z",
+        "group_name": null,
+        "group_id": null
+      }
+    },
+    {
+      "id": 9,
+      "username": "user two",
+      "firstname": "user two",
+      "lastname": "user two",
+      "profile_img_src": "",
+      "content": "Second Post of user two. Marked favorite by the user requesting.",
+      "img_src": null,
+      "post_type": "group",
+      "like_counter": 3,
+      "created_at": "2021-07-12T05:00:00.000Z",
+      "group_name": "Random group",
+      "group_id": 1,
+      "referenced_post": null
+    }
+  ],
+  "total_records": 7
+}
+```
+
+##### Codes
+
+No particular codes.
+
+#### Get comments of a post
+
+##### Description
+
+Retrieves a list of comments for a specific post.
+Comments are sorted in descending order according to the creation date.
+Records are served into groups of a certain size called pages. 
+You can select the group size and what group get in a call.
+
+##### Endpoint
+
+`/v1/api/social-network/posts/post/:post_id/comments`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+GET
+
+##### Params
+
+###### URL Parameter
+
+* `post_id`: int.
+
+Publication that the user is requesting.
+
+###### Query Parameter
+
+The following two parameters are optional. It has default values.
+
+* `offset`: int.
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`: int.
+
+The number of the group to retrieve. Pages starts at `0`, what is also the default value.
+
+##### Response data-structure
+
+```json
+{
+  "comments": [
+    {
+      "post_id": 4,
+      "user_id": 1,
+      "firstname": "User 1",
+      "lastname": "User 1",
+      "username": "user1",
+      "profile_img_src": "",
+      "content": "Comment of user 1 in post with id 4",
+      "image_src": null,
+      "created_at": "2021-07-26T20:16:09.000Z"
+    },
+    {
+      "post_id": 4,
+      "user_id": 2,
+      "firstname": "User 2",
+      "lastname": "User 2",
+      "username": "user2",
+      "profile_img_src": "",
+      "content": "Comment of user 2 in post with id 4",
+      "image_src": null,
+      "created_at": "2021-07-26T20:16:09.000Z"
+    }
+  ],
+  "total_records": 4
+}
+```
+
+##### Codes
+
+* 1: Unauthenticated. User must authenticate to get the requested response.
+* 2: Unauthorized. The requested post belongs to a private group to which the user requesting doesn't belong.
+* 3: Resource not found.
+
+#### Get publications of a certain group
+
+##### Description
+
+Given a group id, return the most recent publications made in the requested group. 
+
+The result has pagination, with 10 post by page and the first group of posts by 
+default, these 2 parameters can be modified.
+
+##### Endpoint
+
+`/v1/api/social-network/posts/group/:group_id`
+
+##### Headers
+
+* `Authorization`
+
+##### Method
+
+GET
+
+##### Params
+
+###### URL Parameter
+
+* `group_id`: int.
+
+Group that the user is requesting.
+
+###### Query Parameter
+
+The following two parameters are optional. It has default values.
+
+* `offset`: int.
+
+The size of the group of records to retrieve. Default `10`.
+
+* `page`: int.
+
+The number of the group to retrieve. Pages starts at `0`, what is also the default value.
+
+##### Response data-structure
+
+```json
+{
+  "group_posts": [
+    {
+      "id": 142,
+      "username": "user2",
+      "firstname": "User 2 name",
+      "lastname": "User 2 lastname",
+      "profile_img_src": "",
+      "content": "User 2 shares post of user 1 with id 141 in group 2",
+      "img_src": null,
+      "post_type": "group",
+      "created_at": "2021-08-07T05:00:00.000Z",
+      "like_counter": 1,
+      "liked_by_user": false,
+      "group_name": "Group 2 of user 1",
+      "group_id": 2,
+      "referenced_post": {
+        "id": 141,
+        "username": "user 1",
+        "firstname": "User 1 name",
+        "lastname": "User 1 lastname",
+        "profile_img_src": "",
+        "content": "Post of user 1. User post",
+        "img_src": "https://res.cloudinary.com/someone-cloud/image/upload/v1628376661/mkqghrm6ihpv4dt2jd0y.jpg",
+        "post_type": "user",
+        "like_counter": 1,
+        "created_at": "2021-08-07T05:00:00.000Z",
+        "liked_by_user": false,
+        "group_name": null,
+        "group_id": null
+      }
+    },
+    {
+      "id": 144,
+      "username": "user 31",
+      "firstname": "User 31 name",
+      "lastname": "User 31 lastname",
+      "profile_img_src": "",
+      "content": "Post of user 31 in group 2",
+      "img_src": "",
+      "post_type": "group",
+      "created_at": "2021-08-07T05:00:00.000Z",
+      "like_counter": 2,
+      "liked_by_user": true,
+      "group_name": "Group 2 of user 1",
+      "group_id": 2,
+      "referenced_post": null
+    },
+    {
+      "id": 146,
+      "username": "user31",
+      "firstname": "User 31 name",
+      "lastname": "User 31 lastname",
+      "profile_img_src": "",
+      "content": "User 30 shares post of user 2 (in group 1, with id 145) in group 2",
+      "img_src": null,
+      "post_type": "group",
+      "created_at": "2021-08-08T05:00:00.000Z",
+      "like_counter": 1,
+      "liked_by_user": false,
+      "group_name": "Group 2 of user 1",
+      "group_id": 2,
+      "referenced_post": {
+        "id": 145,
+        "username": "user2",
+        "firstname": "User 2 name",
+        "lastname": "User 2 lastname",
+        "profile_img_src": "",
+        "content": "Post of user 2 in group 1",
+        "img_src": "https://res.cloudinary.com/someone-cloud/image/upload/v1628436840/awjdp1chroaofshxjyvj.jpg",
+        "post_type": "group",
+        "like_counter": 1,
+        "created_at": "2021-08-08T05:00:00.000Z",
+        "liked_by_user": false,
+        "group_name": "Group 1 of user 1",
+        "group_id": 1
+      }
+    }
+  ],
+  "total_records": 14
+}
+```
+
+##### Codes
+
+* 1: Group does not exist.
+* 2: Forbidden. User is not member of the private group.

@@ -2,12 +2,14 @@ const moment = require("moment")
 const fs = require('fs')
 const path = require('path')
 
+let rootDir = process.env.ACADEMIC_NETWORK_BACKEND_ROOTDIR
+
 class Logger {
   constructor(conf = {}) {
     this.process = conf.process
     this.method = conf.method
     this.queue = (conf.queue) ? (conf.queue) : ([])
-    this.logpath = (conf.logpath) ? (conf.logpath) : (path.join(process.cwd(), 'logs', 'logs.log'))
+    this.logpath = (conf.logpath) ? (conf.logpath) : (path.join(rootDir, 'logs', 'logs.log'))
     this.dirname = path.dirname(this.logpath)
     this.writeToStdout = (typeof conf.writeToStdout == 'boolean') ? (conf.writeToStdout) : true
     this.writeToFile = (typeof conf.writeToFile == 'boolean') ? (conf.writeToFile) : false
@@ -29,7 +31,7 @@ class Logger {
   }
 
   computeLog() {
-    let log = `--- Process [${moment().format()}] [${this.method}]: ${this.process}.\n`
+    let log = `--- Process [${moment().format('YYYY-MM-DD HH:mm:ss')}] [${this.method}]: ${this.process}.\n`
     for (let m of this.queue) {
       log += `-> ${m}\n`
     }

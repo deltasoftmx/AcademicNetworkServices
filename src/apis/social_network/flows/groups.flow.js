@@ -1,21 +1,26 @@
-const multer = require('multer')
+const fileUpload = require('express-fileupload')
 const generalMiddleware = require('../../../middlewares/general.middleware')
 const groupsController = require('../controllers/groups.controller')
 const groupsMiddleware = require('../../../middlewares/groups.middleware')
 
-// Multer settings.
-const upload = multer({dest: 'uploads/'})
+const rootDir = process.env.ACADEMIC_NETWORK_BACKEND_ROOTDIR
+// FileUpload settings.
+const fileUploadMidd = fileUpload({
+  useTempFiles : true,
+  tempFileDir : `${rootDir}/uploads/`,
+  safeFileNames: true
+})
 
 module.exports = {
-  getGroupPermissions: [
+  getGroupInformation: [
     generalMiddleware.verifyAPIKey,
     groupsMiddleware.checkGroupId,
-    groupsController.getGroupPermissions
+    groupsController.getGroupInformation
   ],
 
   searchGroups: [
     generalMiddleware.verifyAPIKey,
-    generalMiddleware.userAuth,
+    generalMiddleware.userAuthIfTokenSent,
     groupsMiddleware.checkSearchGroupsParams,
     groupsController.searchGroups
   ],
@@ -39,8 +44,37 @@ module.exports = {
     generalMiddleware.verifyAPIKey,
     generalMiddleware.userAuth,
     groupsMiddleware.checkGroupId,
-    upload.single('image'),
+    fileUploadMidd,
     groupsMiddleware.checkUpdateGroupImageData,
     groupsController.updateGroupImage
+  ],
+
+  addUserToGroup: [
+    generalMiddleware.verifyAPIKey,
+    generalMiddleware.userAuth,
+    groupsMiddleware.checkGroupId,
+    groupsController.addUserToGroup
+  ],
+
+  getAvailableGroupPermissions: [
+    generalMiddleware.verifyAPIKey,
+    groupsController.getAvailableGroupPermissions
+  ],
+
+  post: [
+    generalMiddleware.verifyAPIKey,
+    generalMiddleware.userAuth,
+    groupsMiddleware.checkGroupId,
+    groupsMiddleware.verifyPermissions,
+    fileUploadMidd,
+    groupsMiddleware.checkNewPostData,
+    groupsController.createPost
+  ],
+
+  getMembershipInfo: [
+    generalMiddleware.verifyAPIKey,
+    generalMiddleware.userAuth,
+    groupsMiddleware.checkGroupId,
+    groupsController.getMembershipInfo
   ]
 }

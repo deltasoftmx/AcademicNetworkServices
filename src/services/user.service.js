@@ -47,7 +47,7 @@ module.exports = {
     //Setting data to create a new user.
     let at_index = user.email.indexOf('@')
     let domain_name = user.email.substring(at_index + 1)
-    let createUserArgs = [user.firstname, user.lastname, user.student_id, user.email, user.passwd, 
+    let createUserArgs = [user.firstname, user.lastname, user.username, user.email, user.passwd, 
                 user.profile_img_src || '', user.description || '', user.user_type_id, domain_name]
     let conn
     try {
@@ -88,6 +88,8 @@ module.exports = {
         //Also the documentation of this function in the services documentation for more details.
         if(result.exit_code == 3) {
           result.exit_code = 5;
+        } else if(result.exit_code == 4) {
+          result.exit_code = 6;
         } else {
           throw new Error(`Error trying to create a new student by a new user. 
                           sp_create_student's exit_code: ${result.exit_code}`)
@@ -111,7 +113,7 @@ module.exports = {
 
   /**
    * Return the user public information according of the user type.
-   * @param {string} username 
+   * @param {string} username Username or email.
    */
   getPublicUserData: async function (username) {
     try {
@@ -131,9 +133,9 @@ module.exports = {
             INNER JOIN
           user_types ON users.user_type_id = user_types.id
         WHERE
-          username = ?
+          username = ? or email = ?
         LIMIT 1;`
-      let resultUser = await mariadb.query(query, username)
+      let resultUser = await mariadb.query(query, [username, username])
       let userData = resultUser[0]
       
       if (!userData) {
@@ -169,35 +171,32 @@ module.exports = {
   },
 
   /**
-   * Creates a new post in the system.
+   * Creates a new post of type 'user'. The post can be a shared post of a 
+   * public group post or user post.
    * @param {int} userId 
    * @param {Object} post An object with:
    * - content: string.
    * - image: Object. An object with:
    *   - path: Path of image in the local files.
+   * @param {number} referencedPostId
    */
-  createPost: async function(userId, post) {    
-    // If the user doesn't send any data.
-    if (!post.content && !post.image) {
-      return null
-    }
-
-    let result = {}
+  createPost: async function(userId, post, referencedPostId = null) {
+    let postData = {}
 
     if (post.content) {
-      result.content = post.content;
+      postData.content = post.content;
     }
 
-    if (post.image) {
+    if (post.image && !referencedPostId) {
       try {
         // The image is uploaded to cloudinary
         const resultUploadImage = await cloudinary.uploader.upload(post.image.path)
-        result.img_src = resultUploadImage.secure_url
-        result.cloudinary_id = resultUploadImage.public_id
+        postData.img_src = resultUploadImage.secure_url
+        postData.cloudinary_id = resultUploadImage.public_id
       } catch (err) {
         err.file = __filename
         err.func = 'createPost'
-        err.cloudinary_id = result.cloudinary_id
+        err.cloudinary_id = postData.cloudinary_id
         throw err
       } finally {
          // The local files are deleted.
@@ -205,23 +204,38 @@ module.exports = {
       }
     }
 
-    let args = [userId, result.content || '', result.img_src || '', result.cloudinary_id || '', 'user']
-    const query = `INSERT INTO posts (user_id, content, img_src, cloudinary_id, post_type) VALUES (?, ?, ?, ?, ?);`
+    const args = [
+      userId, 
+      postData.content ?? '', 
+      postData.img_src ?? '', 
+      postData.cloudinary_id ?? '',
+      referencedPostId ?? 0,
+      'user'
+    ]
+    const query = 'call user_post_create(?, ?, ?, ?, ?, ?);'
     
     try {
-      await mariadb.query(query, args)
-      result.cloudinary_id = undefined
-      return result;
+      let queryPostRes = await mariadb.query(query, args)
+      queryPostRes = queryPostRes[0][0]
+      postData.post_id = queryPostRes.post_id
+      delete postData.cloudinary_id
+      return {
+        exit_code: queryPostRes.exit_code,
+        message: queryPostRes.message,
+        post_data: queryPostRes.exit_code == 0 ? postData : {}
+      }
     } catch (err) {
       err.file = __filename
       err.func = 'createPost'
-      err.cloudinary_id = result.cloudinary_id
+      err.cloudinary_id = postData.cloudinary_id
       throw err
     }
   },
 
-  /** Perform a search in the database retrieving all the user records that match with 'search' parameter.
-   * It gets all users, followers or users followed by a target user. This can be set in 'userRelativeType' using: all|followers|followed
+  /** 
+   * Perform a search in the database retrieving all the user records that match with 'search' parameter.
+   * It gets all users, followers or users followed by a target user. This can be set in 'userRelativeType' using: all|followers|followed.
+   * The 'all' user relative type does not need user authentication.
    * It can selects chunks of records of 'offset' size. The chunk number is defined by 'page'.
    * It supports ascending and descending order by regiter date.
    * @param {string} userRelativeType 
@@ -245,8 +259,8 @@ module.exports = {
         users.profile_img_src
       from users
         inner join user_types
-          on users.user_type_id = user_types.id `
-    
+          on users.user_type_id = user_types.id
+    `
     if(userRelativeType != 'all') {
       query += `inner join followers `
       if(userRelativeType == 'followers') {
@@ -270,9 +284,9 @@ module.exports = {
       users.email regexp ? or
       user_types.name regexp ? ) 
       order by users.id ${asc ? 'asc' : 'desc'}
-      limit ${page * offset}, ${offset} ;`
-    
-    let args = [ userTarget, search, search, search, search, search ]
+      limit ?, ?;
+    `
+    let args = [ userTarget, search, search, search, search, search, page*offset, offset ]
     if(userRelativeType == 'all') {
       args.shift()
     }
@@ -302,6 +316,7 @@ module.exports = {
 
     try {
       let result = await mariadb.query(query, args)
+      args.pop(); args.pop()
       let countResult = await mariadb.query(countQuery, args)
       return {
         users: result,
