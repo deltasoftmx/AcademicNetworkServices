@@ -10,5 +10,6 @@ router.post('/group/:group_id/add-user', groupsFlow.addUserToGroup)
 router.get('/available-permissions', groupsFlow.getAvailableGroupPermissions)
 router.post('/group/:group_id/post', groupsFlow.post)
 router.get('/group/:group_id/membership-info', groupsFlow.getMembershipInfo)
+router.post('/post/:post_id/make-comment', groupsFlow.createComment)
 
 module.exports = router

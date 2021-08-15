@@ -1,8 +1,9 @@
 const fs = require('fs')
 const groupService = require('../../../services/group.service')
+const postService = require('../../../services/post.service')
+const userService = require('../../../services/user.service')
 const errorHandlingService = require('../../../services/error_handling.service')
 const messages = require('../../../../etc/messages.json')
-const postService = require('../../../services/post.service')
 
 module.exports = {
   getGroupInformation: async function(req, res) {
@@ -270,6 +271,71 @@ module.exports = {
       err.file = err.file || __filename
       err.func = err.func || 'getMembershipInfo'
       errorHandlingService.handleErrorInRequest(req, res, err)
+    }
+  },
+
+  createComment: async function(req, res) {
+    const comment = {
+      content: req.body.content
+    }
+    if (req.files && req.files.image) {
+      comment.image = {
+        path: req.files.image.tempFilePath
+      }
+    }
+    if (!comment.content && !comment.image) {
+      return res.status(400).finish({
+        code: 3,
+        messages: ['No data was sent']
+      })
+    }
+    try {
+      const { membershipInfo } = await groupService.getMembershipInfo(req.api.userId, req.params.group_id)
+      if (!membershipInfo.is_member) {
+        if (comment.image) {
+          fs.unlinkSync(comment.image.path)
+        }
+        return res.status(403).finish({
+          code: 4,
+          messages: ['Forbidden. User cannot comment because does not belong to the group.']
+        })
+      }
+      const commentData = await postService.createComment(
+        req.params.post_id,
+        req.api.userId,
+        comment
+      )
+      const userData = await userService.getPublicUserData(req.api.username)
+
+      res.status(200).finish({
+        code: 0,
+        messages: ['Done'],
+        data: {
+          post_id: req.params.post_id,
+          comment_id: commentData.comment_id,
+          user_id: req.api.userId,
+          firstname: userData.firstname,
+          lastname: userData.lastname,
+          username: userData.username,
+          profile_image_src: userData.profile_img_src,
+          content: commentData.content,
+          image_src: commentData.image_src,
+          created_at: commentData.created_at
+        }
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'createComment'
+      
+      // If exist some Cloudinary env var not configured.
+      if (err.http_code === 401) {
+        req.api.logger.error(err)
+        res.status(500).finish({
+          code: 1001,
+          messages: [messages.error_messages.e500]
+        })
+      }
+      errorHandlingService.handleImageUploadError(req, res, err)
     }
   }
 }

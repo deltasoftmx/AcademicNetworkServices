@@ -26,6 +26,7 @@
     * [Add a user to a group](#add-a-user-to-a-group)
     * [Get available permissions for groups](#get-available-permissions-for-groups)
     * [Create group post](#create-group-post)
+    * [Create comment in group post](#create-comment-in-group-post)
     * [Get membership information](#get-membership-information)
   * [Posts](#posts)
     * [Get posts for timeline](#get-posts-for-timeline)
@@ -925,6 +926,59 @@ POST
 * 3: No data was sent.
 * 4: User is not member of group.
 * 5: The post cannot be shared, it belongs to a private group.
+
+#### Create comment in group post
+
+##### Description
+
+Creates a comment made on a post of type 'group'.
+
+The comment can has a content and/or image.
+
+##### Endpoint
+
+`/v1/api/social-network/groups/post/:post_id/make-comment`
+
+##### Headers
+
+* `Content-Type`: multipart/form-data
+* `Authorization`
+
+##### Method
+
+POST
+
+##### Params
+
+* URl params
+  * `post_id`: int.
+
+* Body params
+  * `content`: string.
+  * `image`: blob.
+
+##### Response data-structure
+
+```json
+{
+  "post_id": 13,
+  "comment_id": 46,
+  "user_id": 31,
+  "firstname": "johndoe",
+  "lastname": "John",
+  "username": "Doe",
+  "profile_image_src": "",
+  "content": "Comment of John in post with id 13",
+  "image_src": "https://res.cloudinary.com/someone-cloud/image/upload/v1629063555/iphacdyujxixgljbq9bg.jpg",
+  "created_at": "2021-08-15"
+}
+```
+
+##### Codes
+* 1: The post does not exist or the post does not belong to a group.
+* 2: Group does not have [codename] permission.
+* 3: No data was sent.
+* 4: Forbidden. User cannot comment because does not belong to the group.
 
 #### Get membership information
 
