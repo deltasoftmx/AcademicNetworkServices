@@ -13,6 +13,7 @@
     * [Sign in](#sign-in)
     * [Get public user data](#get-public-user-data)
     * [Create user post](#create-user-post)
+    * [Create comment in user post](#create-comment-in-user-post)
     * [Search users](#search-users)
     * [Get public user types](#get-public-user-types)
     * [Get majors data](#get-majors-data)
@@ -300,6 +301,58 @@ POST
 ##### Codes
 * 1: No data was sent.
 * 2: The post cannot be shared, it belongs to a private group.
+
+#### Create comment in user post
+
+##### Description
+
+Creates a comment made on a post of type 'user'.
+
+The comment can has a content and/or image.
+
+##### Endpoint
+
+`/v1/api/social-network/users/post/:post_id/make-comment`
+
+##### Headers
+
+* `Content-Type`: multipart/form-data
+* `Authorization`
+
+##### Method
+
+POST
+
+##### Params
+
+* URl params
+  * `post_id`: int.
+
+* Body params
+  * `content`: string.
+  * `image`: blob.
+
+##### Response data-structure
+
+```json
+{
+  "post_id": 3,
+  "comment_id": 44,
+  "user_id": 31,
+  "firstname": "johndoe",
+  "lastname": "John",
+  "username": "Doe",
+  "profile_image_src": "",
+  "content": "Comment of John in post with id 3",
+  "image_src": "https://res.cloudinary.com/someone-cloud/image/upload/v1629060714/zlslbdbzu3fjyiknjm38.jpg",
+  "created_at": "2021-08-15"
+}
+```
+
+##### Codes
+* 1: No data was sent.
+* 2: Post does not exist.
+* 3: Error. This post belongs to a group. Use the proper API.
 
 #### Search users
 
