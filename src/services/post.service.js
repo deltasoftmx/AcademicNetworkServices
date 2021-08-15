@@ -1,3 +1,5 @@
+const cloudinary = require('cloudinary').v2
+const fs = require('fs')
 const mariadb = require('./mariadb.service')
 
 module.exports = {
@@ -518,6 +520,68 @@ module.exports = {
     } catch (err) {
       err.file = __filename
       err.func = 'getPostsOfAGroup'
+      throw err
+    }
+  },
+
+  /**
+   * Create a comment made on a certain post (user and group post type).
+   * @param {number} postId 
+   * @param {number} userId 
+   * @param {Object} comment 
+   *  * content: string
+   *  * image: Object
+   *    * path: string
+   * @returns {Promise<Object>}
+   *  * comment_id: number
+   *  * content: string 
+   *  * image_src: string
+   *  * created_at: string
+   */
+  createComment: async function(postId, userId, comment) {
+    let cloudinaryId = null
+    let cloudinaryImageSrc = null
+
+    if (comment.image) {
+      try {
+        const resultUploadImage = await cloudinary.uploader.upload(comment.image.path)
+        cloudinaryImageSrc = resultUploadImage.secure_url
+        cloudinaryId = resultUploadImage.public_id
+      } catch (err) {
+        err.file = __filename
+        err.func = 'createComment'
+        err.cloudinary_id = cloudinaryId
+        throw err
+      } finally {
+        fs.unlinkSync(comment.image.path)
+      }
+    }
+
+    const args = [
+      postId,
+      userId,
+      comment.content ?? '', 
+      cloudinaryImageSrc ?? '', 
+      cloudinaryId ?? ''
+    ]
+    const query = `
+      insert into post_comments(post_id, user_id, content, image_src, cloudinary_id)
+      values (?, ?, ?, ?, ?);
+    `
+
+    try {
+      const queryCommentRes = await mariadb.query(query, args)
+      const commentData = {
+        comment_id: queryCommentRes.insertId,
+        content: comment.content,
+        image_src: cloudinaryImageSrc,
+        created_at: new Date().toISOString().slice(0, 10)
+      }
+      return commentData
+    } catch (err) {
+      err.file = __filename
+      err.func = 'createComment'
+      err.cloudinary_id = cloudinaryId
       throw err
     }
   }

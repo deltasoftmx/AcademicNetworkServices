@@ -11,6 +11,7 @@
   * [getFavoritePosts](#getfavoriteposts)
   * [getCommentsOfAPost](#getcommentsofapost)
   * [getPostsOfAGroup](#getpostsofagroup)
+  * [createComment](#createcomment)
 
 ## Description
 
@@ -205,3 +206,24 @@ default.
     * `group_id`: string,
     * `referenced_post_id`: int
   * `total_records`: int. | undefined
+
+### `createComment`
+
+* **Description**: 
+
+Create a comment made on a certain post (user and group post type).
+
+* **Params**:
+
+  * `postId`: int.
+  * `userId`: int.
+  * `comment`: Object
+    * `content`: string
+    * `image`: Object
+      * `path`: string
+
+* **Return data type**: Promise\<Object>
+  * `comment_id`: number
+  * `content`: string 
+  * `image_src`: string.
+  * `created_at`: string
