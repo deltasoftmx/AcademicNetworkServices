@@ -135,6 +135,7 @@ create table if not exists post_comments (
     user_id int unsigned not null,
     content text,
     image_src varchar(700),
+    cloudinary_id varchar(100),
     created_at date default curdate(),
     
     foreign key(post_id) references posts(id),

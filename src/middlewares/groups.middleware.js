@@ -4,7 +4,52 @@ const {
   parseNumberFromGroupIfApplic,
   parseNumberIfApplicable } = require('../services/validator.service')
 const groupService = require('../services/group.service')
+const postService = require('../services/post.service')
 
+function urlHasCommand(url) {
+  return url.includes(':')
+}
+
+function urlMatch(urlWhereExec, testUrl)  {
+  if (urlHasCommand(urlWhereExec)) {
+    let splitedExecUrl = urlWhereExec.split('/')
+    let splitedTestUrl = testUrl.split('/')
+    splitedExecUrl.shift()
+    splitedTestUrl.shift()
+    
+    if (splitedExecUrl.length != splitedTestUrl.length) {
+      return false
+    }
+    
+    for (let i = 0; i < splitedExecUrl.length; i++) {
+      if (splitedExecUrl[i][0] == ':') {
+        let command = splitedExecUrl[i].substr(1)
+        let urlFragment
+        switch (command) {
+          case 'number':
+            urlFragment = parseFloat(splitedTestUrl[i])
+            if (isNaN(urlFragment)) {
+              return false
+            }
+          break
+          case 'string':
+            urlFragment = parseFloat(splitedTestUrl[i])
+            if (!isNaN(urlFragment)) {
+              return false
+            }
+          break
+        }
+      } else {
+        if (splitedExecUrl[i] != splitedTestUrl[i]) {
+          return false
+        }
+      }
+    }
+    return true
+  } else {
+    return urlWhereExec == testUrl
+  }
+}
 
 module.exports = {
   checkGroupId: function(req, res, next) {
@@ -145,6 +190,18 @@ module.exports = {
     return next()
   },
 
+  getGroupIdFromPostId: async function(req, res, next) {
+    const postInformation = await postService.postBelongsToGroup(req.params.post_id)    
+    if (postInformation == -1) {
+      return res.status(400).finish({
+        code: 1,
+        messages: ['The post does not exist or the post does not belong to a group.']
+      })
+    }
+    req.params.group_id = postInformation.group_id
+    next()
+  },
+
   verifyPermissions: async function(req, res, next) {
     const groupInformation = await groupService.getGroupInformation(req.params.group_id)
     if (groupInformation.exit_code == 1) {
@@ -157,15 +214,10 @@ module.exports = {
       return next()
     }
     let groupPermissions = groupInformation.permissions
-    delete groupPermissions.meta
     const endpointPermissions = await groupService.getEndpointPermissions()
 
-    // The request parameter group_id that appears in the path as a number, is changed 
-    // by 'group_id', this is how was registered in group_endpoint_permissions table.
-    let urlEndpoint = req.originalUrl.replace(/\/[0-9]+\//, '/:group_id/')
-
     for (const endpointPer of endpointPermissions) {
-      if (endpointPer.endpoint === urlEndpoint) {
+      if (urlMatch(endpointPer.endpoint, req.originalUrl)) {
         for (const groupPer of groupPermissions) {
           if (endpointPer.group_permission_id == groupPer.id && groupPer.granted == 0) {
             return res.status(403).finish({

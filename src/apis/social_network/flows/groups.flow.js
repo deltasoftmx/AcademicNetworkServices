@@ -1,7 +1,8 @@
 const fileUpload = require('express-fileupload')
-const generalMiddleware = require('../../../middlewares/general.middleware')
-const groupsController = require('../controllers/groups.controller')
-const groupsMiddleware = require('../../../middlewares/groups.middleware')
+const generalMidd = require('../../../middlewares/general.middleware')
+const groupMidd = require('../../../middlewares/groups.middleware')
+const postMidd = require('../../../middlewares/posts.middleware')
+const groupCtrl = require('../controllers/groups.controller')
 
 const rootDir = process.env.ACADEMIC_NETWORK_BACKEND_ROOTDIR
 // FileUpload settings.
@@ -13,68 +14,79 @@ const fileUploadMidd = fileUpload({
 
 module.exports = {
   getGroupInformation: [
-    generalMiddleware.verifyAPIKey,
-    groupsMiddleware.checkGroupId,
-    groupsController.getGroupInformation
+    groupMidd.checkGroupId,
+    generalMidd.verifyAPIKey,
+    groupCtrl.getGroupInformation
   ],
 
   searchGroups: [
-    generalMiddleware.verifyAPIKey,
-    generalMiddleware.userAuthIfTokenSent,
-    groupsMiddleware.checkSearchGroupsParams,
-    groupsController.searchGroups
+    generalMidd.verifyAPIKey,
+    groupMidd.checkSearchGroupsParams,
+    generalMidd.userAuthIfTokenSent,
+    groupCtrl.searchGroups
   ],
 
   createGroup: [
-    generalMiddleware.verifyAPIKey,
-    generalMiddleware.userAuth,
-    groupsMiddleware.checkCreatingData,
-    groupsController.createGroup
+    generalMidd.verifyAPIKey,
+    groupMidd.checkCreatingData,
+    generalMidd.userAuth,
+    groupCtrl.createGroup
   ],
 
   switchGroupNotifications: [
-    generalMiddleware.verifyAPIKey,
-    generalMiddleware.userAuth,
-    groupsMiddleware.checkGroupId,
-    groupsMiddleware.checkSwitchGroupNotificationsData,
-    groupsController.switchGroupNotifications
+    generalMidd.verifyAPIKey,
+    groupMidd.checkGroupId,
+    generalMidd.userAuth,
+    groupMidd.checkSwitchGroupNotificationsData,
+    groupCtrl.switchGroupNotifications
   ],
 
   updateGroupImage: [
-    generalMiddleware.verifyAPIKey,
-    generalMiddleware.userAuth,
-    groupsMiddleware.checkGroupId,
+    generalMidd.verifyAPIKey,
+    groupMidd.checkGroupId,
+    generalMidd.userAuth,
+    groupMidd.checkUpdateGroupImageData,
     fileUploadMidd,
-    groupsMiddleware.checkUpdateGroupImageData,
-    groupsController.updateGroupImage
+    groupCtrl.updateGroupImage
   ],
 
   addUserToGroup: [
-    generalMiddleware.verifyAPIKey,
-    generalMiddleware.userAuth,
-    groupsMiddleware.checkGroupId,
-    groupsController.addUserToGroup
+    generalMidd.verifyAPIKey,
+    groupMidd.checkGroupId,
+    generalMidd.userAuth,
+    groupCtrl.addUserToGroup
   ],
 
   getAvailableGroupPermissions: [
-    generalMiddleware.verifyAPIKey,
-    groupsController.getAvailableGroupPermissions
+    generalMidd.verifyAPIKey,
+    groupCtrl.getAvailableGroupPermissions
   ],
 
   post: [
-    generalMiddleware.verifyAPIKey,
-    generalMiddleware.userAuth,
-    groupsMiddleware.checkGroupId,
-    groupsMiddleware.verifyPermissions,
+    generalMidd.verifyAPIKey,
+    groupMidd.checkGroupId,
+    generalMidd.userAuth,
+    groupMidd.verifyPermissions,
+    groupMidd.checkNewPostData,
     fileUploadMidd,
-    groupsMiddleware.checkNewPostData,
-    groupsController.createPost
+    groupCtrl.createPost
   ],
 
   getMembershipInfo: [
-    generalMiddleware.verifyAPIKey,
-    generalMiddleware.userAuth,
-    groupsMiddleware.checkGroupId,
-    groupsController.getMembershipInfo
+    generalMidd.verifyAPIKey,
+    groupMidd.checkGroupId,
+    generalMidd.userAuth,
+    groupCtrl.getMembershipInfo
+  ],
+
+  createComment: [
+    generalMidd.verifyAPIKey,
+    generalMidd.userAuth,
+    postMidd.checkPostId,
+    groupMidd.getGroupIdFromPostId,
+    groupMidd.verifyPermissions,
+    fileUploadMidd,
+    postMidd.checkCommentInPostData,
+    groupCtrl.createComment
   ]
 }

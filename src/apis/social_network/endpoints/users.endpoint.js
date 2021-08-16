@@ -8,5 +8,6 @@ router.post('/post', userflows.post)
 router.get('/search', userflows.searchUsers)
 router.get('/types', userflows.getPublicUserTypes)
 router.get('/majors', userflows.getMajorsData)
+router.post('/post/:post_id/make-comment', userflows.createComment)
 
 module.exports = router

@@ -1,3 +1,4 @@
+const fs = require('fs')
 const moment = require('moment')
 const userService = require('../../../services/user.service')
 const cryptService = require('../../../services/crypt.service')
@@ -255,6 +256,82 @@ module.exports = {
       err.file = err.file || __filename
       err.func = err.func || 'getMajorsData'
       errorHandlingService.handleErrorInRequest(req, res, err)
+    }
+  },
+
+  createComment: async function(req, res) {
+    const comment = {
+      content: req.body.content
+    }
+    if (req.files && req.files.image) {
+      comment.image = {
+        path: req.files.image.tempFilePath
+      }
+    }
+    if (!comment.content && !comment.image) {
+      return res.status(400).finish({
+        code: 1,
+        messages: ['No data was sent.']
+      })
+    }
+    try {
+      const postData = await postService.getPostData(req.params.post_id, false)
+      if (!postData) {
+        return res.status(404).finish({
+          code: 2,
+          messages: ['Post does not exist.']
+        })
+      }
+
+      const typeOfPost = await postService.postBelongsToGroup(req.params.post_id)
+      if (typeOfPost.group_id) {
+        return res.status(400).finish({
+          code: 3,
+          messages: ['Error. This post belongs to a group. Use the proper API.']
+        })
+      }
+
+      const commentData = await postService.createComment(
+        req.params.post_id,
+        req.api.userId,
+        comment
+      )
+      const userData = await userService.getPublicUserData(req.api.username)
+
+      res.status(200).finish({
+        code: 0,
+        messages: ['Done'],
+        data: {
+          post_id: req.params.post_id,
+          comment_id: commentData.comment_id,
+          user_id: req.api.userId,
+          firstname: userData.firstname,
+          lastname: userData.lastname,
+          username: userData.username,
+          profile_image_src: userData.profile_img_src,
+          content: commentData.content,
+          image_src: commentData.image_src,
+          created_at: commentData.created_at
+        }
+      })
+    } catch (err) {
+      err.file = err.file || __filename
+      err.func = err.func || 'createComment'
+      
+      // If exist some Cloudinary env var not configured.
+      if (err.http_code === 401) {
+        req.api.logger.error(err)
+        res.status(500).finish({
+          code: 1001,
+          messages: [messages.error_messages.e500]
+        })
+      }
+      errorHandlingService.handleImageUploadError(req, res, err)
+    } finally {
+      // It is necessary delete the image when the codes in the response are 2 and 3.
+      if (comment.image) {
+        fs.unlinkSync(comment.image.path)
+      }
     }
   }
 }
