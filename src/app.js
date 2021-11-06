@@ -14,6 +14,7 @@ const express = require('express')
 const moment = require('moment')
 const cloudinary = require('cloudinary').v2
 const generalMidd = require('./middlewares/general.middleware')
+const cors = require('cors')
 const conf = require('../etc/conf.json')
 
 //General settings.
@@ -32,7 +33,7 @@ const app = express()
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(generalMidd.setResponseFormat)
-app.use(generalMidd.allowExternalConnections)
+app.use(cors())
 
 //Importing APIs.
 const socialNetworkAPI = require('./apis/social_network/interfaces')
