@@ -30,11 +30,7 @@ cloudinary.config({
 const app = express()
 
 //Setting gobal middlewares.
-app.use(cors({
-  origin: true,
-  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH', 'OPTIONS'],
-  preflightContinue: true
-}))
+app.use(cors())
 //app.use(generalMidd.allowExternalConnections)
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
