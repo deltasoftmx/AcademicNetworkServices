@@ -32,7 +32,7 @@ const app = express()
 //Setting gobal middlewares.
 app.use(cors({
   origin: '*',
-  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH', 'OPTIONS']
 }))
 //app.use(generalMidd.allowExternalConnections)
 app.use(express.urlencoded({ extended: false }))
