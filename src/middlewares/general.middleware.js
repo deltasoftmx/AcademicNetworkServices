@@ -161,6 +161,6 @@ module.exports = {
   },
 
   response200: async function(req, res, next) {
-    res.stauts(200).end()
+    res.status(200).end()
   }
 }

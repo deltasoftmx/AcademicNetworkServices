@@ -39,6 +39,15 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(generalMidd.setResponseFormat)
 
+//Setting for browsers to test CORS policy
+app.use(function(req, res, next) {
+  if(req.method == 'OPTIONS') {
+    console.log('OPTIONS request caught. Responding status 200.')
+    return res.status(200).end()
+  }
+  next()
+})
+
 //Importing APIs.
 const socialNetworkAPI = require('./apis/social_network/interfaces')
 
@@ -50,8 +59,5 @@ app.use('/v1/api/social-network', generalMidd.setLogger({
 }))
 //Setting the API.
 app.use('/v1/api/social-network', socialNetworkAPI)
-
-//Setting for browsers to test CORS policy
-app.options('*', generalMidd.response200)
 
 module.exports = app
