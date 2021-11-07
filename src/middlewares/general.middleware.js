@@ -158,5 +158,9 @@ module.exports = {
       err.func = err.func || 'verifyAPIKey'
       errorHandlingService.handleErrorInRequest(req, res, err)
     }
+  },
+
+  response200: async function(req, res, next) {
+    res.stauts(200).end()
   }
 }
