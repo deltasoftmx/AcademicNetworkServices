@@ -51,4 +51,7 @@ app.use('/v1/api/social-network', generalMidd.setLogger({
 //Setting the API.
 app.use('/v1/api/social-network', socialNetworkAPI)
 
+//Setting for browsers to test CORS policy
+app.options('*', generalMidd.response200)
+
 module.exports = app
