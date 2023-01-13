@@ -28,4 +28,5 @@ call group_permission_create("Permitir publicaciones", "allow_posts");
 call group_permission_create("Permitir comentarios", "allow_comments");
 
 -- Creates permissions for endpoints.
-call endpoint_permission_create("/v1/api/social-network/groups/group/:group_id/post", 1);
+call endpoint_permission_create("/v1/api/social-network/groups/group/:number/post", 1);
+call endpoint_permission_create("/v1/api/social-network/groups/post/:number/make-comment", 2);

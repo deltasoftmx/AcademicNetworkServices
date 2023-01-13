@@ -117,6 +117,7 @@ module.exports = {
     
     try {
       let permissions = await mariadb.query(query, [groupId])
+      delete permissions.meta
       let exists_group = true
 
       //Verify if group exists.

@@ -1,6 +1,7 @@
 const fileUpload = require('express-fileupload')
 const generalMidd = require('../../../middlewares/general.middleware')
 const userMidd = require('../../../middlewares/users.middleware')
+const postMidd = require('../../../middlewares/posts.middleware')
 const userCtrl = require('../controllers/users.controller')
 
 const rootDir = process.env.ACADEMIC_NETWORK_BACKEND_ROOTDIR
@@ -54,5 +55,14 @@ module.exports = {
   getMajorsData: [
     generalMidd.verifyAPIKey,
     userCtrl.getMajorsData
+  ],
+
+  createComment: [
+    generalMidd.verifyAPIKey,
+    generalMidd.userAuth,
+    postMidd.checkPostId,
+    fileUploadMidd,
+    postMidd.checkCommentInPostData,
+    userCtrl.createComment
   ]
 }

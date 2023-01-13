@@ -14,6 +14,7 @@ const express = require('express')
 const moment = require('moment')
 const cloudinary = require('cloudinary').v2
 const generalMidd = require('./middlewares/general.middleware')
+const cors = require('cors')
 const conf = require('../etc/conf.json')
 
 //General settings.
@@ -29,10 +30,20 @@ cloudinary.config({
 const app = express()
 
 //Setting gobal middlewares.
+app.use(cors())
+//app.use(generalMidd.allowExternalConnections)
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(generalMidd.setResponseFormat)
-app.use(generalMidd.allowExternalConnections)
+
+//Setting for browsers to test CORS policy
+app.use(function(req, res, next) {
+  if(req.method == 'OPTIONS') {
+    console.log('OPTIONS request caught. Responding status 200.')
+    return res.status(200).end()
+  }
+  next()
+})
 
 //Importing APIs.
 const socialNetworkAPI = require('./apis/social_network/interfaces')
